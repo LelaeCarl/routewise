@@ -108,9 +108,9 @@
               name="preference"
               class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             >
-              <option value="cheapest" {% if preference_key == 'cheapest' %}selected{% endif %}>Lowest cost</option>
-              <option value="fastest" {% if preference_key == 'fastest' %}selected{% endif %}>Fastest delivery</option>
-              <option value="balanced" {% if preference_key == 'balanced' %}selected{% endif %}>Balanced trade-off</option>
+                <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest cost</option>
+                <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest delivery</option>
+                <option value="balanced_tradeoff" {% if preference_key == 'balanced_tradeoff' %}selected{% endif %}>Balanced trade-off</option>
             </select>
           </div>
         </div>
