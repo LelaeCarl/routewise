@@ -2,36 +2,62 @@
 
 {% block content %}
   <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div>
-      <h1 class="text-3xl font-bold tracking-tight">Logistics Hubs</h1>
-      <p class="mt-1 text-slate-600">A searchable knowledge base for ports, ICDs, and gateways (Phase 1 UI).</p>
+    <div class="space-y-2">
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900">Logistics Hubs</h1>
+      <p class="text-sm text-slate-600">
+        A searchable knowledge-base view of ports, ICDs, and air gateways. Find the nodes you care about, fast.
+      </p>
     </div>
-    <div class="rounded-xl bg-white/70 px-4 py-3 ring-1 ring-slate-200/70">
-      <p class="text-sm font-semibold text-slate-900">Search UI</p>
-      <p class="text-xs text-slate-600">Filtering is client-side placeholder behavior.</p>
+
+    <div class="rounded-2xl bg-white/70 px-4 py-3 shadow-soft ring-1 ring-slate-200/70">
+      <div class="flex items-center justify-between gap-3">
+        <p class="text-sm font-semibold text-slate-900">Sample catalog</p>
+        <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">5 hubs</span>
+      </div>
+      <p class="mt-1 text-xs text-slate-600">Phase 2: improved search UX (client-side).</p>
     </div>
   </div>
 
   <div class="mt-6 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div class="space-y-1">
         <p class="text-sm font-semibold text-slate-900">Find a hub</p>
-        <p class="text-sm text-slate-600">Type to filter the cards below.</p>
+        <p class="text-sm text-slate-600">Filter by type, then search by name.</p>
       </div>
 
-      <div class="w-full sm:w-[420px]">
-        <label class="sr-only" for="hubSearch">Search hubs</label>
-        <input
-          id="hubSearch"
-          type="text"
-          placeholder="Search: Shanghai, Mombasa, Nairobi..."
-          class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20"
-        />
+      <div class="flex w-full flex-col gap-3 sm:w-[560px] sm:flex-row sm:items-center">
+        <div class="flex-1">
+          <label class="sr-only" for="hubSearch">Search hubs</label>
+          <input
+            id="hubSearch"
+            type="text"
+            placeholder="Search: Shanghai, Mombasa, Nairobi..."
+            class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+          />
+        </div>
+
+        <div class="w-full sm:w-48">
+          <label class="sr-only" for="hubType">Filter hub type</label>
+          <select
+            id="hubType"
+            class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+          >
+            <option value="all" selected>All types</option>
+            <option value="sea">Sea</option>
+            <option value="port">Port</option>
+            <option value="icd">ICD</option>
+            <option value="air">Air</option>
+          </select>
+        </div>
       </div>
     </div>
 
     <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Shanghai Port">
+      <div
+        class="hub-card rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+        data-hub-name="Shanghai Port"
+        data-hub-type="sea"
+      >
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-sm font-bold text-slate-900">Shanghai Port</p>
@@ -39,10 +65,14 @@
           </div>
           <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Sea</span>
         </div>
-        <div class="mt-4 text-xs text-slate-600">Typical role: export consolidation, container staging.</div>
+        <p class="mt-4 text-xs text-slate-600">Typical role: export consolidation, container staging.</p>
       </div>
 
-      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Shenzhen Port">
+      <div
+        class="hub-card rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+        data-hub-name="Shenzhen Port"
+        data-hub-type="sea"
+      >
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-sm font-bold text-slate-900">Shenzhen Port</p>
@@ -50,10 +80,14 @@
           </div>
           <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Sea</span>
         </div>
-        <div class="mt-4 text-xs text-slate-600">Typical role: cross-border consolidation, lane routing support.</div>
+        <p class="mt-4 text-xs text-slate-600">Typical role: cross-border consolidation, lane routing support.</p>
       </div>
 
-      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Mombasa Port">
+      <div
+        class="hub-card rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+        data-hub-name="Mombasa Port"
+        data-hub-type="port"
+      >
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-sm font-bold text-slate-900">Mombasa Port</p>
@@ -61,10 +95,14 @@
           </div>
           <span class="rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">Port</span>
         </div>
-        <div class="mt-4 text-xs text-slate-600">Typical role: import processing, maritime-to-inland transition.</div>
+        <p class="mt-4 text-xs text-slate-600">Typical role: import processing, maritime-to-inland transition.</p>
       </div>
 
-      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Nairobi ICD">
+      <div
+        class="hub-card rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+        data-hub-name="Nairobi ICD"
+        data-hub-type="icd"
+      >
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-sm font-bold text-slate-900">Nairobi ICD</p>
@@ -72,10 +110,14 @@
           </div>
           <span class="rounded-xl bg-accent/15 px-3 py-1 text-xs font-semibold text-accent ring-1 ring-accent/20">ICD</span>
         </div>
-        <div class="mt-4 text-xs text-slate-600">Typical role: customs release, cross-dock distribution.</div>
+        <p class="mt-4 text-xs text-slate-600">Typical role: customs release, cross-dock distribution.</p>
       </div>
 
-      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Guangzhou Airport">
+      <div
+        class="hub-card rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft"
+        data-hub-name="Guangzhou Airport"
+        data-hub-type="air"
+      >
         <div class="flex items-start justify-between gap-3">
           <div>
             <p class="text-sm font-bold text-slate-900">Guangzhou Airport</p>
@@ -83,8 +125,16 @@
           </div>
           <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Air</span>
         </div>
-        <div class="mt-4 text-xs text-slate-600">Typical role: high-priority shipments, expedited lanes.</div>
+        <p class="mt-4 text-xs text-slate-600">Typical role: high-priority shipments, expedited lanes.</p>
       </div>
+    </div>
+
+    <div
+      id="hubEmpty"
+      class="hidden mt-6 rounded-2xl border border-slate-200/70 bg-slate-50 p-6 text-center"
+    >
+      <p class="text-sm font-semibold text-slate-900">No hubs match your filters.</p>
+      <p class="mt-1 text-xs text-slate-600">Try clearing your search or switching the type selector back to “All types”.</p>
     </div>
   </div>
 {% endblock %}

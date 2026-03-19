@@ -51,7 +51,26 @@ def index():
 
 @app.route("/planner")
 def planner():
-    return render_template("planner.html", title="Plan Route")
+    direction_key = request.args.get("direction", "china-kenya")
+    origin = request.args.get("origin", "")
+    destination = request.args.get("destination", "")
+    weight = request.args.get("weight", "")
+    preference_key = request.args.get("preference", "balanced")
+
+    direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced")
+
+    return render_template(
+        "planner.html",
+        title="Plan Route",
+        direction_key=direction_key,
+        direction_label=direction_label,
+        origin=origin,
+        destination=destination,
+        weight=weight,
+        preference_key=preference_key,
+        preference_label=preference_label,
+    )
 
 
 @app.route("/results")
@@ -67,16 +86,20 @@ def results():
     preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced")
 
     kpis = _placeholder_kpis(preference_key)
+    modes_list = [m.strip() for m in kpis["modes"].split("+") if m.strip()]
 
     return render_template(
         "results.html",
         title="Results",
+        direction_key=direction_key,
         direction=direction_label,
+        preference_key=preference_key,
         origin=origin,
         destination=destination,
         weight=weight,
         preference=preference_label,
         kpis=kpis,
+        modes_list=modes_list,
     )
 
 

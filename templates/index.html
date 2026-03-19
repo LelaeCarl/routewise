@@ -1,97 +1,102 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section
-    class="relative overflow-hidden rounded-3xl border border-slate-200/70 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-6 shadow-soft sm:p-10"
-  >
-    <div class="grid gap-8 lg:grid-cols-2 lg:items-center">
-      <div class="space-y-5">
-        <div class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 ring-1 ring-slate-200/70">
-          <span class="h-2 w-2 rounded-full bg-secondary" aria-hidden="true"></span>
-          <span class="text-sm font-medium text-slate-700">Phase 1: Planning UI scaffold</span>
+  <section class="rounded-3xl border border-slate-200/70 bg-gradient-to-b from-white to-slate-50 p-6 shadow-soft sm:p-10">
+    <div class="grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-7 space-y-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+            Graph-ready planning UI
+          </span>
+          <span class="inline-flex items-center rounded-full bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
+            Phase 2 UX refinement
+          </span>
         </div>
 
-        <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-          Plan smarter logistics routes
-          <span class="text-primary">China ↔ Kenya</span>
-        </h1>
-
-        <p class="text-base leading-relaxed text-slate-700 sm:text-lg">
-          RouteWise helps you compare cost, time, and transport modes so cross-border shipping decisions feel clear and actionable.
-          This phase focuses on a production-ready scaffold—routing logic comes later.
-        </p>
+        <div class="space-y-3">
+          <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            Plan smarter logistics routes
+            <span class="block text-primary">China ↔ Kenya</span>
+          </h1>
+          <p class="max-w-xl text-base leading-relaxed text-slate-700 sm:text-lg">
+            RouteWise turns complex cross-border trade-offs into clear route recommendations.
+            Compare cost, time, and transport modes in a clean workflow designed for real operations.
+          </p>
+        </div>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
             href="{{ url_for('planner') }}"
-            class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90"
+            class="inline-flex items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
           >
             Plan your route
+            <span aria-hidden="true" class="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-lg bg-white/10">→</span>
           </a>
           <a
             href="{{ url_for('hubs') }}"
-            class="inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/70 transition hover:bg-slate-50"
+            class="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/70 shadow-sm transition hover:bg-slate-50"
           >
             Explore hubs
           </a>
         </div>
 
-        <div class="flex flex-wrap gap-2 pt-2">
-          <span class="rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200/70">Cost vs time preferences</span>
-          <span class="rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200/70">Multi-modal routing</span>
-          <span class="rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200/70">Clear route outputs</span>
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Multi-modal planning</span>
+          <span class="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Preference-aware KPIs</span>
+          <span class="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Timeline + breakdown structure</span>
         </div>
       </div>
 
-      <div class="space-y-4">
-        <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-5">
+      <div class="lg:col-span-5 space-y-5">
+        <div class="rounded-3xl bg-white/80 p-5 ring-1 ring-slate-200/70 shadow-sm">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <p class="text-sm font-semibold text-slate-900">Quick sample</p>
-              <p class="text-sm text-slate-600">Balancing cost and delivery time</p>
+              <p class="text-sm font-semibold text-slate-900">Sample route preview</p>
+              <p class="mt-1 text-sm text-slate-600">Balanced trade-off · placeholder data</p>
             </div>
             <span class="rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">Preview</span>
           </div>
 
           <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <div class="rounded-xl bg-white p-4 ring-1 ring-slate-200/70">
-              <p class="text-xs font-medium text-slate-500">Estimated cost</p>
-              <p class="text-lg font-bold text-slate-900">$1,420</p>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Cost</p>
+              <p class="mt-2 text-2xl font-bold text-slate-900">$1,420</p>
             </div>
-            <div class="rounded-xl bg-white p-4 ring-1 ring-slate-200/70">
-              <p class="text-xs font-medium text-slate-500">Estimated transit time</p>
-              <p class="text-lg font-bold text-slate-900">15 days</p>
+            <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Time</p>
+              <p class="mt-2 text-2xl font-bold text-slate-900">15 days</p>
             </div>
           </div>
 
-          <div class="mt-4 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
-            <p class="text-sm font-semibold text-slate-800">Sample route</p>
-            <p class="text-sm text-slate-600">Shanghai Port → Nairobi ICD</p>
+          <div class="mt-4 rounded-2xl border border-slate-200/70 bg-white p-4">
+            <p class="text-sm font-semibold text-slate-900">Route</p>
+            <p class="mt-1 text-sm text-slate-600">Shanghai Port → Nairobi ICD</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Sea</span>
+              <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Rail</span>
+              <span class="rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent ring-1 ring-accent/20">Road</span>
+            </div>
             <a
               href="{{ url_for('results', direction='china-kenya', preference='balanced') }}"
-              class="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
+              class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
             >
               View sample results
             </a>
           </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-5">
-            <p class="text-sm font-semibold text-slate-900">Transport modes</p>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-primary" aria-hidden="true"></span> Sea</li>
-              <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-secondary" aria-hidden="true"></span> Air</li>
-              <li class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-accent" aria-hidden="true"></span> Road</li>
-            </ul>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Design</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900">SaaS-like UX</p>
           </div>
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-5">
-            <p class="text-sm font-semibold text-slate-900">What you get</p>
-            <div class="mt-3 space-y-2 text-sm text-slate-700">
-              <p>Best route summary</p>
-              <p>KPIs (cost/time)</p>
-              <p>Timeline breakdown</p>
-            </div>
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Workflow</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900">Discover → Plan → Understand</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Clarity</p>
+            <p class="mt-2 text-sm font-semibold text-slate-900">KPIs + breakdown structure</p>
           </div>
         </div>
       </div>
@@ -99,83 +104,95 @@
   </section>
 
   <section class="mt-10">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight">How it works</h2>
-        <p class="mt-1 text-slate-600">A simple flow designed for busy operators.</p>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">How it works</h2>
+        <p class="mt-1 text-sm text-slate-600">A simple flow designed for busy operators and academic review.</p>
       </div>
-      <div class="rounded-xl bg-white/70 px-4 py-2 ring-1 ring-slate-200/70">
-        <p class="text-sm font-semibold text-slate-800">No login, no complexity</p>
-        <p class="text-xs text-slate-600">Just plan and understand outputs.</p>
+      <div class="rounded-2xl bg-white/70 px-4 py-2 ring-1 ring-slate-200/70 shadow-sm">
+        <p class="text-sm font-semibold text-slate-800">No backend complexity yet</p>
+        <p class="mt-0.5 text-xs text-slate-600">UX foundations first</p>
       </div>
     </div>
 
     <div class="mt-6 grid gap-4 md:grid-cols-3">
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">1</span>
-          <p class="text-sm font-semibold text-slate-900">Discover</p>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20 font-bold" aria-hidden="true">1</span>
+          <div>
+            <p class="text-sm font-semibold text-slate-900">Discover</p>
+            <p class="text-xs text-slate-600">Direction + endpoints</p>
+          </div>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Choose a route direction and key logistics endpoints (ports/hubs).</p>
+        <p class="mt-3 text-sm text-slate-600">Choose China → Kenya or Kenya → China and enter origin/destination nodes.</p>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-secondary/15 text-secondary ring-1 ring-secondary/25">2</span>
-          <p class="text-sm font-semibold text-slate-900">Input</p>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-secondary/15 text-secondary ring-1 ring-secondary/20 font-bold" aria-hidden="true">2</span>
+          <div>
+            <p class="text-sm font-semibold text-slate-900">Input</p>
+            <p class="text-xs text-slate-600">Weight + preference</p>
+          </div>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Set weight and a preference (cheapest, fastest, or a balanced trade-off).</p>
+        <p class="mt-3 text-sm text-slate-600">Specify cargo weight and pick the trade-off: cheapest, fastest, or balanced.</p>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-accent/15 text-accent ring-1 ring-accent/25">3</span>
-          <p class="text-sm font-semibold text-slate-900">Understand</p>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/20 font-bold" aria-hidden="true">3</span>
+          <div>
+            <p class="text-sm font-semibold text-slate-900">Understand</p>
+            <p class="text-xs text-slate-600">KPIs + timeline</p>
+          </div>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Get a clean summary, KPIs, and a route timeline you can act on.</p>
+        <p class="mt-3 text-sm text-slate-600">Review KPIs, route timeline structure, and placeholders for comparison options.</p>
       </div>
     </div>
   </section>
 
   <section class="mt-10">
-    <div class="flex items-center justify-between gap-4">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h2 class="text-2xl font-bold tracking-tight">Transport modes</h2>
-        <p class="mt-1 text-slate-600">Multi-modal planning across the network.</p>
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Transport modes</h2>
+        <p class="mt-1 text-sm text-slate-600">Designed for multi-modal lanes between hubs and ICDs.</p>
       </div>
-      <div class="hidden rounded-xl bg-white/70 px-4 py-2 ring-1 ring-slate-200/70 sm:block">
-        <p class="text-sm font-semibold text-slate-800">Sea, Air, Rail, Road</p>
+      <div class="hidden rounded-2xl bg-white/70 px-4 py-2 ring-1 ring-slate-200/70 sm:block shadow-sm">
+        <p class="text-sm font-semibold text-slate-800">Sea · Air · Rail · Road</p>
       </div>
     </div>
 
     <div class="mt-6 grid gap-4 md:grid-cols-4">
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">S</span>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20 font-bold" aria-hidden="true">S</span>
           <p class="text-sm font-semibold text-slate-900">Sea</p>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Great for bulk, cost-effective lanes.</p>
+        <p class="mt-3 text-sm text-slate-600">Bulk & consolidation lanes.</p>
       </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-secondary/15 text-secondary ring-1 ring-secondary/25">A</span>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-secondary/15 text-secondary ring-1 ring-secondary/20 font-bold" aria-hidden="true">A</span>
           <p class="text-sm font-semibold text-slate-900">Air</p>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Fast transit for high-priority shipments.</p>
+        <p class="mt-3 text-sm text-slate-600">Fast transit for priority cargo.</p>
       </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">R</span>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20 font-bold" aria-hidden="true">R</span>
           <p class="text-sm font-semibold text-slate-900">Rail</p>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Balanced corridors where available.</p>
+        <p class="mt-3 text-sm text-slate-600">Balanced corridors when available.</p>
       </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+
+      <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
         <div class="flex items-center gap-3">
-          <span class="grid h-9 w-9 place-items-center rounded-xl bg-accent/15 text-accent ring-1 ring-accent/25">O</span>
+          <span class="grid h-10 w-10 place-items-center rounded-2xl bg-accent/15 text-accent ring-1 ring-accent/20 font-bold" aria-hidden="true">O</span>
           <p class="text-sm font-semibold text-slate-900">Road</p>
         </div>
-        <p class="mt-3 text-sm text-slate-600">Last-mile movement between hubs and ICDs.</p>
+        <p class="mt-3 text-sm text-slate-600">Last-mile movement between hubs & ICDs.</p>
       </div>
     </div>
   </section>

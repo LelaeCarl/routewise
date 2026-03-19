@@ -31,3 +31,26 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+.timeline-step {
+  border-left: 2px solid rgba(15, 23, 42, 0.08);
+  padding-left: 16px;
+}
+
+.rw-spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  border: 3px solid rgba(30, 58, 138, 0.18);
+  border-top-color: rgba(30, 58, 138, 1);
+  animation: rw-spin 0.9s linear infinite;
+}
+
+@keyframes rw-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

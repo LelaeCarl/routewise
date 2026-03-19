@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1E3A8A" />
     <meta
       name="description"
       content="RouteWise helps you plan intelligent cross-border logistics routes between China and Kenya."
@@ -41,72 +42,150 @@
       Skip to content
     </a>
 
+    <div
+      id="rw-loading"
+      class="hidden fixed inset-0 z-[60] bg-background/70 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="flex h-full items-center justify-center px-4">
+        <div class="w-full max-w-md rounded-2xl bg-white/80 p-6 ring-1 ring-slate-200/70 shadow-soft">
+          <div class="flex items-center justify-center gap-3">
+            <span class="rw-spinner" aria-hidden="true"></span>
+            <p class="text-sm font-semibold text-slate-900">Computing route…</p>
+          </div>
+          <p class="mt-2 text-center text-xs text-slate-600">
+            Phase 1 scaffold: results are placeholders until the routing engine is implemented.
+          </p>
+        </div>
+      </div>
+    </div>
+
     <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-background/80 backdrop-blur">
       <div class="mx-auto max-w-6xl px-4 py-3">
-        <nav class="flex items-center justify-between">
-          <a href="{{ url_for('index') }}" class="group inline-flex items-center gap-2">
+        <nav class="flex items-center justify-between gap-4">
+          <a href="{{ url_for('index') }}" class="group inline-flex items-center gap-3">
             <span
-              class="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white shadow-sm ring-1 ring-primary/20"
+              class="grid h-10 w-10 place-items-center rounded-2xl bg-primary text-white shadow-sm ring-1 ring-primary/20"
               aria-hidden="true"
             >
-              <span class="text-sm font-bold">RW</span>
+              <span class="text-sm font-bold tracking-wide">RW</span>
             </span>
-            <span class="text-sm font-semibold tracking-wide">
-              RouteWise
-              <span
-                class="ml-2 hidden rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 sm:inline"
-              >
-                Phase 1
-              </span>
+
+            <span class="leading-tight">
+              <span class="block text-sm font-semibold tracking-wide text-slate-900">RouteWise</span>
+              <span class="hidden text-xs font-medium text-slate-600 sm:inline">Intelligent route planning</span>
             </span>
           </a>
 
           {% set path = request.path %}
-          <div class="flex items-center gap-1">
+          <div class="hidden items-center gap-1 md:flex">
             <a
               href="{{ url_for('index') }}"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              class="inline-flex items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if path == '/' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              aria-current="{% if path == '/' %}page{% else %}false{% endif %}"
             >
               Home
             </a>
             <a
               href="{{ url_for('planner') }}"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/planner' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              class="inline-flex items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if path == '/planner' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              aria-current="{% if path == '/planner' %}page{% else %}false{% endif %}"
             >
               Plan Route
             </a>
             <a
               href="{{ url_for('hubs') }}"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/hubs' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              class="inline-flex items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if path == '/hubs' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              aria-current="{% if path == '/hubs' %}page{% else %}false{% endif %}"
             >
               Hubs
             </a>
             <a
               href="{{ url_for('about') }}"
-              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/about' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              class="inline-flex items-center rounded-xl px-3 py-2 text-sm font-medium transition-colors {% if path == '/about' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+              aria-current="{% if path == '/about' %}page{% else %}false{% endif %}"
             >
               About
             </a>
           </div>
+
+          <details class="relative md:hidden">
+            <summary class="list-none">
+              <span
+                class="inline-flex cursor-pointer select-none items-center justify-center rounded-xl border border-slate-200/70 bg-white/60 px-3 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-white"
+              >
+                Menu
+              </span>
+            </summary>
+
+            <div class="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200/70 bg-white/90 p-2 shadow-soft">
+              <div class="flex flex-col">
+                <a
+                  href="{{ url_for('index') }}"
+                  class="rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-slate-100 {% if path == '/' %}bg-primary/10 text-primary{% else %}text-slate-700{% endif %}"
+                >
+                  Home
+                </a>
+                <a
+                  href="{{ url_for('planner') }}"
+                  class="mt-1 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-slate-100 {% if path == '/planner' %}bg-primary/10 text-primary{% else %}text-slate-700{% endif %}"
+                >
+                  Plan Route
+                </a>
+                <a
+                  href="{{ url_for('hubs') }}"
+                  class="mt-1 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-slate-100 {% if path == '/hubs' %}bg-primary/10 text-primary{% else %}text-slate-700{% endif %}"
+                >
+                  Hubs
+                </a>
+                <a
+                  href="{{ url_for('about') }}"
+                  class="mt-1 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-slate-100 {% if path == '/about' %}bg-primary/10 text-primary{% else %}text-slate-700{% endif %}"
+                >
+                  About
+                </a>
+              </div>
+            </div>
+          </details>
         </nav>
       </div>
     </header>
 
-    <main id="main-content" class="mx-auto max-w-6xl flex-1 px-4 py-8">
+    <main id="main-content" class="mx-auto max-w-6xl flex-1 px-4 py-10">
       {% block content %}{% endblock %}
     </main>
 
     <footer class="border-t border-slate-200/70 bg-background/70">
       <div class="mx-auto max-w-6xl px-4 py-8">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <p class="text-sm text-slate-600">
-            <span class="font-semibold text-slate-800">RouteWise</span> — intelligent route planning for cross-border logistics.
-          </p>
-          <div class="flex items-center gap-3 text-sm">
-            <a class="text-slate-600 hover:text-primary" href="{{ url_for('planner') }}">Try the planner</a>
-            <span class="h-4 w-px bg-slate-300" aria-hidden="true"></span>
-            <span class="text-slate-500">Phase 1 scaffold · no algorithm yet</span>
+        <div class="grid gap-8 md:grid-cols-3 md:items-start">
+          <div class="space-y-2">
+            <p class="text-sm text-slate-600">
+              <span class="font-semibold text-slate-900">RouteWise</span> — intelligent route planning for cross-border logistics between China and Kenya.
+            </p>
+            <p class="text-xs text-slate-500">Phase 1 scaffold · no routing algorithm yet</p>
           </div>
+
+          <div class="space-y-3">
+            <p class="text-sm font-semibold text-slate-900">Navigate</p>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <a class="text-slate-600 hover:text-primary transition-colors" href="{{ url_for('index') }}">Home</a>
+              <a class="text-slate-600 hover:text-primary transition-colors" href="{{ url_for('planner') }}">Plan Route</a>
+              <a class="text-slate-600 hover:text-primary transition-colors" href="{{ url_for('hubs') }}">Hubs</a>
+              <a class="text-slate-600 hover:text-primary transition-colors" href="{{ url_for('about') }}">About</a>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <p class="text-sm font-semibold text-slate-900">Next</p>
+            <p class="text-sm text-slate-600">
+              Phase 3 will introduce the graph model + shortest-path routing engine.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-8 flex items-center justify-between gap-4 border-t border-slate-200/70 pt-5 text-xs text-slate-500">
+          <span>© {{ 2026 }} RouteWise</span>
+          <span>Built with Flask + Jinja + Tailwind CDN</span>
         </div>
       </div>
     </footer>
