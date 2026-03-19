@@ -1,0 +1,91 @@
+[
+  {
+    "id": "shanghai_port",
+    "name": "Shanghai Port",
+    "country": "China",
+    "city": "Shanghai",
+    "type": "port",
+    "description": "Major East China sea gateway used for export consolidation and container staging prior to ocean transit."
+  },
+  {
+    "id": "shenzhen_port",
+    "name": "Shenzhen Port",
+    "country": "China",
+    "city": "Shenzhen",
+    "type": "port",
+    "description": "Southern sea gateway supporting efficient connections into the Red Sea / Gulf routing corridor."
+  },
+  {
+    "id": "ningbo_port",
+    "name": "Ningbo Port",
+    "country": "China",
+    "city": "Ningbo",
+    "type": "port",
+    "description": "Hangzhou Bay port complex used for bulk movement into multi-leg ocean lanes."
+  },
+  {
+    "id": "guangzhou_airport",
+    "name": "Guangzhou Airport",
+    "country": "China",
+    "city": "Guangzhou",
+    "type": "airport",
+    "description": "Air cargo gateway for high-priority shipments; supports quick handoffs to inland logistics."
+  },
+  {
+    "id": "beijing_airport",
+    "name": "Beijing Airport",
+    "country": "China",
+    "city": "Beijing",
+    "type": "airport",
+    "description": "Air cargo gateway enabling faster routing via hubs such as Dubai for time-sensitive deliveries."
+  },
+  {
+    "id": "mombasa_port",
+    "name": "Mombasa Port",
+    "country": "Kenya",
+    "city": "Mombasa",
+    "type": "port",
+    "description": "Primary East African maritime entry point used for import processing and consolidation before inland distribution."
+  },
+  {
+    "id": "nairobi_airport",
+    "name": "Nairobi Airport",
+    "country": "Kenya",
+    "city": "Nairobi",
+    "type": "airport",
+    "description": "Kenya’s air gateway for inbound cargo; typically used to accelerate last-mile distribution to ICDs."
+  },
+  {
+    "id": "nairobi_icd",
+    "name": "Nairobi ICD",
+    "country": "Kenya",
+    "city": "Nairobi",
+    "type": "icd",
+    "description": "Inland Container Depot for customs handling, cross-dock transfers, and distribution into Kenya’s regional markets."
+  },
+  {
+    "id": "kisumu_hub",
+    "name": "Kisumu Hub",
+    "country": "Kenya",
+    "city": "Kisumu",
+    "type": "rail_hub",
+    "description": "Regional inland hub connected to Kenya’s rail corridor and used for downstream consolidation."
+  },
+  {
+    "id": "djibouti_port",
+    "name": "Djibouti Port",
+    "country": "Djibouti",
+    "city": "Djibouti",
+    "type": "port",
+    "description": "Transit sea port enabling multi-leg ocean routing across the Red Sea corridor."
+  },
+  {
+    "id": "dubai_air_hub",
+    "name": "Dubai Air Hub",
+    "country": "United Arab Emirates",
+    "city": "Dubai",
+    "type": "airport",
+    "description": "Major air transit hub used for rerouting between China’s air gateways and Kenya’s air gateway."
+  }
+]
+

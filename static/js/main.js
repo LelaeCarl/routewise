@@ -22,17 +22,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("load", hideLoading);
   }
 
-  // Hubs UX: lightweight placeholder behavior for hub search UI.
+  // Hubs UX: search/filter placeholder behavior for hub cards.
+  // `hubType` is optional so the page can still work if the filter UI is not present.
   const hubSearch = document.getElementById("hubSearch");
   const hubType = document.getElementById("hubType");
-  if (!hubSearch || !hubType) return;
+  if (!hubSearch) return;
 
   const cards = Array.from(document.querySelectorAll(".hub-card"));
   const emptyEl = document.getElementById("hubEmpty");
 
   const filter = () => {
     const q = hubSearch.value.trim().toLowerCase();
-    const type = hubType.value;
+    const type = hubType ? hubType.value : "all";
 
     let visibleCount = 0;
     for (const card of cards) {
@@ -52,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   hubSearch.addEventListener("input", filter);
-  hubType.addEventListener("change", filter);
+  if (hubType) hubType.addEventListener("change", filter);
   filter();
 });
 

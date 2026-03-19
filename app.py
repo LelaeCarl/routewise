@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, render_template, request
 
+from backend.data_loader import load_network
+
 
 app = Flask(__name__)
 
@@ -105,7 +107,8 @@ def results():
 
 @app.route("/hubs")
 def hubs():
-    return render_template("hubs.html", title="Hubs")
+    nodes, _edges = load_network()
+    return render_template("hubs.html", title="Hubs", nodes=nodes)
 
 
 @app.route("/about")
