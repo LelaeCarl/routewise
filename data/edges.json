@@ -4,7 +4,7 @@
     "from": "shanghai_port",
     "to": "djibouti_port",
     "mode": "sea",
-    "cost": 9.2,
+    "cost": 8200,
     "time": 13.5,
     "description": "Prototype ocean lane: Shanghai → Djibouti (consolidation + transshipment)."
   },
@@ -13,7 +13,7 @@
     "from": "djibouti_port",
     "to": "shanghai_port",
     "mode": "sea",
-    "cost": 9.0,
+    "cost": 8000,
     "time": 13.5,
     "description": "Prototype ocean lane: Djibouti → Shanghai (return corridor)."
   },
@@ -22,7 +22,7 @@
     "from": "shenzhen_port",
     "to": "djibouti_port",
     "mode": "sea",
-    "cost": 8.9,
+    "cost": 7800,
     "time": 13.0,
     "description": "Prototype ocean lane: Shenzhen → Djibouti."
   },
@@ -31,7 +31,7 @@
     "from": "djibouti_port",
     "to": "shenzhen_port",
     "mode": "sea",
-    "cost": 8.7,
+    "cost": 7600,
     "time": 13.0,
     "description": "Prototype ocean lane: Djibouti → Shenzhen (return corridor)."
   },
@@ -40,7 +40,7 @@
     "from": "ningbo_port",
     "to": "djibouti_port",
     "mode": "sea",
-    "cost": 9.0,
+    "cost": 8000,
     "time": 12.8,
     "description": "Prototype ocean lane: Ningbo → Djibouti."
   },
@@ -49,7 +49,7 @@
     "from": "djibouti_port",
     "to": "ningbo_port",
     "mode": "sea",
-    "cost": 8.8,
+    "cost": 7800,
     "time": 12.8,
     "description": "Prototype ocean lane: Djibouti → Ningbo."
   },
@@ -58,7 +58,7 @@
     "from": "djibouti_port",
     "to": "mombasa_port",
     "mode": "sea",
-    "cost": 3.0,
+    "cost": 3000,
     "time": 4.2,
     "description": "Prototype ocean lane: Djibouti → Mombasa (regional leg)."
   },
@@ -67,7 +67,7 @@
     "from": "mombasa_port",
     "to": "djibouti_port",
     "mode": "sea",
-    "cost": 3.1,
+    "cost": 3100,
     "time": 4.2,
     "description": "Prototype ocean lane: Mombasa → Djibouti."
   },
@@ -76,7 +76,7 @@
     "from": "shanghai_port",
     "to": "mombasa_port",
     "mode": "sea",
-    "cost": 11.0,
+    "cost": 11800,
     "time": 16.5,
     "description": "Prototype direct ocean lane: Shanghai → Mombasa."
   },
@@ -85,7 +85,7 @@
     "from": "mombasa_port",
     "to": "shanghai_port",
     "mode": "sea",
-    "cost": 10.8,
+    "cost": 11500,
     "time": 16.5,
     "description": "Prototype direct ocean lane: Mombasa → Shanghai."
   },
@@ -95,7 +95,7 @@
     "from": "mombasa_port",
     "to": "nairobi_icd",
     "mode": "road",
-    "cost": 6.5,
+    "cost": 3400,
     "time": 3.2,
     "description": "Prototype road lane: Mombasa → Nairobi ICD (trucking + consolidation)."
   },
@@ -104,7 +104,7 @@
     "from": "nairobi_icd",
     "to": "mombasa_port",
     "mode": "road",
-    "cost": 6.3,
+    "cost": 3300,
     "time": 3.2,
     "description": "Prototype road lane: Nairobi ICD → Mombasa."
   },
@@ -113,7 +113,7 @@
     "from": "mombasa_port",
     "to": "nairobi_airport",
     "mode": "road",
-    "cost": 6.2,
+    "cost": 3100,
     "time": 3.0,
     "description": "Prototype road lane: Mombasa → Nairobi Airport (for air-accelerated handoffs)."
   },
@@ -122,7 +122,7 @@
     "from": "nairobi_airport",
     "to": "mombasa_port",
     "mode": "road",
-    "cost": 6.0,
+    "cost": 3000,
     "time": 3.0,
     "description": "Prototype road lane: Nairobi Airport → Mombasa."
   },
@@ -131,7 +131,7 @@
     "from": "nairobi_airport",
     "to": "nairobi_icd",
     "mode": "road",
-    "cost": 2.4,
+    "cost": 1700,
     "time": 1.0,
     "description": "Prototype last-mile road: Nairobi Airport → Nairobi ICD."
   },
@@ -140,9 +140,28 @@
     "from": "nairobi_icd",
     "to": "nairobi_airport",
     "mode": "road",
-    "cost": 2.3,
+    "cost": 1600,
     "time": 1.0,
     "description": "Prototype last-mile road: Nairobi ICD → Nairobi Airport."
+  },
+
+  {
+    "id": "e_road_shenzhen_port_guangzhou_airport_fwd",
+    "from": "shenzhen_port",
+    "to": "guangzhou_airport",
+    "mode": "road",
+    "cost": 2200,
+    "time": 1.2,
+    "description": "Prototype road transfer: Shenzhen Port → Guangzhou Airport (inland consolidation for air)."
+  },
+  {
+    "id": "e_road_guangzhou_airport_shenzhen_port_rev",
+    "from": "guangzhou_airport",
+    "to": "shenzhen_port",
+    "mode": "road",
+    "cost": 2100,
+    "time": 1.2,
+    "description": "Prototype road transfer: Guangzhou Airport → Shenzhen Port (return transfer)."
   },
 
   {
@@ -150,8 +169,8 @@
     "from": "nairobi_icd",
     "to": "kisumu_hub",
     "mode": "rail",
-    "cost": 7.8,
-    "time": 5.5,
+    "cost": 3900,
+    "time": 4.0,
     "description": "Prototype rail corridor: Nairobi ICD → Kisumu Hub."
   },
   {
@@ -159,8 +178,8 @@
     "from": "kisumu_hub",
     "to": "nairobi_icd",
     "mode": "rail",
-    "cost": 7.6,
-    "time": 5.5,
+    "cost": 3800,
+    "time": 4.0,
     "description": "Prototype rail corridor: Kisumu Hub → Nairobi ICD."
   },
   {
@@ -168,8 +187,8 @@
     "from": "nairobi_icd",
     "to": "kisumu_hub",
     "mode": "road",
-    "cost": 6.9,
-    "time": 4.6,
+    "cost": 2800,
+    "time": 5.0,
     "description": "Prototype road lane: Nairobi ICD → Kisumu Hub."
   },
   {
@@ -177,8 +196,8 @@
     "from": "kisumu_hub",
     "to": "nairobi_icd",
     "mode": "road",
-    "cost": 6.7,
-    "time": 4.6,
+    "cost": 2700,
+    "time": 5.0,
     "description": "Prototype road lane: Kisumu Hub → Nairobi ICD."
   },
 
@@ -187,8 +206,8 @@
     "from": "beijing_airport",
     "to": "dubai_air_hub",
     "mode": "air",
-    "cost": 28.0,
-    "time": 4.0,
+    "cost": 26000,
+    "time": 3.8,
     "description": "Prototype air leg: Beijing Airport → Dubai Air Hub."
   },
   {
@@ -196,8 +215,8 @@
     "from": "dubai_air_hub",
     "to": "beijing_airport",
     "mode": "air",
-    "cost": 27.5,
-    "time": 4.0,
+    "cost": 25500,
+    "time": 3.8,
     "description": "Prototype air leg: Dubai Air Hub → Beijing Airport."
   },
   {
@@ -205,8 +224,8 @@
     "from": "guangzhou_airport",
     "to": "dubai_air_hub",
     "mode": "air",
-    "cost": 26.0,
-    "time": 4.0,
+    "cost": 24000,
+    "time": 3.7,
     "description": "Prototype air leg: Guangzhou Airport → Dubai Air Hub."
   },
   {
@@ -214,8 +233,8 @@
     "from": "dubai_air_hub",
     "to": "guangzhou_airport",
     "mode": "air",
-    "cost": 25.5,
-    "time": 4.0,
+    "cost": 23500,
+    "time": 3.7,
     "description": "Prototype air leg: Dubai Air Hub → Guangzhou Airport."
   },
   {
@@ -223,8 +242,8 @@
     "from": "dubai_air_hub",
     "to": "nairobi_airport",
     "mode": "air",
-    "cost": 27.0,
-    "time": 3.5,
+    "cost": 15000,
+    "time": 3.3,
     "description": "Prototype air leg: Dubai Air Hub → Nairobi Airport."
   },
   {
@@ -232,8 +251,8 @@
     "from": "nairobi_airport",
     "to": "dubai_air_hub",
     "mode": "air",
-    "cost": 26.5,
-    "time": 3.5,
+    "cost": 14500,
+    "time": 3.3,
     "description": "Prototype air leg: Nairobi Airport → Dubai Air Hub."
   },
   {
@@ -241,8 +260,8 @@
     "from": "beijing_airport",
     "to": "nairobi_airport",
     "mode": "air",
-    "cost": 32.0,
-    "time": 6.5,
+    "cost": 30000,
+    "time": 6.0,
     "description": "Prototype direct air route: Beijing Airport → Nairobi Airport."
   },
   {
@@ -250,8 +269,8 @@
     "from": "nairobi_airport",
     "to": "beijing_airport",
     "mode": "air",
-    "cost": 31.5,
-    "time": 6.5,
+    "cost": 29500,
+    "time": 6.0,
     "description": "Prototype direct air route: Nairobi Airport → Beijing Airport."
   },
   {
@@ -259,8 +278,8 @@
     "from": "guangzhou_airport",
     "to": "nairobi_airport",
     "mode": "air",
-    "cost": 30.0,
-    "time": 6.8,
+    "cost": 32000,
+    "time": 6.2,
     "description": "Prototype direct air route: Guangzhou Airport → Nairobi Airport."
   },
   {
@@ -268,8 +287,8 @@
     "from": "nairobi_airport",
     "to": "guangzhou_airport",
     "mode": "air",
-    "cost": 29.5,
-    "time": 6.8,
+    "cost": 31500,
+    "time": 6.2,
     "description": "Prototype direct air route: Nairobi Airport → Guangzhou Airport."
   }
 ]

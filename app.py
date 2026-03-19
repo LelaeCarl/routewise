@@ -8,6 +8,28 @@ from backend.route_engine import RouteEngine
 
 app = Flask(__name__)
 
+def format_cny(value: float) -> str:
+    """Format a numeric value as a realistic CNY currency string (no decimals)."""
+    try:
+        num = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    # Dataset values represent prototype shipment cost estimates in CNY.
+    return f"¥{num:,.0f}"
+
+
+def format_days(value: float) -> str:
+    """Format transit time (days) with one decimal for readability."""
+    try:
+        num = float(value)
+    except (TypeError, ValueError):
+        return str(value)
+    return f"{num:.1f}"
+
+
+# Make formatting available to all Jinja templates.
+app.jinja_env.filters["format_cny"] = format_cny
+app.jinja_env.filters["format_days"] = format_days
 
 PREFERENCE_LABELS = {
     "lowest_cost": "Lowest cost",
