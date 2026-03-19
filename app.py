@@ -2,16 +2,16 @@ import os
 
 from flask import Flask, render_template, request
 
-from backend.data_loader import load_network
+from backend.data_loader import load_network, load_nodes
 
 
 app = Flask(__name__)
 
 
 PREFERENCE_LABELS = {
-    "cheapest": "Cheapest",
-    "fastest": "Fastest",
-    "balanced": "Balanced",
+    "cheapest": "Lowest cost",
+    "fastest": "Fastest delivery",
+    "balanced": "Balanced trade-off",
 }
 
 DIRECTION_LABELS = {
@@ -53,22 +53,47 @@ def index():
 
 @app.route("/planner")
 def planner():
+    nodes = load_nodes()
+
+    allowed_origin_destination_types = {"port", "airport", "icd", "rail_hub", "road_hub"}
+
     direction_key = request.args.get("direction", "china-kenya")
-    origin = request.args.get("origin", "")
-    destination = request.args.get("destination", "")
+    origin_id = request.args.get("origin", "").strip()
+    destination_id = request.args.get("destination", "").strip()
     weight = request.args.get("weight", "")
     preference_key = request.args.get("preference", "balanced")
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
     preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced")
 
+    if direction_key == "china-kenya":
+        origin_options = [n for n in nodes if n.country == "China" and n.type in allowed_origin_destination_types]
+        destination_options = [
+            n for n in nodes if n.country == "Kenya" and n.type in allowed_origin_destination_types
+        ]
+    else:
+        origin_options = [n for n in nodes if n.country == "Kenya" and n.type in allowed_origin_destination_types]
+        destination_options = [
+            n for n in nodes if n.country == "China" and n.type in allowed_origin_destination_types
+        ]
+
+    origin_option_ids = {n.id for n in origin_options}
+    destination_option_ids = {n.id for n in destination_options}
+
+    origin_selected = origin_id if origin_id in origin_option_ids else (origin_options[0].id if origin_options else "")
+    destination_selected = (
+        destination_id if destination_id in destination_option_ids else (destination_options[0].id if destination_options else "")
+    )
+
     return render_template(
         "planner.html",
         title="Plan Route",
         direction_key=direction_key,
         direction_label=direction_label,
-        origin=origin,
-        destination=destination,
+        origin_selected=origin_selected,
+        destination_selected=destination_selected,
+        origin_options=origin_options,
+        destination_options=destination_options,
         weight=weight,
         preference_key=preference_key,
         preference_label=preference_label,
@@ -80,8 +105,8 @@ def results():
     direction_key = request.args.get("direction", "china-kenya")
     preference_key = request.args.get("preference", "balanced")
 
-    origin = request.args.get("origin", "").strip()
-    destination = request.args.get("destination", "").strip()
+    origin_id = request.args.get("origin", "").strip()
+    destination_id = request.args.get("destination", "").strip()
     weight = request.args.get("weight", "").strip()
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
@@ -90,12 +115,19 @@ def results():
     kpis = _placeholder_kpis(preference_key)
     modes_list = [m.strip() for m in kpis["modes"].split("+") if m.strip()]
 
+    nodes = load_nodes()
+    node_map = {n.id: n for n in nodes}
+    origin = node_map.get(origin_id).name if origin_id in node_map else origin_id
+    destination = node_map.get(destination_id).name if destination_id in node_map else destination_id
+
     return render_template(
         "results.html",
         title="Results",
         direction_key=direction_key,
         direction=direction_label,
         preference_key=preference_key,
+        origin_id=origin_id,
+        destination_id=destination_id,
         origin=origin,
         destination=destination,
         weight=weight,

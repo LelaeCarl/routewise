@@ -5,214 +5,163 @@
     <div class="space-y-2">
       <h1 class="text-3xl font-bold tracking-tight text-slate-900">Route Planner</h1>
       <p class="text-sm text-slate-600 sm:text-base">
-        Enter the logistics basics and review a credible results view. This phase is UX-focused—KPIs are placeholders until the routing engine lands.
+        Enter your shipment details and routing objective. RouteWise will generate a structured route analysis view using the logistics network dataset.
       </p>
     </div>
 
-    <div class="rounded-2xl border border-slate-200/70 bg-white/70 px-4 py-3 shadow-soft">
-      <p class="text-sm font-semibold text-slate-900">Preference preview</p>
-      <p class="mt-0.5 text-xs text-slate-600">Switch between modes of optimization and see KPIs update.</p>
+    <div class="rounded-2xl bg-white/70 px-4 py-3 ring-1 ring-slate-200/70 shadow-sm">
+      <p class="text-sm font-semibold text-slate-900">Objective-first planning</p>
+      <p class="mt-0.5 text-xs text-slate-600">Choose lowest cost, fastest delivery, or a balanced trade-off.</p>
     </div>
   </div>
 
   <div class="mt-6 grid gap-6 lg:grid-cols-3">
-    <div class="lg:col-span-2">
-      <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-        <form id="plannerForm" method="GET" action="{{ url_for('results') }}" class="space-y-6">
-          <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-5">
-            <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p class="text-sm font-semibold text-slate-900">1. Shipment details</p>
-                <p class="mt-0.5 text-xs text-slate-600">These fields define direction and routing scope.</p>
-              </div>
-              <span class="inline-flex items-center rounded-xl bg-white px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
-                Phase 1 scaffold
-              </span>
+    <div class="lg:col-span-2 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+      <form method="GET" action="{{ url_for('results') }}" class="space-y-6">
+        <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-5">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Shipment details</p>
+              <p class="mt-0.5 text-xs text-slate-600">Direction, endpoints, and cargo weight.</p>
             </div>
-
-            <div class="mt-4 grid gap-4 sm:grid-cols-2">
-              <div class="sm:col-span-2">
-                <label class="text-sm font-semibold text-slate-800" for="direction">Shipment direction</label>
-                <select
-                  id="direction"
-                  name="direction"
-                  class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
-                >
-                  <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China → Kenya</option>
-                  <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya → China</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="text-sm font-semibold text-slate-800" for="origin">Origin</label>
-                <input
-                  id="origin"
-                  name="origin"
-                  type="text"
-                  value="{{ origin }}"
-                  placeholder="e.g., Shanghai Port"
-                  class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
-                />
-              </div>
-
-              <div>
-                <label class="text-sm font-semibold text-slate-800" for="destination">Destination</label>
-                <input
-                  id="destination"
-                  name="destination"
-                  type="text"
-                  value="{{ destination }}"
-                  placeholder="e.g., Nairobi ICD"
-                  class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
-                />
-              </div>
-
-              <div>
-                <label class="text-sm font-semibold text-slate-800" for="weight">Cargo weight (kg)</label>
-                <input
-                  id="weight"
-                  name="weight"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value="{{ weight }}"
-                  placeholder="e.g., 5000"
-                  class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
-                />
-                <p class="mt-1 text-xs text-slate-500">Used in later phases for cost/time scaling.</p>
-              </div>
-            </div>
+            <span class="inline-flex items-center rounded-xl bg-white px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+              Network-driven
+            </span>
           </div>
 
-          <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
-            <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p class="text-sm font-semibold text-slate-900">2. Route preference</p>
-                <p class="mt-0.5 text-xs text-slate-600">Pick the trade-off you care about most.</p>
-              </div>
-              <span class="inline-flex items-center rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
-                {{ preference_label }}
-              </span>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label class="text-sm font-semibold text-slate-800" for="direction">Shipment direction</label>
+              <select
+                id="direction"
+                name="direction"
+                class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              >
+                <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China → Kenya</option>
+                <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya → China</option>
+              </select>
             </div>
 
-            <div class="mt-4 grid gap-3 sm:grid-cols-3">
-              <label class="cursor-pointer">
-                <input
-                  type="radio"
-                  name="preference"
-                  value="cheapest"
-                  class="peer sr-only"
-                  {% if preference_key == 'cheapest' %}checked{% endif %}
-                />
-                <span
-                  class="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition
-                         peer-checked:border-primary/40 peer-checked:bg-primary/10 peer-checked:ring-2 peer-checked:ring-primary/20"
-                >
-                  <span class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-900">Cheapest</span>
-                    <span class="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary ring-1 ring-primary/20">
-                      Cost
-                    </span>
-                  </span>
-                  <span class="mt-1 block text-xs text-slate-600">Lower cost across legs</span>
-                </span>
-              </label>
-
-              <label class="cursor-pointer">
-                <input
-                  type="radio"
-                  name="preference"
-                  value="fastest"
-                  class="peer sr-only"
-                  {% if preference_key == 'fastest' %}checked{% endif %}
-                />
-                <span
-                  class="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition
-                         peer-checked:border-primary/40 peer-checked:bg-primary/10 peer-checked:ring-2 peer-checked:ring-primary/20"
-                >
-                  <span class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-900">Fastest</span>
-                    <span class="rounded-full bg-secondary/15 px-2 py-0.5 text-[11px] font-semibold text-secondary ring-1 ring-secondary/20">
-                      Time
-                    </span>
-                  </span>
-                  <span class="mt-1 block text-xs text-slate-600">Fewer/shorter handoffs</span>
-                </span>
-              </label>
-
-              <label class="cursor-pointer">
-                <input
-                  type="radio"
-                  name="preference"
-                  value="balanced"
-                  class="peer sr-only"
-                  {% if preference_key == 'balanced' %}checked{% endif %}
-                />
-                <span
-                  class="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition
-                         peer-checked:border-primary/40 peer-checked:bg-primary/10 peer-checked:ring-2 peer-checked:ring-primary/20"
-                >
-                  <span class="flex items-center justify-between">
-                    <span class="text-sm font-semibold text-slate-900">Balanced</span>
-                    <span class="rounded-full bg-accent/15 px-2 py-0.5 text-[11px] font-semibold text-accent ring-1 ring-accent/20">
-                      Trade-off
-                    </span>
-                  </span>
-                  <span class="mt-1 block text-xs text-slate-600">Practical cost/time mix</span>
-                </span>
-              </label>
+            <div>
+              <label class="text-sm font-semibold text-slate-800" for="origin">Origin</label>
+              <select
+                id="origin"
+                name="origin"
+                class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              >
+                {% for node in origin_options %}
+                  <option value="{{ node.id }}" {% if node.id == origin_selected %}selected{% endif %}>
+                    {{ node.name }} ({{ node.city }})
+                  </option>
+                {% endfor %}
+              </select>
             </div>
+
+            <div>
+              <label class="text-sm font-semibold text-slate-800" for="destination">Destination</label>
+              <select
+                id="destination"
+                name="destination"
+                class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              >
+                {% for node in destination_options %}
+                  <option value="{{ node.id }}" {% if node.id == destination_selected %}selected{% endif %}>
+                    {{ node.name }} ({{ node.city }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div>
+              <label class="text-sm font-semibold text-slate-800" for="weight">Cargo weight (kg)</label>
+              <input
+                id="weight"
+                name="weight"
+                type="number"
+                step="0.01"
+                min="0"
+                value="{{ weight }}"
+                placeholder="e.g., 5000"
+                class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
+              />
+              <p class="mt-1 text-xs text-slate-500">Used to tailor route outcomes as routing logic is added.</p>
+            </div>
+
+            <div class="hidden sm:block"></div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200/70 bg-white p-5">
+          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Routing objective</p>
+              <p class="mt-0.5 text-xs text-slate-600">The objective controls which trade-off the route analysis emphasizes.</p>
+            </div>
+            <span class="inline-flex items-center rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
+              {{ preference_label }}
+            </span>
           </div>
 
-          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p class="text-sm text-slate-600">
-              You’ll be redirected to <span class="font-semibold text-slate-800">/results</span> with your inputs.
-            </p>
-
-            <button
-              type="submit"
-              class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
+          <div class="mt-4">
+            <select
+              id="preference"
+              name="preference"
+              class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
             >
-              Plan route
-              <span aria-hidden="true" class="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-lg bg-white/10">
-                →
-              </span>
-            </button>
+              <option value="cheapest" {% if preference_key == 'cheapest' %}selected{% endif %}>Lowest cost</option>
+              <option value="fastest" {% if preference_key == 'fastest' %}selected{% endif %}>Fastest delivery</option>
+              <option value="balanced" {% if preference_key == 'balanced' %}selected{% endif %}>Balanced trade-off</option>
+            </select>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-slate-600">
+            You’ll view a route analysis summary at <span class="font-semibold text-slate-800">/results</span>.
+          </p>
+
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
+          >
+            Generate analysis
+            <span aria-hidden="true" class="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-lg bg-white/10">→</span>
+          </button>
+        </div>
+      </form>
     </div>
 
-    <aside class="lg:sticky lg:top-24 h-fit">
-      <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <p class="text-lg font-bold tracking-tight text-slate-900">Planner guidance</p>
-            <p class="mt-1 text-sm text-slate-600">Make your trade-off explicit for clearer results.</p>
-          </div>
-          <span class="rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
-            UX Phase 2
-          </span>
+    <aside class="lg:sticky lg:top-24 h-fit rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold tracking-tight text-slate-900">Planning guidance</h2>
+          <p class="mt-1 text-sm text-slate-600">Quick, practical rules for selecting routes.</p>
+        </div>
+        <span class="rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
+          Operational
+        </span>
+      </div>
+
+      <div class="mt-5 space-y-4">
+        <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+          <p class="text-sm font-semibold text-slate-900">Lowest cost</p>
+          <p class="mt-1 text-sm text-slate-600">Bulk-oriented routes often reduce total cost by using efficient sea and road legs.</p>
         </div>
 
-        <div class="mt-5 space-y-4">
-          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70 transition hover:bg-slate-100">
-            <p class="text-sm font-semibold text-slate-900">What changes when you switch preference?</p>
-            <p class="mt-1 text-sm text-slate-600">The results KPIs and route summary update to match your optimization goal.</p>
-          </div>
-
-          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70 transition hover:bg-slate-100">
-            <p class="text-sm font-semibold text-slate-900">Inputs we’ll use later</p>
-            <p class="mt-1 text-sm text-slate-600">Origin/destination hubs, cargo weight, and direction will map to a graph model.</p>
-          </div>
+        <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+          <p class="text-sm font-semibold text-slate-900">Fastest delivery</p>
+          <p class="mt-1 text-sm text-slate-600">When urgency matters, air corridors can shorten transit time and simplify handoffs.</p>
         </div>
 
-        <div class="mt-6 rounded-2xl border border-slate-200/70 bg-white p-4">
-          <p class="text-sm font-semibold text-slate-900">Next phase</p>
-          <p class="mt-1 text-sm text-slate-600">
-            We’ll replace placeholders with graph-based routing (Dijkstra/A*), including real timeline legs and comparisons.
-          </p>
+        <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+          <p class="text-sm font-semibold text-slate-900">Balanced trade-off</p>
+          <p class="mt-1 text-sm text-slate-600">A pragmatic mix of cost and speed for steady planning across lanes.</p>
         </div>
+      </div>
+
+      <div class="mt-6 rounded-2xl border border-slate-200/70 bg-white p-4">
+        <p class="text-sm font-semibold text-slate-900">Mode-driven route structure</p>
+        <p class="mt-1 text-sm text-slate-600">RouteWise presents a leg-by-leg analysis that stays consistent as deeper routing details are added.</p>
       </div>
     </aside>
   </div>

@@ -20,7 +20,7 @@
           Recommended route for {{ direction }}
         </h1>
         <p class="text-sm text-slate-600 sm:text-base">
-          A clear, actionable summary of cost, time, and mode mix. Phase 1 uses placeholder data; later phases will compute real routes.
+          A clear, actionable summary of cost, time, and mode mix based on the logistics network dataset and your selected objective.
         </p>
       </div>
 
@@ -32,7 +32,7 @@
           {% if weight %}<div><span class="font-semibold text-slate-900">Weight:</span> {{ weight }} kg</div>{% endif %}
         </div>
         <a
-          href="{{ url_for('planner', direction=direction_key, origin=origin, destination=destination, weight=weight, preference=preference_key) }}"
+          href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=preference_key) }}"
           class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
         >
           Edit inputs
@@ -45,7 +45,7 @@
     <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h2 class="text-xl font-bold tracking-tight text-slate-900">Key performance indicators</h2>
-        <p class="mt-1 text-sm text-slate-600">Placeholder KPIs to support UX review in Phase 2.</p>
+        <p class="mt-1 text-sm text-slate-600">Estimated outcomes for your selected routing objective.</p>
       </div>
       <div class="flex flex-wrap items-center gap-2">
         <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Cost & time trade-off</span>
@@ -136,21 +136,22 @@
           </div>
 
           <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
-            <p class="text-sm font-semibold text-slate-900">Confidence (Phase 1)</p>
+            <p class="text-sm font-semibold text-slate-900">Analysis scope</p>
             <p class="mt-2 text-sm text-slate-600">
-              UI validation only. In later phases, this will reflect routing engine consistency and constraint coverage.
+              This route analysis summarizes outcomes derived from the network dataset for the selected objective.
+              As routing computation is finalized, detailed outputs will be computed by the full engine.
             </p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <span class="rounded-xl bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">No algorithm yet</span>
-              <span class="rounded-xl bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">KPIs placeholder</span>
+              <span class="rounded-xl bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Network-based estimates</span>
+              <span class="rounded-xl bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Leg-by-leg structure</span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-        <h2 class="text-xl font-bold tracking-tight text-slate-900">Route timeline (placeholder)</h2>
-        <p class="mt-1 text-sm text-slate-600">A leg-by-leg visualization that will become accurate in Phase 3+.</p>
+        <h2 class="text-xl font-bold tracking-tight text-slate-900">Estimated transit steps</h2>
+        <p class="mt-1 text-sm text-slate-600">A leg-by-leg view of how cargo typically moves across the network.</p>
 
         <ol class="mt-5 space-y-4">
           <li class="timeline-step rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
@@ -196,8 +197,8 @@
       </div>
 
       <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-        <h2 class="text-xl font-bold tracking-tight text-slate-900">Route breakdown (placeholder)</h2>
-        <p class="mt-1 text-sm text-slate-600">Structure for leg-level detail. Values will be populated by the routing engine later.</p>
+        <h2 class="text-xl font-bold tracking-tight text-slate-900">Route breakdown</h2>
+        <p class="mt-1 text-sm text-slate-600">A structured table view of route segments and estimated ETA windows.</p>
 
         <div class="mt-5 overflow-hidden rounded-2xl border border-slate-200/70 bg-white">
           <table class="w-full text-left text-sm">
@@ -243,48 +244,48 @@
     <aside class="space-y-6">
       <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
         <h2 class="text-xl font-bold tracking-tight text-slate-900">Comparison</h2>
-        <p class="mt-1 text-sm text-slate-600">Preview alternative optimization strategies (placeholder data).</p>
+        <p class="mt-1 text-sm text-slate-600">Explore other objectives to compare route analysis outcomes.</p>
 
         <div class="mt-5 space-y-4">
           <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-            <p class="text-sm font-semibold text-slate-900">Option: Cheapest</p>
+            <p class="text-sm font-semibold text-slate-900">Objective: Lowest cost</p>
             <p class="mt-1 text-xs text-slate-600">Lower cost over speed</p>
             <div class="mt-3 flex gap-2">
               <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Sea + Road</span>
             </div>
             <a
-              href="{{ url_for('results', direction=direction_key, origin=origin, destination=destination, weight=weight, preference='cheapest') }}"
+              href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference='cheapest') }}"
               class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
             >
-              View
+              View analysis
             </a>
           </div>
 
           <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-            <p class="text-sm font-semibold text-slate-900">Option: Balanced</p>
+            <p class="text-sm font-semibold text-slate-900">Objective: Balanced trade-off</p>
             <p class="mt-1 text-xs text-slate-600">Practical cost/time mix</p>
             <div class="mt-3 flex gap-2">
               <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Sea + Rail + Road</span>
             </div>
             <a
-              href="{{ url_for('results', direction=direction_key, origin=origin, destination=destination, weight=weight, preference='balanced') }}"
+              href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference='balanced') }}"
               class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
             >
-              View
+              View analysis
             </a>
           </div>
 
           <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-            <p class="text-sm font-semibold text-slate-900">Option: Fastest</p>
+            <p class="text-sm font-semibold text-slate-900">Objective: Fastest delivery</p>
             <p class="mt-1 text-xs text-slate-600">Prioritize delivery time</p>
             <div class="mt-3 flex gap-2">
               <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">Air + Road</span>
             </div>
             <a
-              href="{{ url_for('results', direction=direction_key, origin=origin, destination=destination, weight=weight, preference='fastest') }}"
+              href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference='fastest') }}"
               class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
             >
-              View
+              View analysis
             </a>
           </div>
         </div>
