@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Logistics Hubs</h1>
+      <p class="mt-1 text-slate-600">A searchable knowledge base for ports, ICDs, and gateways (Phase 1 UI).</p>
+    </div>
+    <div class="rounded-xl bg-white/70 px-4 py-3 ring-1 ring-slate-200/70">
+      <p class="text-sm font-semibold text-slate-900">Search UI</p>
+      <p class="text-xs text-slate-600">Filtering is client-side placeholder behavior.</p>
+    </div>
+  </div>
+
+  <div class="mt-6 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="space-y-1">
+        <p class="text-sm font-semibold text-slate-900">Find a hub</p>
+        <p class="text-sm text-slate-600">Type to filter the cards below.</p>
+      </div>
+
+      <div class="w-full sm:w-[420px]">
+        <label class="sr-only" for="hubSearch">Search hubs</label>
+        <input
+          id="hubSearch"
+          type="text"
+          placeholder="Search: Shanghai, Mombasa, Nairobi..."
+          class="w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
+      </div>
+    </div>
+
+    <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Shanghai Port">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Shanghai Port</p>
+            <p class="mt-1 text-sm text-slate-600">Major sea gateway</p>
+          </div>
+          <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Sea</span>
+        </div>
+        <div class="mt-4 text-xs text-slate-600">Typical role: export consolidation, container staging.</div>
+      </div>
+
+      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Shenzhen Port">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Shenzhen Port</p>
+            <p class="mt-1 text-sm text-slate-600">Regional sea gateway</p>
+          </div>
+          <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Sea</span>
+        </div>
+        <div class="mt-4 text-xs text-slate-600">Typical role: cross-border consolidation, lane routing support.</div>
+      </div>
+
+      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Mombasa Port">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Mombasa Port</p>
+            <p class="mt-1 text-sm text-slate-600">East Africa entry point</p>
+          </div>
+          <span class="rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">Port</span>
+        </div>
+        <div class="mt-4 text-xs text-slate-600">Typical role: import processing, maritime-to-inland transition.</div>
+      </div>
+
+      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Nairobi ICD">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Nairobi ICD</p>
+            <p class="mt-1 text-sm text-slate-600">Inland consolidation depot</p>
+          </div>
+          <span class="rounded-xl bg-accent/15 px-3 py-1 text-xs font-semibold text-accent ring-1 ring-accent/20">ICD</span>
+        </div>
+        <div class="mt-4 text-xs text-slate-600">Typical role: customs release, cross-dock distribution.</div>
+      </div>
+
+      <div class="hub-card rounded-2xl border border-slate-200/70 bg-slate-50 p-5" data-hub-name="Guangzhou Airport">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-sm font-bold text-slate-900">Guangzhou Airport</p>
+            <p class="mt-1 text-sm text-slate-600">Air cargo gateway</p>
+          </div>
+          <span class="rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">Air</span>
+        </div>
+        <div class="mt-4 text-xs text-slate-600">Typical role: high-priority shipments, expedited lanes.</div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

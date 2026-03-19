@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="RouteWise helps you plan intelligent cross-border logistics routes between China and Kenya."
+    />
+
+    <title>{{ title or "RouteWise" }}</title>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1E3A8A",
+              secondary: "#14B8A6",
+              accent: "#22C55E",
+              background: "#F8FAFC",
+              text: "#0F172A",
+            },
+            boxShadow: {
+              soft: "0 10px 30px rgba(15, 23, 42, 0.08)",
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  </head>
+
+  <body class="min-h-screen bg-background text-text">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow"
+    >
+      Skip to content
+    </a>
+
+    <header class="sticky top-0 z-40 border-b border-slate-200/70 bg-background/80 backdrop-blur">
+      <div class="mx-auto max-w-6xl px-4 py-3">
+        <nav class="flex items-center justify-between">
+          <a href="{{ url_for('index') }}" class="group inline-flex items-center gap-2">
+            <span
+              class="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white shadow-sm ring-1 ring-primary/20"
+              aria-hidden="true"
+            >
+              <span class="text-sm font-bold">RW</span>
+            </span>
+            <span class="text-sm font-semibold tracking-wide">
+              RouteWise
+              <span
+                class="ml-2 hidden rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 sm:inline"
+              >
+                Phase 1
+              </span>
+            </span>
+          </a>
+
+          {% set path = request.path %}
+          <div class="flex items-center gap-1">
+            <a
+              href="{{ url_for('index') }}"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+            >
+              Home
+            </a>
+            <a
+              href="{{ url_for('planner') }}"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/planner' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+            >
+              Plan Route
+            </a>
+            <a
+              href="{{ url_for('hubs') }}"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/hubs' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+            >
+              Hubs
+            </a>
+            <a
+              href="{{ url_for('about') }}"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {% if path == '/about' %}bg-primary/10 text-primary ring-1 ring-primary/20{% else %}text-slate-600 hover:bg-slate-100{% endif %}"
+            >
+              About
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" class="mx-auto max-w-6xl flex-1 px-4 py-8">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-slate-200/70 bg-background/70">
+      <div class="mx-auto max-w-6xl px-4 py-8">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <p class="text-sm text-slate-600">
+            <span class="font-semibold text-slate-800">RouteWise</span> — intelligent route planning for cross-border logistics.
+          </p>
+          <div class="flex items-center gap-3 text-sm">
+            <a class="text-slate-600 hover:text-primary" href="{{ url_for('planner') }}">Try the planner</a>
+            <span class="h-4 w-px bg-slate-300" aria-hidden="true"></span>
+            <span class="text-slate-500">Phase 1 scaffold · no algorithm yet</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
+

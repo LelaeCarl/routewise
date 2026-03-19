@@ -1,0 +1,33 @@
+:root {
+  --primary: #1e3a8a;
+  --secondary: #14b8a6;
+  --accent: #22c55e;
+  --background: #f8fafc;
+  --text: #0f172a;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--text);
+}
+
+::selection {
+  background: rgba(20, 184, 166, 0.25);
+}
+
+a {
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(30, 58, 138, 0.25);
+  outline-offset: 2px;
+}
+

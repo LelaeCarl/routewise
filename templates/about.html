@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">About RouteWise</h1>
+      <p class="mt-1 text-slate-600">
+        A decision support tool for intelligent cross-border logistics between China and Kenya.
+      </p>
+    </div>
+    <div class="rounded-xl bg-white/70 px-4 py-3 ring-1 ring-slate-200/70">
+      <p class="text-sm font-semibold text-slate-900">Academic-friendly by design</p>
+      <p class="mt-1 text-xs text-slate-600">Clear structure for later algorithm explanation.</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-3 lg:items-start">
+    <div class="lg:col-span-2 space-y-6">
+      <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+        <h2 class="text-xl font-bold tracking-tight">Purpose</h2>
+        <p class="mt-2 text-sm text-slate-700 leading-relaxed">
+          RouteWise helps users translate complex logistics trade-offs into clear route recommendations.
+          Users can express a preference (cheapest, fastest, or balanced) and receive an easy-to-read summary.
+        </p>
+
+        <div class="mt-4 rounded-2xl bg-slate-50 p-5 ring-1 ring-slate-200/70">
+          <p class="text-sm font-semibold text-slate-900">Problem statement</p>
+          <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+            Cross-border shipping is difficult because there are multiple transport modes, cost/time variability,
+            and non-intuitive handoffs between ports, airports, ICDs, and inland delivery points.
+          </p>
+        </div>
+      </section>
+
+      <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+        <h2 class="text-xl font-bold tracking-tight">System features (planned)</h2>
+        <div class="mt-5 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+            <p class="text-sm font-semibold text-slate-900">Multi-modal routing</p>
+            <p class="mt-1 text-sm text-slate-600">Sea, air, rail, and road support.</p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+            <p class="text-sm font-semibold text-slate-900">Preference control</p>
+            <p class="mt-1 text-sm text-slate-600">Cost vs time trade-off.</p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+            <p class="text-sm font-semibold text-slate-900">Two-way logistics</p>
+            <p class="mt-1 text-sm text-slate-600">China ↔ Kenya routing.</p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
+            <p class="text-sm font-semibold text-slate-900">Comparison view</p>
+            <p class="mt-1 text-sm text-slate-600">Multiple options and trade-offs.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="space-y-6">
+      <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+        <h2 class="text-xl font-bold tracking-tight">Tech stack</h2>
+        <ul class="mt-4 space-y-2 text-sm text-slate-700">
+          <li class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-900">Backend</span>
+            <span class="text-slate-600">Python + Flask</span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-900">Templates</span>
+            <span class="text-slate-600">Jinja</span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-900">Frontend</span>
+            <span class="text-slate-600">JavaScript + Tailwind CDN</span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-900">Routing logic</span>
+            <span class="text-slate-600">Phase 3+ (graph model)</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+        <h2 class="text-xl font-bold tracking-tight">Academic context</h2>
+        <p class="mt-2 text-sm text-slate-700 leading-relaxed">
+          RouteWise is structured to support clear explanations of graph modeling and shortest-path methods.
+          In later phases, the app will expose the assumptions behind cost/time calculations to help
+          researchers and students validate results.
+        </p>
+      </section>
+    </aside>
+  </div>
+{% endblock %}
+
