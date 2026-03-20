@@ -67,7 +67,13 @@ def index():
 def planner():
     nodes = load_nodes()
 
-    allowed_origin_destination_types = {"port", "airport", "icd", "rail_hub", "road_hub"}
+    allowed_types = {"port", "airport", "icd", "rail_hub", "road_hub"}
+
+    china_nodes_raw = [n for n in nodes if n.country == "China" and n.type in allowed_types]
+    kenya_nodes_raw = [n for n in nodes if n.country == "Kenya" and n.type in allowed_types]
+
+    china_nodes = [{"id": n.id, "name": n.name, "city": n.city} for n in china_nodes_raw]
+    kenya_nodes = [{"id": n.id, "name": n.name, "city": n.city} for n in kenya_nodes_raw]
 
     direction_key = request.args.get("direction", "china-kenya")
     origin_id = request.args.get("origin", "").strip()
@@ -79,15 +85,11 @@ def planner():
     preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced")
 
     if direction_key == "china-kenya":
-        origin_options = [n for n in nodes if n.country == "China" and n.type in allowed_origin_destination_types]
-        destination_options = [
-            n for n in nodes if n.country == "Kenya" and n.type in allowed_origin_destination_types
-        ]
+        origin_options = china_nodes_raw
+        destination_options = kenya_nodes_raw
     else:
-        origin_options = [n for n in nodes if n.country == "Kenya" and n.type in allowed_origin_destination_types]
-        destination_options = [
-            n for n in nodes if n.country == "China" and n.type in allowed_origin_destination_types
-        ]
+        origin_options = kenya_nodes_raw
+        destination_options = china_nodes_raw
 
     origin_option_ids = {n.id for n in origin_options}
     destination_option_ids = {n.id for n in destination_options}
@@ -109,6 +111,8 @@ def planner():
         weight=weight,
         preference_key=preference_key,
         preference_label=preference_label,
+        china_nodes=china_nodes,
+        kenya_nodes=kenya_nodes,
     )
 
 

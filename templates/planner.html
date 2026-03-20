@@ -37,8 +37,8 @@
                 name="direction"
                 class="mt-2 w-full rounded-xl border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 transition"
               >
-                <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China → Kenya</option>
-                <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya → China</option>
+                <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China &rarr; Kenya</option>
+                <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya &rarr; China</option>
               </select>
             </div>
 
@@ -115,18 +115,17 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p class="text-sm text-slate-600">
-            You’ll view a route analysis summary at <span class="font-semibold text-slate-800">/results</span>.
-          </p>
-
+        <div>
           <button
             type="submit"
-            class="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
+            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-soft transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:ring-offset-2"
           >
             Analyze Route
-            <span aria-hidden="true" class="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-lg bg-white/10">→</span>
+            <span aria-hidden="true">&rarr;</span>
           </button>
+          <p class="mt-2 text-center text-xs text-slate-500">
+            You will see a route analysis summary on the results page.
+          </p>
         </div>
       </form>
     </div>
@@ -167,3 +166,40 @@
   </div>
 {% endblock %}
 
+{% block scripts %}
+<script>
+  (function () {
+    var chinaNodes = {{ china_nodes | tojson }};
+    var kenyaNodes = {{ kenya_nodes | tojson }};
+
+    var directionEl = document.getElementById('direction');
+    var originEl    = document.getElementById('origin');
+    var destEl      = document.getElementById('destination');
+
+    function rebuildSelect(selectEl, nodes) {
+      var prev = selectEl.value;
+      selectEl.innerHTML = '';
+      nodes.forEach(function (n) {
+        var opt = document.createElement('option');
+        opt.value = n.id;
+        opt.textContent = n.name + ' (' + n.city + ')';
+        if (n.id === prev) opt.selected = true;
+        selectEl.appendChild(opt);
+      });
+      if (!selectEl.value && nodes.length) {
+        selectEl.value = nodes[0].id;
+      }
+    }
+
+    directionEl.addEventListener('change', function () {
+      if (this.value === 'china-kenya') {
+        rebuildSelect(originEl, chinaNodes);
+        rebuildSelect(destEl, kenyaNodes);
+      } else {
+        rebuildSelect(originEl, kenyaNodes);
+        rebuildSelect(destEl, chinaNodes);
+      }
+    });
+  })();
+</script>
+{% endblock %}

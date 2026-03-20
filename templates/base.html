@@ -11,6 +11,7 @@
 
     <title>{{ title or "RouteWise" }}</title>
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -29,7 +30,6 @@
         },
       };
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
   </head>
