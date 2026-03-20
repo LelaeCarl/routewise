@@ -1,167 +1,157 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-    <div class="space-y-1.5">
-      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Route Planner</h1>
-      <p class="max-w-xl text-[15px] leading-relaxed text-slate-500">
-        Enter your shipment details and routing objective. RouteWise will generate a structured route analysis.
-      </p>
-    </div>
-
-    <span class="inline-flex items-center rounded-full bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-primary">
-      Objective-first planning
-    </span>
+  <div class="space-y-1.5">
+    <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Route Planner</h1>
+    <p class="max-w-lg text-[15px] leading-relaxed text-slate-500">
+      Configure your shipment and routing objective. RouteWise will compute the optimal route across the logistics network.
+    </p>
   </div>
 
-  <div class="mt-8 grid gap-6 lg:grid-cols-3">
-    <div class="lg:col-span-2 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
-      <form method="GET" action="{{ url_for('results') }}" class="space-y-6">
-        <fieldset class="rounded-xl bg-slate-50/80 p-5">
-          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <legend class="text-sm font-semibold text-slate-900">Shipment details</legend>
-              <p class="mt-0.5 text-[13px] text-slate-500">Direction, endpoints, and cargo weight.</p>
+  <div class="mt-8 grid gap-8 lg:grid-cols-3">
+    <div class="lg:col-span-2">
+      <div class="rounded-2xl border border-slate-200/60 bg-white shadow-card">
+        <form method="GET" action="{{ url_for('results') }}">
+          <div class="border-b border-slate-100 p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-bold text-slate-900">Shipment details</p>
+                <p class="mt-0.5 text-[13px] text-slate-500">Direction, endpoints, and cargo weight.</p>
+              </div>
+              <span class="rounded-full bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-primary">Step 1</span>
             </div>
-            <span class="inline-flex items-center rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-primary ring-1 ring-slate-200/60">
-              Network-driven
-            </span>
+
+            <div class="mt-5 grid gap-5 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label class="text-[13px] font-semibold text-slate-700" for="direction">Shipment direction</label>
+                <select
+                  id="direction"
+                  name="direction"
+                  class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                >
+                  <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China &rarr; Kenya</option>
+                  <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya &rarr; China</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[13px] font-semibold text-slate-700" for="origin">Origin</label>
+                <select
+                  id="origin"
+                  name="origin"
+                  class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                >
+                  {% for node in origin_options %}
+                    <option value="{{ node.id }}" {% if node.id == origin_selected %}selected{% endif %}>
+                      {{ node.name }} ({{ node.city }})
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[13px] font-semibold text-slate-700" for="destination">Destination</label>
+                <select
+                  id="destination"
+                  name="destination"
+                  class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                >
+                  {% for node in destination_options %}
+                    <option value="{{ node.id }}" {% if node.id == destination_selected %}selected{% endif %}>
+                      {{ node.name }} ({{ node.city }})
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[13px] font-semibold text-slate-700" for="weight">Cargo weight (kg)</label>
+                <input
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value="{{ weight }}"
+                  placeholder="e.g., 5000"
+                  class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                />
+              </div>
+
+              <div class="hidden sm:block"></div>
+            </div>
           </div>
 
-          <div class="mt-5 grid gap-5 sm:grid-cols-2">
-            <div class="sm:col-span-2">
-              <label class="text-[13px] font-semibold text-slate-700" for="direction">Shipment direction</label>
+          <div class="border-b border-slate-100 p-6">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-sm font-bold text-slate-900">Routing objective</p>
+                <p class="mt-0.5 text-[13px] text-slate-500">Controls which trade-off the analysis emphasizes.</p>
+              </div>
+              <span class="rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">Step 2</span>
+            </div>
+
+            <div class="mt-4">
               <select
-                id="direction"
-                name="direction"
-                class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+                id="preference"
+                name="preference"
+                class="w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
               >
-                <option value="china-kenya" {% if direction_key == 'china-kenya' %}selected{% endif %}>China &rarr; Kenya</option>
-                <option value="kenya-china" {% if direction_key == 'kenya-china' %}selected{% endif %}>Kenya &rarr; China</option>
+                  <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest cost</option>
+                  <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest delivery</option>
+                  <option value="balanced_tradeoff" {% if preference_key == 'balanced_tradeoff' %}selected{% endif %}>Balanced trade-off</option>
               </select>
             </div>
-
-            <div>
-              <label class="text-[13px] font-semibold text-slate-700" for="origin">Origin</label>
-              <select
-                id="origin"
-                name="origin"
-                class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
-              >
-                {% for node in origin_options %}
-                  <option value="{{ node.id }}" {% if node.id == origin_selected %}selected{% endif %}>
-                    {{ node.name }} ({{ node.city }})
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div>
-              <label class="text-[13px] font-semibold text-slate-700" for="destination">Destination</label>
-              <select
-                id="destination"
-                name="destination"
-                class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
-              >
-                {% for node in destination_options %}
-                  <option value="{{ node.id }}" {% if node.id == destination_selected %}selected{% endif %}>
-                    {{ node.name }} ({{ node.city }})
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div>
-              <label class="text-[13px] font-semibold text-slate-700" for="weight">Cargo weight (kg)</label>
-              <input
-                id="weight"
-                name="weight"
-                type="number"
-                step="0.01"
-                min="0"
-                value="{{ weight }}"
-                placeholder="e.g., 5000"
-                class="mt-1.5 w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
-              />
-              <p class="mt-1.5 text-[11px] text-slate-400">Used to tailor route outcomes as routing logic is added.</p>
-            </div>
-
-            <div class="hidden sm:block"></div>
-          </div>
-        </fieldset>
-
-        <fieldset class="rounded-xl border border-slate-200/60 bg-white p-5">
-          <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <legend class="text-sm font-semibold text-slate-900">Routing objective</legend>
-              <p class="mt-0.5 text-[13px] text-slate-500">Controls which trade-off the route analysis emphasizes.</p>
-            </div>
-            <span class="inline-flex items-center rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">
-              {{ preference_label }}
-            </span>
           </div>
 
-          <div class="mt-4">
-            <select
-              id="preference"
-              name="preference"
-              class="w-full rounded-lg border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/15"
+          <div class="p-6">
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3.5 text-[15px] font-bold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1"
             >
-                <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest cost</option>
-                <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest delivery</option>
-                <option value="balanced_tradeoff" {% if preference_key == 'balanced_tradeoff' %}selected{% endif %}>Balanced trade-off</option>
-            </select>
+              Analyze Route
+              <span aria-hidden="true">&rarr;</span>
+            </button>
           </div>
-        </fieldset>
-
-        <div>
-          <button
-            type="submit"
-            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-[15px] font-bold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1"
-          >
-            Analyze Route
-            <span aria-hidden="true">&rarr;</span>
-          </button>
-          <p class="mt-2 text-center text-[11px] text-slate-400">
-            You will see a route analysis summary on the results page.
-          </p>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
 
     <aside class="lg:sticky lg:top-20 h-fit space-y-4">
       <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-card">
-        <div class="flex items-start justify-between gap-3">
-          <div>
-            <h2 class="text-base font-bold tracking-tight text-slate-900">Planning guidance</h2>
-            <p class="mt-0.5 text-[13px] text-slate-500">Quick rules for selecting routes.</p>
-          </div>
-          <span class="rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">
-            Operational
-          </span>
-        </div>
+        <h2 class="text-sm font-bold text-slate-900">Objective guide</h2>
+        <p class="mt-0.5 text-[13px] text-slate-500">How each objective shapes your route.</p>
 
         <div class="mt-4 space-y-3">
           <div class="rounded-xl bg-slate-50/80 p-3.5">
-            <p class="text-[13px] font-semibold text-slate-800">Lowest cost</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Bulk-oriented routes often reduce total cost by using efficient sea and road legs.</p>
+            <div class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-primary"></span>
+              <p class="text-[13px] font-semibold text-slate-800">Lowest cost</p>
+            </div>
+            <p class="mt-1 pl-3.5 text-[13px] leading-relaxed text-slate-500">Prefers sea and road legs to minimize total spend.</p>
           </div>
 
           <div class="rounded-xl bg-slate-50/80 p-3.5">
-            <p class="text-[13px] font-semibold text-slate-800">Fastest delivery</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">When urgency matters, air corridors can shorten transit time and simplify handoffs.</p>
+            <div class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-secondary"></span>
+              <p class="text-[13px] font-semibold text-slate-800">Fastest delivery</p>
+            </div>
+            <p class="mt-1 pl-3.5 text-[13px] leading-relaxed text-slate-500">Prefers air corridors and fast inland links to minimize transit time.</p>
           </div>
 
           <div class="rounded-xl bg-slate-50/80 p-3.5">
-            <p class="text-[13px] font-semibold text-slate-800">Balanced trade-off</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">A pragmatic mix of cost and speed for steady planning across lanes.</p>
+            <div class="flex items-center gap-2">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              <p class="text-[13px] font-semibold text-slate-800">Balanced trade-off</p>
+            </div>
+            <p class="mt-1 pl-3.5 text-[13px] leading-relaxed text-slate-500">Weighs cost and time equally for a pragmatic middle ground.</p>
           </div>
         </div>
       </div>
 
       <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm">
-        <p class="text-[13px] font-semibold text-slate-800">Mode-driven route structure</p>
-        <p class="mt-1 text-[13px] leading-relaxed text-slate-500">RouteWise presents a leg-by-leg analysis that stays consistent as deeper routing details are added.</p>
+        <p class="text-[13px] font-semibold text-slate-800">How routing works</p>
+        <p class="mt-1 text-[13px] leading-relaxed text-slate-500">RouteWise uses Dijkstra's algorithm on a weighted logistics graph. Each edge has cost and time values; the objective determines the edge weighting function.</p>
       </div>
     </aside>
   </div>

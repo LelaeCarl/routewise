@@ -1,105 +1,110 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="rounded-2xl border border-slate-200/60 bg-gradient-to-b from-white to-slate-50/80 p-6 shadow-card sm:p-10">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-      <div class="space-y-1.5">
-        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">About RouteWise</h1>
-        <p class="max-w-xl text-[15px] leading-relaxed text-slate-500">
-          A graduation-project web system for transparent, academically-aligned decision-making in cross-border logistics between China and Kenya.
-        </p>
-      </div>
+  <div class="space-y-1.5">
+    <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">About RouteWise</h1>
+    <p class="max-w-2xl text-[15px] leading-relaxed text-slate-500">
+      RouteWise is a decision support system for cross-border logistics between China and Kenya.
+      It models multi-modal transport corridors as a weighted graph and uses shortest-path optimization to recommend routes
+      that balance cost, transit time, and operational simplicity.
+    </p>
+  </div>
 
-      <span class="inline-flex items-center rounded-full bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-primary">
-        Design goal
-      </span>
-    </div>
-  </section>
-
-  <section class="mt-8 grid gap-6 lg:grid-cols-3">
-    <div class="lg:col-span-2 space-y-6">
-      <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900">Project purpose</h2>
+  <section class="mt-10 grid gap-8 lg:grid-cols-3">
+    <div class="lg:col-span-2 space-y-8">
+      <div>
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">What it solves</h2>
         <p class="mt-2 text-[15px] leading-relaxed text-slate-500">
-          Provide a practical decision support tool that converts route-planning trade-offs (cost, time, and transport modes)
-          into a clear interface operators can use — and researchers can evaluate.
+          Cross-border trade between China and Kenya involves sea, air, rail, and road legs that interact in non-obvious ways.
+          A cheaper route might take weeks longer; a faster route might cost multiples more. RouteWise makes these trade-offs
+          visible and structured so operators can make informed decisions rather than relying on intuition or spreadsheet estimates.
         </p>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900">Problem being solved</h2>
-        <div class="mt-4 grid gap-3 sm:grid-cols-2">
-          <div class="rounded-xl bg-slate-50/80 p-4">
-            <p class="text-[13px] font-semibold text-slate-800">Multi-modal complexity</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Sea, air, rail, and road handoffs across hubs/ICDs.</p>
-          </div>
-          <div class="rounded-xl bg-slate-50/80 p-4">
-            <p class="text-[13px] font-semibold text-slate-800">Cost vs time</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Different lanes produce different delivery profiles.</p>
-          </div>
-          <div class="rounded-xl bg-slate-50/80 p-4">
-            <p class="text-[13px] font-semibold text-slate-800">Non-intuitive planning</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Operators need clarity, not raw graph outputs.</p>
-          </div>
-          <div class="rounded-xl bg-slate-50/80 p-4">
-            <p class="text-[13px] font-semibold text-slate-800">Decision support gap</p>
-            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Small traders benefit from transparent tools.</p>
-          </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-xl bg-slate-50/80 p-4">
+          <p class="text-[13px] font-semibold text-slate-800">Multi-modal complexity</p>
+          <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Sea, air, rail, and road handoffs across ports, airports, and ICDs.</p>
+        </div>
+        <div class="rounded-xl bg-slate-50/80 p-4">
+          <p class="text-[13px] font-semibold text-slate-800">Cost vs time trade-offs</p>
+          <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Different routing objectives produce meaningfully different route outcomes.</p>
+        </div>
+        <div class="rounded-xl bg-slate-50/80 p-4">
+          <p class="text-[13px] font-semibold text-slate-800">Non-intuitive routing</p>
+          <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Operators need structured recommendations, not raw graph outputs.</p>
+        </div>
+        <div class="rounded-xl bg-slate-50/80 p-4">
+          <p class="text-[13px] font-semibold text-slate-800">Decision transparency</p>
+          <p class="mt-1 text-[13px] leading-relaxed text-slate-500">Each route includes a rationale, leg-by-leg breakdown, and objective comparison.</p>
         </div>
       </div>
 
-      <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
-        <h2 class="text-lg font-bold tracking-tight text-slate-900">Key features</h2>
-        <ul class="mt-4 space-y-2">
-          <li class="rounded-xl bg-slate-50/80 p-4 text-[13px] text-slate-600">
-            <span class="font-semibold text-slate-800">Route planning</span> with direction, endpoints, weight, and preference inputs.
-          </li>
-          <li class="rounded-xl bg-slate-50/80 p-4 text-[13px] text-slate-600">
-            <span class="font-semibold text-slate-800">Multi-modal routing</span> across ports, airports, ICDs, and road handoffs.
-          </li>
-          <li class="rounded-xl bg-slate-50/80 p-4 text-[13px] text-slate-600">
-            <span class="font-semibold text-slate-800">Optimization modes</span> (cheapest, fastest, balanced) to support clear comparisons.
-          </li>
-          <li class="rounded-xl bg-slate-50/80 p-4 text-[13px] text-slate-600">
-            <span class="font-semibold text-slate-800">Results with structure</span> — KPIs, timeline legs, and comparison across objectives.
-          </li>
-        </ul>
+      <div>
+        <h2 class="text-lg font-bold tracking-tight text-slate-900">Capabilities</h2>
+        <div class="mt-4 space-y-2">
+          <div class="flex items-start gap-3 rounded-xl bg-slate-50/80 p-4">
+            <span class="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"></span>
+            <p class="text-[13px] text-slate-600"><span class="font-semibold text-slate-800">Route planning</span> — configure direction, origin, destination, cargo weight, and routing objective.</p>
+          </div>
+          <div class="flex items-start gap-3 rounded-xl bg-slate-50/80 p-4">
+            <span class="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary"></span>
+            <p class="text-[13px] text-slate-600"><span class="font-semibold text-slate-800">Multi-modal routing</span> — compute optimal paths across sea, air, rail, and road segments.</p>
+          </div>
+          <div class="flex items-start gap-3 rounded-xl bg-slate-50/80 p-4">
+            <span class="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"></span>
+            <p class="text-[13px] text-slate-600"><span class="font-semibold text-slate-800">Objective comparison</span> — view results for lowest cost, fastest delivery, and balanced trade-off side by side.</p>
+          </div>
+          <div class="flex items-start gap-3 rounded-xl bg-slate-50/80 p-4">
+            <span class="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400"></span>
+            <p class="text-[13px] text-slate-600"><span class="font-semibold text-slate-800">Structured results</span> — KPIs, route rationale, leg-by-leg table, and route path visualization.</p>
+          </div>
+        </div>
       </div>
     </div>
 
     <aside class="space-y-6">
       <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-card">
-        <h2 class="text-base font-bold tracking-tight text-slate-900">Technical approach</h2>
-        <p class="mt-2 text-[13px] leading-relaxed text-slate-500">
-          RouteWise is built as a Flask + Jinja web application with Dijkstra-based routing and possible A* extension.
-        </p>
-
-        <div class="mt-4 rounded-xl bg-slate-50/80 p-4">
-          <p class="text-[13px] font-semibold text-slate-800">Stack</p>
-          <div class="mt-2.5 space-y-2 text-[13px]">
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-semibold text-slate-700">Backend</span>
-              <span class="text-slate-500">Python + Flask</span>
-            </div>
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-semibold text-slate-700">UI</span>
-              <span class="text-slate-500">Jinja + Tailwind CDN</span>
-            </div>
-            <div class="flex items-center justify-between gap-3">
-              <span class="font-semibold text-slate-700">Client</span>
-              <span class="text-slate-500">JavaScript (lightweight)</span>
-            </div>
+        <h2 class="text-sm font-bold text-slate-900">Technical stack</h2>
+        <div class="mt-4 space-y-3 text-[13px]">
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-700">Backend</span>
+            <span class="text-slate-500">Python + Flask</span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-700">Routing</span>
+            <span class="text-slate-500">Dijkstra on weighted graph</span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-700">UI</span>
+            <span class="text-slate-500">Jinja + Tailwind CSS</span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-700">Client</span>
+            <span class="text-slate-500">Vanilla JavaScript</span>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-semibold text-slate-700">Data</span>
+            <span class="text-slate-500">Seeded JSON network</span>
           </div>
         </div>
       </div>
 
       <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-card">
-        <h2 class="text-base font-bold tracking-tight text-slate-900">Academic value</h2>
+        <h2 class="text-sm font-bold text-slate-900">Routing approach</h2>
         <p class="mt-2 text-[13px] leading-relaxed text-slate-500">
-          The UI is intentionally structured so future work can expose assumptions behind cost/time computations.
-          This helps students and evaluators validate correctness and interpret trade-offs.
+          The logistics network is modeled as a directed graph where nodes represent ports, airports, ICDs, and hubs.
+          Edges carry cost and time attributes. Dijkstra's algorithm computes the shortest path using a weighting
+          function determined by the chosen objective.
         </p>
+      </div>
 
+      <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-card">
+        <h2 class="text-sm font-bold text-slate-900">Academic context</h2>
+        <p class="mt-2 text-[13px] leading-relaxed text-slate-500">
+          RouteWise is designed as a graduation project. The interface exposes routing assumptions and
+          trade-offs so evaluators can validate the algorithm's behavior and assess the quality of route recommendations.
+        </p>
         <div class="mt-4 flex flex-wrap gap-1.5">
           <span class="rounded-full bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-primary">Graph modeling</span>
           <span class="rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">Explainable KPIs</span>

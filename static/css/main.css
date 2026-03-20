@@ -89,6 +89,7 @@ a[class*="bg-primary"] {
 /* ── Table refinement ── */
 table {
   font-variant-numeric: tabular-nums;
+  border-collapse: collapse;
 }
 
 thead th {
@@ -96,9 +97,14 @@ thead th {
   letter-spacing: 0.05em;
   font-size: 0.6875rem;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 tbody td {
+  font-size: 0.8125rem;
+}
+
+tfoot td {
   font-size: 0.8125rem;
 }
 
