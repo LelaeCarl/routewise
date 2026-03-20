@@ -1,56 +1,96 @@
+/* ── RouteWise design tokens ── */
 :root {
-  --primary: #1e3a8a;
+  --primary: #1d4ed8;
+  --deep: #1e3a8a;
   --secondary: #14b8a6;
   --accent: #22c55e;
-  --background: #f8fafc;
+  --background: #f6f8fb;
+  --surface: #eef2f7;
   --text: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
 }
 
+/* ── Base ── */
 html {
   scroll-behavior: smooth;
 }
 
 body {
   color: var(--text);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(20, 184, 166, 0.25);
+  background: rgba(29, 78, 216, 0.12);
+  color: #1e293b;
 }
 
 a {
   text-decoration: none;
 }
 
+/* ── Typography: headings use display font ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+}
+
+/* ── Focus ── */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(30, 58, 138, 0.25);
+  outline: 2px solid rgba(29, 78, 216, 0.3);
   outline-offset: 2px;
 }
 
+/* ── Form elements ── */
+select,
+input[type="text"],
+input[type="number"],
+input[type="email"],
+textarea {
+  border: 1px solid var(--border);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+select:hover,
+input[type="text"]:hover,
+input[type="number"]:hover,
+textarea:hover {
+  border-color: #cbd5e1;
+}
+
+/* ── Table refinement ── */
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ── Utility: timeline step ── */
 .timeline-step {
-  border-left: 2px solid rgba(15, 23, 42, 0.08);
+  border-left: 2px solid rgba(15, 23, 42, 0.06);
   padding-left: 16px;
 }
 
+/* ── Loading spinner ── */
 .rw-spinner {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 9999px;
-  border: 3px solid rgba(30, 58, 138, 0.18);
-  border-top-color: rgba(30, 58, 138, 1);
-  animation: rw-spin 0.9s linear infinite;
+  border: 2.5px solid rgba(29, 78, 216, 0.15);
+  border-top-color: var(--primary);
+  animation: rw-spin 0.8s linear infinite;
 }
 
 @keyframes rw-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
-
