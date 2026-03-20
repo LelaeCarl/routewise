@@ -2,42 +2,42 @@
 
 {% block content %}
   {% if route.success %}
-    <section class="rounded-3xl border border-slate-200/70 bg-gradient-to-b from-white to-slate-50 p-6 shadow-soft">
-      <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div class="space-y-2">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center rounded-xl bg-primary/10 px-3 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+    <section class="rounded-2xl border border-slate-200/60 bg-gradient-to-b from-white to-slate-50/80 p-6 shadow-card">
+      <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="inline-flex items-center rounded-full bg-primary/8 px-2.5 py-1 text-[11px] font-semibold text-primary">
               Route analysis
             </span>
-            <span class="inline-flex items-center rounded-xl bg-secondary/15 px-3 py-1 text-xs font-semibold text-secondary ring-1 ring-secondary/20">
+            <span class="inline-flex items-center rounded-full bg-secondary/10 px-2.5 py-1 text-[11px] font-semibold text-secondary">
               {{ objective_label }}
             </span>
           </div>
 
-          <h1 class="text-3xl font-bold tracking-tight text-slate-900">
+          <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">
             {{ route.route_label }}
           </h1>
-          <p class="text-sm text-slate-600 sm:text-base">
-            This route analysis summarizes estimated outcomes across the logistics network for your selected routing objective.
+          <p class="max-w-xl text-[15px] leading-relaxed text-slate-500">
+            Estimated outcomes across the logistics network for your selected routing objective.
           </p>
 
-          <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-4 ring-1 ring-slate-200/70">
-            <p class="text-sm font-semibold text-slate-900">Why this route</p>
-            <p class="mt-1 text-sm text-slate-600">{{ route.route_rationale }}</p>
+          <div class="rounded-xl bg-slate-50/80 p-4">
+            <p class="text-[13px] font-semibold text-slate-800">Why this route</p>
+            <p class="mt-1 text-[13px] leading-relaxed text-slate-500">{{ route.route_rationale }}</p>
           </div>
         </div>
 
-        <div class="rounded-2xl border border-slate-200/70 bg-white/70 p-4 shadow-sm lg:w-[360px]">
-          <p class="text-sm font-semibold text-slate-900">Shipment summary</p>
-          <div class="mt-3 space-y-1 text-sm text-slate-700">
-            <div><span class="font-semibold text-slate-900">Direction:</span> {{ direction }}</div>
-            <div><span class="font-semibold text-slate-900">Origin:</span> {{ origin_name }}</div>
-            <div><span class="font-semibold text-slate-900">Destination:</span> {{ destination_name }}</div>
-            {% if weight %}<div><span class="font-semibold text-slate-900">Weight:</span> {{ weight }} kg</div>{% endif %}
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm lg:w-[340px]">
+          <p class="text-[13px] font-semibold text-slate-800">Shipment summary</p>
+          <div class="mt-3 space-y-1.5 text-[13px] text-slate-600">
+            <div><span class="font-semibold text-slate-800">Direction:</span> {{ direction }}</div>
+            <div><span class="font-semibold text-slate-800">Origin:</span> {{ origin_name }}</div>
+            <div><span class="font-semibold text-slate-800">Destination:</span> {{ destination_name }}</div>
+            {% if weight %}<div><span class="font-semibold text-slate-800">Weight:</span> {{ weight }} kg</div>{% endif %}
           </div>
           <a
             href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=preference_key) }}"
-            class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/25"
+            class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50"
           >
             Edit inputs
           </a>
@@ -45,53 +45,56 @@
       </div>
     </section>
 
-    <section class="mt-6">
+    <section class="mt-8">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 class="text-xl font-bold tracking-tight text-slate-900">Key performance indicators</h2>
-          <p class="mt-1 text-sm text-slate-600">Totals and route characteristics derived from the selected objective.</p>
+          <p class="mt-1 text-[13px] text-slate-500">Totals and route characteristics for the selected objective.</p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
           {% for mode in route.modes_used %}
-            <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-800 ring-1 ring-slate-200/70">{{ mode }}</span>
+            <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">{{ mode }}</span>
           {% endfor %}
         </div>
       </div>
 
       <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total cost (CNY)</p>
-          <p class="mt-2 text-2xl font-bold text-slate-900">{{ route.total_cost | format_cny }}</p>
-          <p class="mt-2 text-sm text-slate-600">Sum across all route legs</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm">
+          <p class="text-[11px] font-medium uppercase tracking-widest text-slate-400">Total cost (CNY)</p>
+          <p class="mt-1.5 text-[28px] font-extrabold tracking-tight text-slate-900 kpi-value">{{ route.total_cost | format_cny }}</p>
+          <p class="mt-1 text-[11px] text-slate-400">Sum across all route legs</p>
         </div>
-        <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Total transit time (days)</p>
-          <p class="mt-2 text-2xl font-bold text-slate-900">{{ route.total_time | format_days }} days</p>
-          <p class="mt-2 text-sm text-slate-600">Sum across all route legs</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm">
+          <p class="text-[11px] font-medium uppercase tracking-widest text-slate-400">Transit time (days)</p>
+          <p class="mt-1.5 text-[28px] font-extrabold tracking-tight text-slate-900 kpi-value">{{ route.total_time | format_days }}</p>
+          <p class="mt-1 text-[11px] text-slate-400">Sum across all route legs</p>
         </div>
-        <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Routing objective</p>
-          <p class="mt-2 text-2xl font-bold text-slate-900">{{ objective_label }}</p>
-          <p class="mt-2 text-sm text-slate-600">Used to select the route</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm">
+          <p class="text-[11px] font-medium uppercase tracking-widest text-slate-400">Objective</p>
+          <p class="mt-1.5 text-lg font-bold tracking-tight text-slate-900">{{ objective_label }}</p>
+          <p class="mt-1 text-[11px] text-slate-400">Used to select the route</p>
         </div>
-        <div class="rounded-2xl border border-slate-200/70 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-soft">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Legs</p>
-          <p class="mt-2 text-2xl font-bold text-slate-900">{{ route.legs | length }}</p>
-          <p class="mt-2 text-sm text-slate-600">Number of route segments</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-sm">
+          <p class="text-[11px] font-medium uppercase tracking-widest text-slate-400">Legs</p>
+          <p class="mt-1.5 text-[28px] font-extrabold tracking-tight text-slate-900 kpi-value">{{ route.legs | length }}</p>
+          <p class="mt-1 text-[11px] text-slate-400">Number of route segments</p>
         </div>
       </div>
     </section>
 
-    <section class="mt-6 grid gap-6 lg:grid-cols-3 lg:items-start">
+    <section class="mt-8 grid gap-6 lg:grid-cols-3 lg:items-start">
       <div class="lg:col-span-2 space-y-6">
-        <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-          <h2 class="text-xl font-bold tracking-tight text-slate-900">Route path</h2>
-          <p class="mt-1 text-sm text-slate-600">Ordered sequence from origin to destination.</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
+          <h2 class="text-lg font-bold tracking-tight text-slate-900">Route path</h2>
+          <p class="mt-1 text-[13px] text-slate-500">Ordered sequence from origin to destination.</p>
 
           {% if route.path_nodes | length > 0 %}
-            <div class="mt-4 flex flex-wrap gap-2">
+            <div class="mt-4 flex flex-wrap gap-1.5">
               {% for node in route.path_nodes %}
-                <span class="rounded-xl bg-slate-50 px-3 py-1 text-sm font-semibold text-slate-900 ring-1 ring-slate-200/70">
+                {% if not loop.first %}
+                  <span class="self-center text-slate-300" aria-hidden="true">&rarr;</span>
+                {% endif %}
+                <span class="rounded-lg bg-slate-50/80 px-3 py-1.5 text-[13px] font-semibold text-slate-800 ring-1 ring-slate-200/60">
                   {{ node.name }}
                 </span>
               {% endfor %}
@@ -99,47 +102,49 @@
           {% endif %}
         </div>
 
-        <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-          <h2 class="text-xl font-bold tracking-tight text-slate-900">Leg-by-leg breakdown</h2>
-          <p class="mt-1 text-sm text-slate-600">Estimated cost, transit time, and transport mode for each leg.</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
+          <h2 class="text-lg font-bold tracking-tight text-slate-900">Leg-by-leg breakdown</h2>
+          <p class="mt-1 text-[13px] text-slate-500">Estimated cost, transit time, and transport mode for each leg.</p>
 
           {% if route.legs | length == 0 %}
-            <div class="mt-5 rounded-2xl border border-slate-200/70 bg-slate-50 p-5 text-sm text-slate-700">
-              Origin and destination are the same node—no route legs are required.
+            <div class="mt-5 rounded-xl bg-slate-50/80 p-5 text-[13px] text-slate-600">
+              Origin and destination are the same node — no route legs are required.
             </div>
           {% else %}
-            <div class="mt-5 overflow-hidden rounded-2xl border border-slate-200/70 bg-white">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
-                  <tr>
-                    <th class="px-4 py-3">Leg</th>
-                    <th class="px-4 py-3">From → To</th>
-                    <th class="px-4 py-3">Mode</th>
-                    <th class="px-4 py-3">Cost (CNY)</th>
-                    <th class="px-4 py-3">Time (days)</th>
+            <div class="mt-5 overflow-hidden rounded-xl border border-slate-200/60">
+              <table class="w-full text-left">
+                <thead>
+                  <tr class="border-b border-slate-200/60 bg-slate-50/80">
+                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Leg</th>
+                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">From &rarr; To</th>
+                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Mode</th>
+                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Cost (CNY)</th>
+                    <th class="px-5 py-3 text-[11px] font-semibold uppercase tracking-widest text-slate-400">Time (days)</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200/70">
+                <tbody class="divide-y divide-slate-100">
                   {% for leg in route.legs %}
-                    <tr>
-                      <td class="px-4 py-3 font-semibold text-slate-900">{{ loop.index }}</td>
-                      <td class="px-4 py-3 text-slate-700">{{ leg.from.name }} → {{ leg.to.name }}</td>
-                      <td class="px-4 py-3 text-slate-700">{{ leg.mode }}</td>
-                      <td class="px-4 py-3 text-slate-700">{{ leg.cost | format_cny }}</td>
-                      <td class="px-4 py-3 text-slate-700">{{ leg.time | format_days }} days</td>
+                    <tr class="transition hover:bg-slate-50/50">
+                      <td class="px-5 py-3.5 text-[13px] font-semibold text-slate-800">{{ loop.index }}</td>
+                      <td class="px-5 py-3.5 text-[13px] text-slate-600">{{ leg.from.name }} &rarr; {{ leg.to.name }}</td>
+                      <td class="px-5 py-3.5">
+                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{{ leg.mode }}</span>
+                      </td>
+                      <td class="px-5 py-3.5 text-[13px] font-semibold text-slate-800 kpi-value">{{ leg.cost | format_cny }}</td>
+                      <td class="px-5 py-3.5 text-[13px] text-slate-600 kpi-value">{{ leg.time | format_days }} days</td>
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
             </div>
 
-            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
               {% for leg in route.legs %}
-                <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/70">
-                  <p class="text-sm font-semibold text-slate-900">Leg {{ loop.index }}</p>
-                  <p class="mt-1 text-sm text-slate-600">{{ leg.from.name }} → {{ leg.to.name }} · {{ leg.mode }}</p>
+                <div class="rounded-xl bg-slate-50/80 p-4">
+                  <p class="text-[13px] font-semibold text-slate-800">Leg {{ loop.index }}</p>
+                  <p class="mt-1 text-[13px] text-slate-500">{{ leg.from.name }} &rarr; {{ leg.to.name }} &middot; {{ leg.mode }}</p>
                   {% if leg.description %}
-                    <p class="mt-2 text-xs text-slate-600">{{ leg.description }}</p>
+                    <p class="mt-2 text-[11px] leading-relaxed text-slate-400">{{ leg.description }}</p>
                   {% endif %}
                 </div>
               {% endfor %}
@@ -149,16 +154,16 @@
       </div>
 
       <aside class="space-y-6">
-        <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-          <h2 class="text-xl font-bold tracking-tight text-slate-900">Alternative objectives</h2>
-          <p class="mt-1 text-sm text-slate-600">Compute route analysis for other objectives.</p>
+        <div class="rounded-2xl border border-slate-200/60 bg-white p-5 shadow-card">
+          <h2 class="text-base font-bold tracking-tight text-slate-900">Alternative objectives</h2>
+          <p class="mt-1 text-[13px] text-slate-500">Compare route analysis across objectives.</p>
 
-          <div class="mt-5 space-y-4">
+          <div class="mt-4 space-y-3">
             {% for obj_key, alt in alternatives.items() %}
-              <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-                <div class="flex items-start justify-between gap-4">
+              <div class="rounded-xl border border-slate-200/60 bg-slate-50/80 p-4">
+                <div class="flex items-start justify-between gap-3">
                   <div>
-                    <p class="text-sm font-semibold text-slate-900">
+                    <p class="text-[13px] font-semibold text-slate-800">
                       {% if obj_key == 'lowest_cost' %}
                         Lowest cost
                       {% elif obj_key == 'fastest_delivery' %}
@@ -168,15 +173,15 @@
                       {% endif %}
                     </p>
                     {% if alt.success %}
-                      <p class="mt-1 text-xs text-slate-600">{{ alt.route_label }}</p>
+                      <p class="mt-0.5 text-[11px] text-slate-400">{{ alt.route_label }}</p>
                     {% else %}
-                      <p class="mt-1 text-xs text-slate-600">{{ alt.error }}</p>
+                      <p class="mt-0.5 text-[11px] text-slate-400">{{ alt.error }}</p>
                     {% endif %}
                   </div>
                   <div class="text-right">
                     {% if alt.success %}
-                      <p class="text-sm font-semibold text-slate-900">{{ alt.total_cost | format_cny }}</p>
-                      <p class="text-xs text-slate-600">{{ alt.total_time | format_days }} days</p>
+                      <p class="text-sm font-bold text-slate-800 kpi-value">{{ alt.total_cost | format_cny }}</p>
+                      <p class="text-[11px] text-slate-400 kpi-value">{{ alt.total_time | format_days }} days</p>
                     {% endif %}
                   </div>
                 </div>
@@ -184,9 +189,10 @@
                 {% if alt.success %}
                   <a
                     href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=obj_key) }}"
-                    class="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
+                    class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-[13px] font-semibold text-white transition-all hover:bg-blue-700"
                   >
                     View analysis
+                    <span aria-hidden="true">&rarr;</span>
                   </a>
                 {% endif %}
               </div>
@@ -196,18 +202,18 @@
       </aside>
     </section>
   {% else %}
-    <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-      <div class="flex flex-col gap-2">
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Route analysis unavailable</h1>
-        <p class="text-sm text-slate-600">{{ route.error }}</p>
+    <section class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
+      <div class="flex flex-col gap-3">
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Route analysis unavailable</h1>
+        <p class="text-[15px] text-slate-500">{{ route.error }}</p>
         <a
           href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=preference_key) }}"
-          class="mt-2 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          class="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-blue-700 hover:shadow-md"
         >
           Adjust shipment details
+          <span aria-hidden="true">&rarr;</span>
         </a>
       </div>
     </section>
   {% endif %}
 {% endblock %}
-

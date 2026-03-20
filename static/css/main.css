@@ -32,7 +32,7 @@ a {
   text-decoration: none;
 }
 
-/* ── Typography: headings use display font ── */
+/* ── Typography ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
 }
@@ -47,7 +47,7 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* ── Form elements ── */
+/* ── Form controls ── */
 select,
 input[type="text"],
 input[type="number"],
@@ -55,6 +55,8 @@ input[type="email"],
 textarea {
   border: 1px solid var(--border);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 select:hover,
@@ -64,14 +66,40 @@ textarea:hover {
   border-color: #cbd5e1;
 }
 
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: rgba(29, 78, 216, 0.4);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.08);
+}
+
+/* ── Buttons ── */
+button,
+a[class*="bg-primary"] {
+  transition: all 0.15s ease;
+}
+
+/* ── KPI numbers use display font ── */
+.kpi-value {
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Table refinement ── */
 table {
   font-variant-numeric: tabular-nums;
 }
 
-th {
+thead th {
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+}
+
+tbody td {
+  font-size: 0.8125rem;
 }
 
 /* ── Utility: timeline step ── */
