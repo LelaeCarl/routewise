@@ -12,6 +12,7 @@ from backend.comparison import (
 from backend.data_loader import load_nodes
 from backend.decision import build_decision_context
 from backend.route_engine import RouteEngine
+from backend.sensitivity import build_sensitivity_context
 
 
 app = Flask(__name__)
@@ -169,6 +170,7 @@ def results():
     route_insight = ""
     route_story = ""
     decision = {}
+    sensitivity = {}
 
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
@@ -183,6 +185,10 @@ def results():
             route_story = build_route_story(route)
             enriched_alts = enrich_alternatives(route, preference_key, alternatives)
             decision = build_decision_context(route, preference_key, alternatives)
+            sensitivity = build_sensitivity_context(
+                origin_id, destination_id, preference_key,
+                weight_kg, route, engine,
+            )
 
             leg_labels = build_leg_labels(route)
             for i, label in enumerate(leg_labels):
@@ -207,6 +213,7 @@ def results():
         route_insight=route_insight,
         route_story=route_story,
         decision=decision,
+        sensitivity=sensitivity,
     )
 
 
