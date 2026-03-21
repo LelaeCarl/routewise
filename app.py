@@ -156,6 +156,12 @@ def results():
     origin_name = node_map.get(origin_id).name if origin_id in node_map else origin_id
     destination_name = node_map.get(destination_id).name if destination_id in node_map else destination_id
 
+    try:
+        weight_kg = float(weight) if weight else 500.0
+    except (ValueError, TypeError):
+        weight_kg = 500.0
+    weight_kg = max(0.1, weight_kg)
+
     engine = RouteEngine()
     route = None
     alternatives = {}
@@ -167,9 +173,9 @@ def results():
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
     else:
-        route = engine.compute_route(origin_id, destination_id, preference_key)
+        route = engine.compute_route(origin_id, destination_id, preference_key, weight_kg)
         for obj_key in OBJECTIVE_KEYS:
-            alternatives[obj_key] = engine.compute_route(origin_id, destination_id, obj_key)
+            alternatives[obj_key] = engine.compute_route(origin_id, destination_id, obj_key, weight_kg)
 
         if route.get("success"):
             route["route_rationale"] = build_rationale(route, preference_key, alternatives)

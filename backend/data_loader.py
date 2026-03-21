@@ -41,13 +41,25 @@ def load_edges(path: str | None = None) -> List[Edge]:
 
     edges: List[Edge] = []
     for item in raw:
+        if "base_cost" in item:
+            base_cost = float(item["base_cost"])
+            cost_per_kg = float(item["cost_per_kg"])
+            minimum_charge = float(item["minimum_charge"])
+        else:
+            legacy_cost = float(item["cost"])
+            base_cost = legacy_cost
+            cost_per_kg = 0.0
+            minimum_charge = legacy_cost
+
         edges.append(
             Edge(
                 id=str(item["id"]),
                 from_node=str(item["from"]),
                 to_node=str(item["to"]),
                 mode=str(item["mode"]),
-                cost=float(item["cost"]),
+                base_cost=base_cost,
+                cost_per_kg=cost_per_kg,
+                minimum_charge=minimum_charge,
                 time=float(item["time"]),
                 description=str(item.get("description", "")),
             )
@@ -78,8 +90,12 @@ def validate_network(nodes: List[Node], edges: List[Edge]) -> None:
         if edge.mode not in ALLOWED_EDGE_MODES:
             raise ValueError(f"Invalid edge mode '{edge.mode}' for edge '{edge.id}'")
 
-        if edge.cost <= 0:
-            raise ValueError(f"Edge '{edge.id}' must have positive cost")
+        if edge.base_cost < 0:
+            raise ValueError(f"Edge '{edge.id}' must have non-negative base_cost")
+        if edge.cost_per_kg < 0:
+            raise ValueError(f"Edge '{edge.id}' must have non-negative cost_per_kg")
+        if edge.minimum_charge <= 0:
+            raise ValueError(f"Edge '{edge.id}' must have positive minimum_charge")
         if edge.time <= 0:
             raise ValueError(f"Edge '{edge.id}' must have positive time")
 

@@ -23,7 +23,9 @@ class Edge:
     from_node: str
     to_node: str
     mode: str
-    cost: float
+    base_cost: float
+    cost_per_kg: float
+    minimum_charge: float
     time: float
     description: str
 
