@@ -10,6 +10,7 @@ from backend.comparison import (
     enrich_alternatives,
 )
 from backend.data_loader import load_nodes
+from backend.decision import build_decision_context
 from backend.route_engine import RouteEngine
 
 
@@ -161,6 +162,7 @@ def results():
     enriched_alts = {}
     route_insight = ""
     route_story = ""
+    decision = {}
 
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
@@ -174,6 +176,7 @@ def results():
             route_insight = build_route_insight(route, preference_key)
             route_story = build_route_story(route)
             enriched_alts = enrich_alternatives(route, preference_key, alternatives)
+            decision = build_decision_context(route, preference_key, alternatives)
 
             leg_labels = build_leg_labels(route)
             for i, label in enumerate(leg_labels):
@@ -197,6 +200,7 @@ def results():
         objective_label=preference_label,
         route_insight=route_insight,
         route_story=route_story,
+        decision=decision,
     )
 
 
