@@ -2,7 +2,13 @@ import os
 
 from flask import Flask, render_template, request
 
-from backend.comparison import build_rationale, build_route_insight, enrich_alternatives
+from backend.comparison import (
+    build_leg_labels,
+    build_rationale,
+    build_route_insight,
+    build_route_story,
+    enrich_alternatives,
+)
 from backend.data_loader import load_nodes
 from backend.route_engine import RouteEngine
 
@@ -28,9 +34,24 @@ def format_days(value: float) -> str:
     return f"{num:.1f}"
 
 
+_NODE_TYPE_LABELS = {
+    "port": "Port",
+    "airport": "Airport",
+    "icd": "ICD",
+    "rail_hub": "Rail hub",
+    "road_hub": "Road hub",
+}
+
+
+def format_node_type(value: str) -> str:
+    """Convert node type key to a human-readable label."""
+    return _NODE_TYPE_LABELS.get(value, value)
+
+
 # Make formatting available to all Jinja templates.
 app.jinja_env.filters["format_cny"] = format_cny
 app.jinja_env.filters["format_days"] = format_days
+app.jinja_env.filters["format_node_type"] = format_node_type
 
 PREFERENCE_LABELS = {
     "lowest_cost": "Lowest cost",
@@ -139,6 +160,7 @@ def results():
     alternatives = {}
     enriched_alts = {}
     route_insight = ""
+    route_story = ""
 
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
@@ -150,7 +172,13 @@ def results():
         if route.get("success"):
             route["route_rationale"] = build_rationale(route, preference_key, alternatives)
             route_insight = build_route_insight(route, preference_key)
+            route_story = build_route_story(route)
             enriched_alts = enrich_alternatives(route, preference_key, alternatives)
+
+            leg_labels = build_leg_labels(route)
+            for i, label in enumerate(leg_labels):
+                if i < len(route["legs"]):
+                    route["legs"][i]["label"] = label
 
     return render_template(
         "results.html",
@@ -168,6 +196,7 @@ def results():
         alternatives=enriched_alts if enriched_alts else alternatives,
         objective_label=preference_label,
         route_insight=route_insight,
+        route_story=route_story,
     )
 
 

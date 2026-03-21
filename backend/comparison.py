@@ -254,6 +254,75 @@ def build_route_insight(current_route: dict, objective_key: str) -> str:
     return f"Combines {', '.join(m.lower() for m in modes)} transport across {len(legs)} legs."
 
 
+_MODE_VERBS = {
+    "Sea": "Sea transit",
+    "Air": "Air corridor",
+    "Road": "Road transfer",
+    "Rail": "Rail corridor",
+}
+
+
+def build_route_story(route: dict) -> str:
+    """Generate a one-sentence narrative summary of the route journey."""
+    if not route.get("success") or not route.get("legs"):
+        return ""
+
+    legs = route["legs"]
+    modes = route.get("modes_used", [])
+    origin = route.get("origin", {})
+    destination = route.get("destination", {})
+    o_city = origin.get("city", "origin")
+    d_city = destination.get("city", "destination")
+
+    if len(legs) == 1:
+        m = legs[0]["mode"].lower()
+        return f"Direct {m} shipment from {o_city} to {d_city}."
+
+    if len(modes) == 1:
+        m = modes[0].lower()
+        return (
+            f"This route uses {m} transport across {len(legs)} segments "
+            f"from {o_city} to {d_city}."
+        )
+
+    main_leg = max(legs, key=lambda l: l.get("cost", 0))
+    main_mode = main_leg["mode"].lower()
+    last_mode = legs[-1]["mode"].lower()
+
+    via_cities = [leg["to"]["city"] for leg in legs[:-1]]
+    if via_cities:
+        via = via_cities[0] if len(via_cities) <= 2 else via_cities[0]
+        return (
+            f"This route moves by {main_mode} through {via} "
+            f"before {last_mode} delivery to {d_city}."
+        )
+
+    return (
+        f"This route combines {', '.join(m.lower() for m in modes)} "
+        f"transport from {o_city} to {d_city}."
+    )
+
+
+def build_leg_labels(route: dict) -> list:
+    """Generate short descriptive labels for each leg, e.g. 'Sea transit to Djibouti'."""
+    if not route.get("success"):
+        return []
+
+    labels = []
+    legs = route.get("legs", [])
+    for i, leg in enumerate(legs):
+        mode = leg.get("mode", "")
+        to_name = leg.get("to", {}).get("name", "")
+        to_city = leg.get("to", {}).get("city", "")
+        verb = _MODE_VERBS.get(mode, f"{mode} transfer")
+
+        if i == len(legs) - 1:
+            labels.append(f"{verb} to {to_name}")
+        else:
+            labels.append(f"{verb} to {to_city}")
+    return labels
+
+
 def enrich_alternatives(current_route: dict, objective_key: str, alternatives: dict) -> dict:
     """Add comparison data to each alternative for template rendering.
 

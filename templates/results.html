@@ -68,24 +68,84 @@
     <section class="mt-8 grid gap-8 lg:grid-cols-3 lg:items-start">
       <div class="lg:col-span-2 space-y-8">
         {% if route.path_nodes | length > 1 %}
+          {% set mode_bg = {'sea': 'bg-blue-500', 'air': 'bg-sky-500', 'road': 'bg-amber-500', 'rail': 'bg-emerald-600'} %}
           <div class="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-card">
-            <h2 class="text-lg font-bold tracking-tight text-slate-900">Route path</h2>
-            <div class="mt-4 flex items-center gap-0 overflow-x-auto pb-1">
+            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h2 class="text-lg font-bold tracking-tight text-slate-900">Route path</h2>
+              {% if route_story %}
+                <p class="text-[12px] leading-relaxed text-slate-400">{{ route_story }}</p>
+              {% endif %}
+            </div>
+
+            {# ── Desktop: horizontal journey flow ── #}
+            <div class="mt-5 hidden md:flex md:items-start">
               {% for node in route.path_nodes %}
                 {% if not loop.first %}
-                  <div class="flex shrink-0 flex-col items-center px-2">
-                    {% set prev_idx = loop.index0 - 1 %}
-                    {% if route.legs[prev_idx] is defined %}
-                      <span class="text-[10px] font-semibold uppercase text-slate-400">{{ route.legs[prev_idx].mode }}</span>
-                    {% endif %}
-                    <span class="text-slate-300" aria-hidden="true">&rarr;</span>
+                  {% set leg = route.legs[loop.index0 - 1] %}
+                  <div class="flex flex-1 items-center self-start mt-[7px] min-w-[60px]">
+                    <div class="h-px flex-1 bg-slate-200"></div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
+                      <span class="mt-1 text-[10px] text-slate-400 kpi-value whitespace-nowrap">{{ leg.time | format_days }}d &middot; {{ leg.cost | format_cny }}</span>
+                    </div>
+                    <div class="h-px flex-1 bg-slate-200"></div>
                   </div>
                 {% endif %}
-                <div class="shrink-0 rounded-lg border border-slate-200/60 bg-slate-50/80 px-3.5 py-2 text-center">
-                  <p class="text-[13px] font-semibold text-slate-800">{{ node.name }}</p>
-                  <p class="text-[10px] text-slate-400">{{ node.city }}</p>
+                <div class="shrink-0 text-center" style="max-width:140px">
+                  <div class="mx-auto flex h-[18px] w-[18px] items-center justify-center rounded-full {% if loop.first or loop.last %}bg-primary/10 ring-1 ring-primary/20{% else %}bg-slate-100{% endif %}">
+                    {% if loop.first or loop.last %}
+                      <div class="h-2 w-2 rounded-full bg-primary"></div>
+                    {% else %}
+                      <div class="h-1.5 w-1.5 rounded-full bg-slate-400"></div>
+                    {% endif %}
+                  </div>
+                  <p class="mt-2 text-[13px] font-semibold leading-tight {% if loop.first or loop.last %}text-slate-900{% else %}text-slate-600{% endif %}">{{ node.name }}</p>
+                  <p class="mt-0.5 text-[10px] text-slate-400">{{ node.type | format_node_type }} &middot; {{ node.city }}</p>
+                  {% if loop.first %}
+                    <p class="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-primary/70">Origin</p>
+                  {% elif loop.last %}
+                    <p class="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-primary/70">Destination</p>
+                  {% endif %}
                 </div>
               {% endfor %}
+            </div>
+
+            {# ── Mobile: vertical journey timeline ── #}
+            <div class="mt-5 md:hidden">
+              <div class="relative pl-8">
+                <div class="route-line absolute left-[10px] top-1 bottom-1 w-px bg-gradient-to-b from-primary/30 via-slate-200 to-primary/30"></div>
+                {% for node in route.path_nodes %}
+                  <div class="relative {% if not loop.first %}mt-5{% endif %}">
+                    <div class="absolute -left-8 top-0.5 flex h-[22px] w-[22px] items-center justify-center">
+                      {% if loop.first or loop.last %}
+                        <div class="h-3 w-3 rounded-full bg-primary ring-[3px] ring-primary/10"></div>
+                      {% else %}
+                        <div class="h-2.5 w-2.5 rounded-full border-2 border-slate-300 bg-white"></div>
+                      {% endif %}
+                    </div>
+                    <p class="text-[14px] font-semibold {% if loop.first or loop.last %}text-slate-900{% else %}text-slate-700{% endif %}">{{ node.name }}</p>
+                    <p class="mt-0.5 text-[11px] text-slate-400">
+                      {{ node.type | format_node_type }} &middot; {{ node.city }}
+                      {% if loop.first %}<span class="ml-1 font-semibold text-primary">&middot; Origin</span>{% endif %}
+                      {% if loop.last %}<span class="ml-1 font-semibold text-primary">&middot; Destination</span>{% endif %}
+                    </p>
+                  </div>
+                  {% if not loop.last %}
+                    {% set leg = route.legs[loop.index0] %}
+                    <div class="relative mt-2.5 ml-1">
+                      <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
+                        <span class="text-[11px] text-slate-400 kpi-value">{{ leg.time | format_days }}d</span>
+                        <span class="text-slate-300">&middot;</span>
+                        <span class="text-[11px] text-slate-400 kpi-value">{{ leg.cost | format_cny }}</span>
+                      </div>
+                      {% if leg.label is defined and leg.label %}
+                        <p class="mt-0.5 text-[11px] text-slate-400">{{ leg.label }}</p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
             </div>
           </div>
         {% endif %}
@@ -99,10 +159,11 @@
           {% if route.legs | length == 0 %}
             <div class="p-6">
               <div class="rounded-xl bg-slate-50/80 p-5 text-[13px] text-slate-600">
-                Origin and destination are the same node — no route legs required.
+                Origin and destination are the same node &mdash; no route legs required.
               </div>
             </div>
           {% else %}
+            {% set mode_bg = {'sea': 'bg-blue-500', 'air': 'bg-sky-500', 'road': 'bg-amber-500', 'rail': 'bg-emerald-600'} %}
             <div class="mt-4 overflow-hidden">
               <table class="w-full text-left">
                 <thead>
@@ -117,13 +178,18 @@
                 <tbody class="divide-y divide-slate-50">
                   {% for leg in route.legs %}
                     <tr class="transition hover:bg-slate-50/50">
-                      <td class="px-6 py-4 text-[13px] font-semibold text-slate-400">{{ loop.index }}</td>
-                      <td class="px-6 py-4 text-[13px] text-slate-700">{{ leg.from.name }} &rarr; {{ leg.to.name }}</td>
-                      <td class="px-6 py-4">
-                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">{{ leg.mode }}</span>
+                      <td class="px-6 py-4 align-top text-[13px] font-semibold text-slate-300">{{ loop.index }}</td>
+                      <td class="px-6 py-4 align-top">
+                        <p class="text-[13px] font-medium text-slate-700">{{ leg.from.name }} &rarr; {{ leg.to.name }}</p>
+                        {% if leg.label is defined and leg.label %}
+                          <p class="mt-0.5 text-[11px] text-slate-400">{{ leg.label }}</p>
+                        {% endif %}
                       </td>
-                      <td class="px-6 py-4 text-right text-[13px] font-semibold text-slate-800 kpi-value">{{ leg.cost | format_cny }}</td>
-                      <td class="px-6 py-4 text-right text-[13px] text-slate-500 kpi-value">{{ leg.time | format_days }} d</td>
+                      <td class="px-6 py-4 align-top">
+                        <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
+                      </td>
+                      <td class="px-6 py-4 align-top text-right text-[13px] font-semibold text-slate-800 kpi-value">{{ leg.cost | format_cny }}</td>
+                      <td class="px-6 py-4 align-top text-right text-[13px] text-slate-500 kpi-value">{{ leg.time | format_days }} d</td>
                     </tr>
                   {% endfor %}
                 </tbody>
