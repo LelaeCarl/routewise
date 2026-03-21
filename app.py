@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, render_template, request
 
+from backend.comparison import build_rationale, build_route_insight, enrich_alternatives
 from backend.data_loader import load_nodes
 from backend.route_engine import RouteEngine
 
@@ -136,14 +137,20 @@ def results():
     engine = RouteEngine()
     route = None
     alternatives = {}
+    enriched_alts = {}
+    route_insight = ""
 
-    # Handle missing inputs gracefully.
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
     else:
         route = engine.compute_route(origin_id, destination_id, preference_key)
         for obj_key in OBJECTIVE_KEYS:
             alternatives[obj_key] = engine.compute_route(origin_id, destination_id, obj_key)
+
+        if route.get("success"):
+            route["route_rationale"] = build_rationale(route, preference_key, alternatives)
+            route_insight = build_route_insight(route, preference_key)
+            enriched_alts = enrich_alternatives(route, preference_key, alternatives)
 
     return render_template(
         "results.html",
@@ -158,8 +165,9 @@ def results():
         weight=weight,
         preference=preference_label,
         route=route,
-        alternatives=alternatives,
+        alternatives=enriched_alts if enriched_alts else alternatives,
         objective_label=preference_label,
+        route_insight=route_insight,
     )
 
 
