@@ -242,7 +242,10 @@
       </div>
     </header>
 
-    <main id="main-content" class="mx-auto max-w-6xl flex-1 px-5 py-10">
+    <main
+      id="main-content"
+      class="{% if is_auth_shell %}flex-1 px-0 py-0{% else %}mx-auto max-w-6xl flex-1 px-5 py-10{% endif %}"
+    >
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <div class="mb-6 space-y-2">
