@@ -74,10 +74,13 @@
       </div>
     </div>
 
+    {% set path = request.path %}
+    {% set is_auth_shell = (path == '/login' or path == '/register') %}
+
     <header class="sticky top-0 z-40 border-b border-slate-200/60 bg-white/80 backdrop-blur-md">
       <div class="mx-auto max-w-6xl px-5">
         <nav class="flex h-14 items-center justify-between gap-4">
-          <a href="{{ url_for('index') }}" class="group inline-flex items-center gap-2.5">
+          <a href="{{ url_for('auth.login') if not current_user else url_for('index') }}" class="group inline-flex items-center gap-2.5">
             <span
               class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white"
               aria-hidden="true"
@@ -87,7 +90,7 @@
             <span class="text-[15px] font-bold tracking-tight text-slate-900 font-display">RouteWise</span>
           </a>
 
-          {% set path = request.path %}
+          {% if current_user and not is_auth_shell %}
           <div class="hidden items-center gap-1 md:flex">
             <a
               href="{{ url_for('index') }}"
@@ -118,6 +121,45 @@
               About
             </a>
           </div>
+          {% endif %}
+
+          <div class="hidden items-center gap-2 md:flex">
+            {% if current_user and not is_auth_shell %}
+              <a
+                href="{{ url_for('profile') }}"
+                class="rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 transition hover:text-slate-800 hover:bg-slate-50"
+              >
+                Profile
+              </a>
+              {% if is_admin %}
+                <a
+                  href="{{ url_for('admin.dashboard') }}"
+                  class="rounded-lg px-3 py-1.5 text-[13px] font-semibold text-primary transition hover:bg-primary/10"
+                >
+                  Admin
+                </a>
+              {% endif %}
+              <a
+                href="{{ url_for('auth.logout') }}"
+                class="rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 transition hover:text-slate-800 hover:bg-slate-50"
+              >
+                Logout
+              </a>
+            {% else %}
+              <a
+                href="{{ url_for('auth.login') }}"
+                class="rounded-lg px-3 py-1.5 text-[13px] font-medium transition hover:text-slate-800 hover:bg-slate-50 {% if path == '/login' %}text-slate-900{% else %}text-slate-500{% endif %}"
+              >
+                Login
+              </a>
+              <a
+                href="{{ url_for('auth.register') }}"
+                class="rounded-lg bg-primary px-3 py-1.5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-primary/90"
+              >
+                Register
+              </a>
+            {% endif %}
+          </div>
 
           <details class="relative md:hidden">
             <summary class="list-none">
@@ -129,30 +171,67 @@
             </summary>
 
             <div class="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200/60 bg-white p-1 shadow-soft">
-              <a
-                href="{{ url_for('index') }}"
-                class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
-              >
-                Home
-              </a>
-              <a
-                href="{{ url_for('planner') }}"
-                class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/planner' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
-              >
-                Plan Route
-              </a>
-              <a
-                href="{{ url_for('hubs') }}"
-                class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/hubs' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
-              >
-                Hubs
-              </a>
-              <a
-                href="{{ url_for('about') }}"
-                class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/about' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
-              >
-                About
-              </a>
+              {% if current_user and not is_auth_shell %}
+                <a
+                  href="{{ url_for('index') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
+                >
+                  Home
+                </a>
+                <a
+                  href="{{ url_for('planner') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/planner' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
+                >
+                  Plan Route
+                </a>
+                <a
+                  href="{{ url_for('hubs') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/hubs' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
+                >
+                  Hubs
+                </a>
+                <a
+                  href="{{ url_for('about') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium transition hover:bg-slate-50 {% if path == '/about' %}bg-primary/8 text-primary{% else %}text-slate-600{% endif %}"
+                >
+                  About
+                </a>
+
+                <div class="my-1 h-px bg-slate-100"></div>
+                <a
+                  href="{{ url_for('profile') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-50"
+                >
+                  Profile
+                </a>
+                {% if is_admin %}
+                  <a
+                    href="{{ url_for('admin.dashboard') }}"
+                    class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-primary transition hover:bg-primary/10"
+                  >
+                    Admin
+                  </a>
+                {% endif %}
+                <a
+                  href="{{ url_for('auth.logout') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-50"
+                >
+                  Logout
+                </a>
+              {% else %}
+                <a
+                  href="{{ url_for('auth.login') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-50"
+                >
+                  Login
+                </a>
+                <a
+                  href="{{ url_for('auth.register') }}"
+                  class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-primary transition hover:bg-primary/10"
+                >
+                  Register
+                </a>
+              {% endif %}
             </div>
           </details>
         </nav>
@@ -160,9 +239,27 @@
     </header>
 
     <main id="main-content" class="mx-auto max-w-6xl flex-1 px-5 py-10">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+              {% set styles =
+                'border-slate-200/70 bg-white text-slate-800' if category == 'info' else
+                'border-secondary/20 bg-secondary/10 text-slate-800' if category == 'success' else
+                'border-amber-200 bg-amber-50 text-amber-900' if category == 'warning' else
+                'border-red-200 bg-red-50 text-red-900'
+              %}
+              <div class="rounded-2xl border p-4 text-sm shadow-card {{ styles }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
       {% block content %}{% endblock %}
     </main>
 
+    {% if current_user and not is_auth_shell %}
     <footer class="border-t border-slate-200/60">
       <div class="mx-auto max-w-6xl px-5 py-8">
         <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
@@ -187,6 +284,7 @@
         </div>
       </div>
     </footer>
+    {% endif %}
 
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     {% block scripts %}{% endblock %}

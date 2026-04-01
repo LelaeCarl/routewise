@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, g, redirect, render_template, request, session, url_for
+from sqlalchemy.exc import OperationalError
 
 from backend.comparison import (
     build_leg_labels,
@@ -13,9 +14,104 @@ from backend.data_loader import load_nodes
 from backend.decision import build_decision_context
 from backend.route_engine import RouteEngine
 from backend.sensitivity import build_sensitivity_context
+from backend.extensions import db
+from backend.db_models import RouteAnalysis, User
+from backend.auth_routes import auth_bp
+from backend.admin_routes import admin_bp
+from backend.auth_utils import login_required
 
 
 app = Flask(__name__)
+
+# --- Core config (local dev defaults) ---
+app.secret_key = os.environ.get("ROUTEWISE_SECRET_KEY", "dev-routewise-secret-change-me")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL",
+    "sqlite:///routewise.db",
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+
+# Register route groups
+app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp)
+
+
+@app.cli.command("init-db")
+def init_db_command():
+    """Initialize SQLite tables."""
+    with app.app_context():
+        db.create_all()
+    print("Initialized database tables.")
+
+
+@app.cli.command("seed-admin")
+def seed_admin_command():
+    """Seed a local dev admin account if none exists."""
+    with app.app_context():
+        db.create_all()
+
+        existing = User.query.filter_by(role="admin").first()
+        if existing:
+            print("Admin already exists. Skipping seed.")
+            return
+
+        username = os.environ.get("ROUTEWISE_ADMIN_USERNAME", "carl")
+        email = os.environ.get("ROUTEWISE_ADMIN_EMAIL", "admin@routewise.local")
+        password = os.environ.get("ROUTEWISE_ADMIN_PASSWORD", "carl123")
+
+        user = User(username=username, email=email.lower(), role="admin")
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        print(f"Seeded admin user '{username}' ({email}).")
+
+
+@app.before_request
+def load_current_user():
+    # Make local development resilient if the DB hasn't been initialized yet.
+    try:
+        db.create_all()
+    except OperationalError:
+        # If the DB file can't be created or opened, continue without auth state.
+        g.user = None
+        return
+
+    user_id = session.get("user_id")
+    try:
+        g.user = User.query.get(user_id) if user_id else None
+    except OperationalError:
+        g.user = None
+
+
+@app.before_request
+def enforce_login_gate():
+    """
+    Hard gate: RouteWise behaves as a login-required application.
+    Any unauthenticated request to non-auth endpoints is redirected to /login?next=...
+    """
+    if getattr(g, "user", None):
+        return None
+
+    endpoint = request.endpoint or ""
+    if endpoint == "static":
+        return None
+    if endpoint.startswith("auth."):
+        return None
+
+    nxt = request.full_path or request.path or "/"
+    if nxt.endswith("?"):
+        nxt = nxt[:-1]
+    return redirect(url_for("auth.login", next=nxt))
+
+
+@app.context_processor
+def inject_user():
+    return {
+        "current_user": getattr(g, "user", None),
+        "is_admin": bool(getattr(getattr(g, "user", None), "is_admin", False)),
+    }
 
 def format_cny(value: float) -> str:
     """Format a numeric value as a realistic CNY currency string (no decimals)."""
@@ -195,6 +291,23 @@ def results():
                 if i < len(route["legs"]):
                     route["legs"][i]["label"] = label
 
+            # Persist route analysis for logged-in users
+            if getattr(g, "user", None):
+                path_nodes = route.get("path_nodes", [])
+                path_summary = " → ".join([n.get("name", "") for n in path_nodes if n.get("name")])[:1024]
+                analysis = RouteAnalysis(
+                    user_id=g.user.id,
+                    origin=origin_id,
+                    destination=destination_id,
+                    weight_kg=float(weight_kg),
+                    objective=preference_key,
+                    total_cost=float(route.get("total_cost", 0.0)),
+                    total_time_days=float(route.get("total_time", 0.0)),
+                    path_summary=path_summary or f"{origin_id} → {destination_id}",
+                )
+                db.session.add(analysis)
+                db.session.commit()
+
     return render_template(
         "results.html",
         title="Results",
@@ -226,6 +339,18 @@ def hubs():
 @app.route("/about")
 def about():
     return render_template("about.html", title="About")
+
+
+@app.route("/profile")
+@login_required
+def profile():
+    analyses = (
+        RouteAnalysis.query.filter_by(user_id=g.user.id)
+        .order_by(RouteAnalysis.created_at.desc())
+        .limit(10)
+        .all()
+    )
+    return render_template("profile.html", title="Profile", analyses=analyses)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Inspect edges</h1>
+      <p class="mt-1 text-sm text-slate-600">Read-only corridors with mode and time metadata.</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="rounded-xl bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/60 hover:bg-white">
+      Back to dashboard
+    </a>
+  </div>
+
+  <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-card">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <tr>
+          <th class="px-4 py-3">From</th>
+          <th class="px-4 py-3">To</th>
+          <th class="px-4 py-3">Mode</th>
+          <th class="px-4 py-3">Time (days)</th>
+          <th class="px-4 py-3">Notes</th>
+          <th class="px-4 py-3">ID</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200/70">
+        {% for e in edges %}
+          <tr>
+            <td class="px-4 py-3 text-slate-700">{{ e.from_node }}</td>
+            <td class="px-4 py-3 text-slate-700">{{ e.to_node }}</td>
+            <td class="px-4 py-3 text-slate-700">{{ e.mode }}</td>
+            <td class="px-4 py-3 text-slate-700">{{ e.time | round(2) }}</td>
+            <td class="px-4 py-3 text-slate-700">{{ e.description }}</td>
+            <td class="px-4 py-3 text-slate-500">{{ e.id }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+

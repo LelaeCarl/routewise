@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Profile</h1>
+      <p class="mt-1 text-sm text-slate-600">Account details and recent route analyses.</p>
+    </div>
+    <div class="rounded-2xl bg-white px-4 py-3 ring-1 ring-slate-200/60 shadow-card">
+      <p class="text-sm font-semibold text-slate-900">{{ current_user.username }}</p>
+      <p class="mt-0.5 text-xs text-slate-500">{{ current_user.email }}</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-3 lg:items-start">
+    <section class="lg:col-span-1 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+      <h2 class="text-lg font-bold tracking-tight text-slate-900 font-display">Account</h2>
+      <dl class="mt-4 space-y-3 text-sm">
+        <div class="flex items-center justify-between gap-4">
+          <dt class="text-slate-500">Username</dt>
+          <dd class="font-semibold text-slate-900">{{ current_user.username }}</dd>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <dt class="text-slate-500">Email</dt>
+          <dd class="font-semibold text-slate-900">{{ current_user.email }}</dd>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <dt class="text-slate-500">Joined</dt>
+          <dd class="font-semibold text-slate-900">{{ current_user.created_at.strftime("%Y-%m-%d") }}</dd>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <dt class="text-slate-500">Role</dt>
+          <dd class="font-semibold text-slate-900">{{ current_user.role }}</dd>
+        </div>
+      </dl>
+
+      <div class="mt-6 flex flex-col gap-2">
+        <a
+          href="{{ url_for('planner') }}"
+          class="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90"
+        >
+          New analysis
+        </a>
+        {% if is_admin %}
+          <a
+            href="{{ url_for('admin.dashboard') }}"
+            class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-primary ring-1 ring-primary/20 transition hover:bg-primary/5"
+          >
+            Admin dashboard
+          </a>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="lg:col-span-2 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+      <div class="flex items-end justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold tracking-tight text-slate-900 font-display">Recent analyses</h2>
+          <p class="mt-1 text-sm text-slate-600">Your latest computed routes and outcomes.</p>
+        </div>
+        <span class="rounded-xl bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200/60">
+          {{ analyses|length }} shown
+        </span>
+      </div>
+
+      {% if analyses|length == 0 %}
+        <div class="mt-6 rounded-2xl border border-slate-200/70 bg-slate-50 p-6 text-center">
+          <p class="text-sm font-semibold text-slate-900">No analyses yet</p>
+          <p class="mt-1 text-sm text-slate-600">Run your first route analysis from the planner.</p>
+          <a
+            href="{{ url_for('planner') }}"
+            class="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90"
+          >
+            Go to planner
+          </a>
+        </div>
+      {% else %}
+        <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200/70 bg-white">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+              <tr>
+                <th class="px-4 py-3">Date</th>
+                <th class="px-4 py-3">Route</th>
+                <th class="px-4 py-3">Objective</th>
+                <th class="px-4 py-3">Cost</th>
+                <th class="px-4 py-3">Time</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200/70">
+              {% for a in analyses %}
+                <tr>
+                  <td class="px-4 py-3 text-slate-700">{{ a.created_at.strftime("%Y-%m-%d") }}</td>
+                  <td class="px-4 py-3 text-slate-900 font-semibold">{{ a.path_summary }}</td>
+                  <td class="px-4 py-3 text-slate-700">{{ a.objective }}</td>
+                  <td class="px-4 py-3 text-slate-700">{{ a.total_cost | format_cny }}</td>
+                  <td class="px-4 py-3 text-slate-700">{{ a.total_time_days | format_days }} d</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}
+
