@@ -18,6 +18,8 @@
       rel="stylesheet"
     />
 
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -81,11 +83,13 @@
       <div class="mx-auto max-w-6xl px-5">
         <nav class="flex h-14 items-center justify-between gap-4">
           <a href="{{ url_for('auth.login') if not current_user else url_for('index') }}" class="group inline-flex items-center gap-2.5">
-            <span
-              class="grid h-8 w-8 place-items-center rounded-lg bg-primary text-white"
-              aria-hidden="true"
-            >
-              <span class="text-[11px] font-extrabold tracking-wide font-display">RW</span>
+            <span class="grid h-8 w-8 place-items-center rounded-lg bg-white ring-1 ring-slate-200/70 shadow-sm overflow-hidden">
+              <img
+                src="{{ url_for('static', filename='img/logo.png') }}"
+                alt="RouteWise"
+                class="h-8 w-8 object-contain"
+                loading="eager"
+              />
             </span>
             <span class="text-[15px] font-bold tracking-tight text-slate-900 font-display">RouteWise</span>
           </a>
