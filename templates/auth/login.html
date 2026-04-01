@@ -4,13 +4,15 @@
   <div class="h-[calc(100vh-3.5rem)] overflow-hidden grid lg:grid-cols-[55%_45%]">
     <section class="h-full flex items-center justify-center px-6 sm:px-10">
       <div class="w-full max-w-[420px]">
-        <div class="flex items-center gap-2.5">
-          <img
-            src="{{ url_for('static', filename='img/logo.png') }}"
-            alt="RouteWise"
-            class="h-9 w-9 object-contain"
-            loading="eager"
-          />
+        <div class="flex items-center gap-3">
+          <span class="grid h-12 w-12 place-items-center rounded-2xl bg-white ring-1 ring-slate-200/70 shadow-sm overflow-hidden">
+            <img
+              src="{{ url_for('static', filename='img/logo.png') }}"
+              alt="RouteWise"
+              class="h-10 w-10 object-contain"
+              loading="eager"
+            />
+          </span>
           <span class="text-sm font-semibold text-slate-900 font-display">RouteWise</span>
         </div>
 
@@ -58,12 +60,14 @@
       </div>
     </section>
 
-    <aside class="hidden lg:block h-full overflow-hidden">
-      <img
-        src="{{ url_for('static', filename='images/auth-side.png') }}"
-        alt=""
-        class="h-full w-full object-cover"
-      />
+    <aside class="hidden lg:flex h-full p-6">
+      <div class="h-full w-full overflow-hidden rounded-3xl ring-1 ring-slate-200/60 bg-white">
+        <img
+          src="{{ url_for('static', filename='images/auth-side.png') }}"
+          alt=""
+          class="h-full w-full object-cover"
+        />
+      </div>
     </aside>
   </div>
 {% endblock %}

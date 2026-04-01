@@ -127,8 +127,9 @@
           </div>
           {% endif %}
 
+          {% if not is_auth_shell %}
           <div class="hidden items-center gap-2 md:flex">
-            {% if current_user and not is_auth_shell %}
+            {% if current_user %}
               <a
                 href="{{ url_for('profile') }}"
                 class="rounded-lg px-3 py-1.5 text-[13px] font-medium text-slate-500 transition hover:text-slate-800 hover:bg-slate-50"
@@ -150,21 +151,12 @@
                 Logout
               </a>
             {% else %}
-              <a
-                href="{{ url_for('auth.login') }}"
-                class="rounded-lg px-3 py-1.5 text-[13px] font-medium transition hover:text-slate-800 hover:bg-slate-50 {% if path == '/login' %}text-slate-900{% else %}text-slate-500{% endif %}"
-              >
-                Login
-              </a>
-              <a
-                href="{{ url_for('auth.register') }}"
-                class="rounded-lg bg-primary px-3 py-1.5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-primary/90"
-              >
-                Register
-              </a>
+              <span class="text-[13px] font-medium text-slate-400">Sign in required</span>
             {% endif %}
           </div>
+          {% endif %}
 
+          {% if not is_auth_shell %}
           <details class="relative md:hidden">
             <summary class="list-none">
               <span
@@ -238,6 +230,7 @@
               {% endif %}
             </div>
           </details>
+          {% endif %}
         </nav>
       </div>
     </header>
