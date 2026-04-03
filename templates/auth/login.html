@@ -20,6 +20,9 @@
         <p class="mt-1 text-sm text-slate-600">Sign in to continue to RouteWise.</p>
 
         <form method="POST" class="mt-5 space-y-4">
+          {% if request.args.get('next') %}
+            <input type="hidden" name="next" value="{{ request.args.get('next') }}" />
+          {% endif %}
           <div>
             <label class="text-sm font-semibold text-slate-800" for="email">Email</label>
             <input

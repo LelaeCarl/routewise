@@ -13,6 +13,18 @@ def _clean(s: str) -> str:
     return (s or "").strip()
 
 
+def _safe_next_url(nxt: str) -> str | None:
+    """Allow only same-origin relative paths (blocks open redirects)."""
+    nxt = (nxt or "").strip()
+    if not nxt.startswith("/"):
+        return None
+    if nxt.startswith("//"):
+        return None
+    if "\n" in nxt or "\r" in nxt or "\\" in nxt:
+        return None
+    return nxt
+
+
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -42,10 +54,10 @@ def register():
     session["user_id"] = user.id
     flash("Account created. You’re signed in.", "success")
 
-    nxt = _clean(request.args.get("next", "")) or ""
-    if nxt.startswith("/"):
+    nxt = _safe_next_url(_clean(request.form.get("next") or request.args.get("next", "")))
+    if nxt:
         return redirect(nxt)
-    return redirect(url_for("planner"))
+    return redirect(url_for("home"))
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -64,10 +76,10 @@ def login():
     session["user_id"] = user.id
     flash("Logged in successfully.", "success")
 
-    nxt = _clean(request.args.get("next", "")) or ""
-    if nxt.startswith("/"):
+    nxt = _safe_next_url(_clean(request.form.get("next") or request.args.get("next", "")))
+    if nxt:
         return redirect(nxt)
-    return redirect(url_for("planner"))
+    return redirect(url_for("home"))
 
 
 @auth_bp.route("/logout")

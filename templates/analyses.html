@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="space-y-6">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">History</p>
+        <h1 class="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Recent analyses</h1>
+        <p class="mt-1 max-w-xl text-sm text-slate-600">
+          Every successful route you run is listed here with cost, time, and objective—use <span class="font-medium text-slate-800">Refine</span> to reopen the planner with the same inputs.
+        </p>
+      </div>
+      <a
+        href="{{ url_for('planner') }}"
+        class="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90"
+      >
+        New analysis
+      </a>
+    </div>
+
+    {% if analyses|length == 0 %}
+      <div class="rounded-2xl border border-dashed border-slate-200/80 bg-slate-50/80 p-10 text-center">
+        <p class="text-sm font-semibold text-slate-800">No analyses recorded</p>
+        <p class="mt-1 text-sm text-slate-500">Run a route from the planner; results appear here after each successful computation.</p>
+        <a href="{{ url_for('planner') }}" class="mt-5 inline-flex rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-primary/90">Go to planner</a>
+      </div>
+    {% else %}
+      <div class="overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-card">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-slate-100 bg-slate-50/80 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <tr>
+              <th class="px-4 py-3">When</th>
+              <th class="px-4 py-3">Route</th>
+              <th class="px-4 py-3">Objective</th>
+              <th class="px-4 py-3">Weight</th>
+              <th class="px-4 py-3">Cost</th>
+              <th class="px-4 py-3">Time</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for a in analyses %}
+              <tr class="transition hover:bg-slate-50/60">
+                <td class="whitespace-nowrap px-4 py-3 text-slate-600">{{ a.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                <td class="max-w-[220px] px-4 py-3 font-medium text-slate-900 sm:max-w-xs">
+                  <span class="block truncate" title="{{ a.path_summary }}">{{ a.path_summary }}</span>
+                </td>
+                <td class="px-4 py-3 text-slate-600">{{ preference_labels.get(a.objective, a.objective) }}</td>
+                <td class="px-4 py-3 text-slate-600">{{ a.weight_kg | round(1) }} kg</td>
+                <td class="px-4 py-3 text-slate-800">{{ a.total_cost | format_cny }}</td>
+                <td class="px-4 py-3 text-slate-600">{{ a.total_time_days | format_days }} d</td>
+                <td class="px-4 py-3 text-right">
+                  <a
+                    href="{{ url_for('planner', origin=a.origin, destination=a.destination, weight=a.weight_kg, preference=a.objective) }}"
+                    class="text-xs font-semibold text-primary hover:underline"
+                  >
+                    Refine
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

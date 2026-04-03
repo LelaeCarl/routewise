@@ -19,6 +19,9 @@
       <p class="mt-1 text-sm text-slate-600">Sign up to access RouteWise.</p>
 
       <form method="POST" class="mt-6 space-y-4">
+        {% if request.args.get('next') %}
+          <input type="hidden" name="next" value="{{ request.args.get('next') }}" />
+        {% endif %}
         <div>
           <label class="text-sm font-semibold text-slate-800" for="username">Username</label>
           <input

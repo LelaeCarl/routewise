@@ -1,13 +1,19 @@
 from __future__ import annotations
 
-from flask import Blueprint, render_template
+from flask import Blueprint, flash, g, redirect, render_template, request, url_for
+from sqlalchemy import or_
 
 from backend.auth_utils import admin_required
 from backend.data_loader import load_edges, load_nodes
 from backend.db_models import RouteAnalysis, User
+from backend.extensions import db
 
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+
+def _clean(s: str | None) -> str:
+    return (s or "").strip()
 
 
 @admin_bp.route("/")
@@ -39,6 +45,139 @@ def dashboard():
 def users():
     users = User.query.order_by(User.created_at.desc()).all()
     return render_template("admin/users.html", title="Manage users", users=users)
+
+
+@admin_bp.route("/users/add", methods=["POST"])
+@admin_required
+def users_add():
+    username = _clean(request.form.get("username"))
+    email = _clean(request.form.get("email")).lower()
+    password = request.form.get("password") or ""
+    role = _clean(request.form.get("role", "user"))
+    if role not in ("user", "admin"):
+        role = "user"
+
+    if not username or not email or not password:
+        flash("Username, email, and password are required.", "error")
+        return redirect(url_for("admin.users"))
+    if len(password) < 6:
+        flash("Password must be at least 6 characters.", "error")
+        return redirect(url_for("admin.users"))
+
+    if User.query.filter(or_(User.username == username, User.email == email)).first():
+        flash("An account with that username or email already exists.", "error")
+        return redirect(url_for("admin.users"))
+
+    user = User(username=username, email=email, role=role)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    flash(f"Created user “{username}”.", "success")
+    return redirect(url_for("admin.users"))
+
+
+@admin_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@admin_required
+def users_delete(user_id: int):
+    target = User.query.get_or_404(user_id)
+    if target.id == g.user.id:
+        flash("You cannot delete your own account from here.", "error")
+        return redirect(url_for("admin.users"))
+
+    if target.is_admin and User.query.filter_by(role="admin").count() <= 1:
+        flash("Cannot delete the last admin account.", "error")
+        return redirect(url_for("admin.users"))
+
+    RouteAnalysis.query.filter_by(user_id=target.id).delete(synchronize_session=False)
+    db.session.delete(target)
+    db.session.commit()
+    flash("User deleted.", "success")
+    return redirect(url_for("admin.users"))
+
+
+@admin_bp.route("/users/<int:user_id>/edit", methods=["GET", "POST"])
+@admin_required
+def user_edit(user_id: int):
+    member = User.query.get_or_404(user_id)
+
+    if request.method == "POST":
+        username = _clean(request.form.get("username"))
+        email = _clean(request.form.get("email")).lower()
+        role = _clean(request.form.get("role", "user"))
+        new_password = request.form.get("password") or ""
+
+        if role not in ("user", "admin"):
+            role = "user"
+
+        if not username or not email:
+            flash("Username and email are required.", "error")
+            return (
+                render_template(
+                    "admin/user_edit.html",
+                    title=f"Edit {member.username}",
+                    member=member,
+                    form=request.form,
+                ),
+                400,
+            )
+
+        if member.is_admin and role == "user" and User.query.filter_by(role="admin").count() <= 1:
+            flash("Cannot demote the last admin.", "error")
+            return (
+                render_template(
+                    "admin/user_edit.html",
+                    title=f"Edit {member.username}",
+                    member=member,
+                    form=request.form,
+                ),
+                400,
+            )
+
+        taken = (
+            User.query.filter(
+                User.id != member.id,
+                or_(User.username == username, User.email == email),
+            ).first()
+        )
+        if taken:
+            flash("That username or email is already in use.", "error")
+            return (
+                render_template(
+                    "admin/user_edit.html",
+                    title=f"Edit {member.username}",
+                    member=member,
+                    form=request.form,
+                ),
+                400,
+            )
+
+        if new_password:
+            if len(new_password) < 6:
+                flash("New password must be at least 6 characters.", "error")
+                return (
+                    render_template(
+                        "admin/user_edit.html",
+                        title=f"Edit {member.username}",
+                        member=member,
+                        form=request.form,
+                    ),
+                    400,
+                )
+            member.set_password(new_password)
+
+        member.username = username
+        member.email = email
+        member.role = role
+        db.session.commit()
+        flash("Account updated.", "success")
+        return redirect(url_for("admin.users"))
+
+    return render_template(
+        "admin/user_edit.html",
+        title=f"Edit {member.username}",
+        member=member,
+        form=None,
+    )
 
 
 @admin_bp.route("/analyses")

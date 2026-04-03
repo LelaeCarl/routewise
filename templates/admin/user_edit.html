@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Edit account</h1>
+      <p class="mt-1 text-sm text-slate-600">Update sign-in identity, role, or set a new password for this user.</p>
+    </div>
+    <a href="{{ url_for('admin.users') }}" class="shrink-0 rounded-xl bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/60 hover:bg-white">
+      Back to users
+    </a>
+  </div>
+
+  <form method="post" class="mt-6 max-w-xl space-y-5 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
+    <div>
+      <label class="text-sm font-semibold text-slate-800" for="username">Username</label>
+      <input id="username" name="username" type="text" required autocomplete="off"
+        value="{{ form.get('username', member.username) if form else member.username }}"
+        class="mt-1.5 w-full rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25" />
+    </div>
+    <div>
+      <label class="text-sm font-semibold text-slate-800" for="email">Email</label>
+      <input id="email" name="email" type="email" required autocomplete="off"
+        value="{{ form.get('email', member.email) if form else member.email }}"
+        class="mt-1.5 w-full rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25" />
+    </div>
+    <div>
+      <label class="text-sm font-semibold text-slate-800" for="role">Role</label>
+      {% set r = form.get('role', member.role) if form else member.role %}
+      <select id="role" name="role"
+        class="mt-1.5 w-full rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25">
+        <option value="user" {% if r == 'user' %}selected{% endif %}>User</option>
+        <option value="admin" {% if r == 'admin' %}selected{% endif %}>Admin</option>
+      </select>
+    </div>
+    <div>
+      <label class="text-sm font-semibold text-slate-800" for="password">New password</label>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="6"
+        placeholder="Leave blank to keep current password"
+        class="mt-1.5 w-full rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25" />
+      <p class="mt-1 text-xs text-slate-500">Optional. Minimum 6 characters when set.</p>
+    </div>
+    <div class="flex flex-wrap gap-3 pt-2">
+      <button type="submit" class="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-primary/90">
+        Save changes
+      </button>
+      <a href="{{ url_for('admin.users') }}" class="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-200/70 hover:bg-slate-50">
+        Cancel
+      </a>
+    </div>
+  </form>
+{% endblock %}

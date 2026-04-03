@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask, g, redirect, render_template, request, session, url_for
+from flask import Flask, flash, g, redirect, render_template, request, session, url_for
+from sqlalchemy import or_
 from sqlalchemy.exc import OperationalError
 
 from backend.comparison import (
@@ -106,13 +107,6 @@ def enforce_login_gate():
     return redirect(url_for("auth.login", next=nxt))
 
 
-@app.context_processor
-def inject_user():
-    return {
-        "current_user": getattr(g, "user", None),
-        "is_admin": bool(getattr(getattr(g, "user", None), "is_admin", False)),
-    }
-
 def format_cny(value: float) -> str:
     """Format a numeric value as a realistic CNY currency string (no decimals)."""
     try:
@@ -178,9 +172,48 @@ def _normalize_objective_key(obj_key: str) -> str:
     return LEGACY_OBJECTIVE_TO_OBJECTIVE.get(key, "balanced_tradeoff")
 
 
+@app.context_processor
+def inject_user():
+    return {
+        "current_user": getattr(g, "user", None),
+        "is_admin": bool(getattr(getattr(g, "user", None), "is_admin", False)),
+        "preference_labels": PREFERENCE_LABELS,
+    }
+
+
 @app.route("/")
 def index():
-    return render_template("index.html", title="RouteWise")
+    return redirect(url_for("home"))
+
+
+@app.route("/home")
+@login_required
+def home():
+    user = g.user
+    recent = (
+        RouteAnalysis.query.filter_by(user_id=user.id)
+        .order_by(RouteAnalysis.created_at.desc())
+        .limit(6)
+        .all()
+    )
+    analyses_total = RouteAnalysis.query.filter_by(user_id=user.id).count()
+    return render_template(
+        "home.html",
+        title="Workspace",
+        recent_analyses=recent,
+        analyses_total=analyses_total,
+    )
+
+
+@app.route("/analyses")
+@login_required
+def analyses():
+    items = (
+        RouteAnalysis.query.filter_by(user_id=g.user.id)
+        .order_by(RouteAnalysis.created_at.desc())
+        .all()
+    )
+    return render_template("analyses.html", title="Recent analyses", analyses=items)
 
 
 @app.route("/planner")
@@ -341,13 +374,57 @@ def about():
     return render_template("about.html", title="About")
 
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
+    user = g.user
+    if request.method == "POST":
+        username = (request.form.get("username") or "").strip()
+        email = (request.form.get("email") or "").strip().lower()
+        new_pw = (request.form.get("new_password") or "").strip()
+        new_pw2 = (request.form.get("new_password_confirm") or "").strip()
+        cur_pw = request.form.get("current_password") or ""
+
+        if not username or not email:
+            flash("Username and email are required.", "error")
+        else:
+            taken = (
+                User.query.filter(
+                    User.id != user.id,
+                    or_(User.username == username, User.email == email),
+                ).first()
+            )
+            if taken:
+                flash("That username or email is already taken.", "error")
+            else:
+                want_pw = bool(new_pw or new_pw2)
+                if want_pw:
+                    if not cur_pw:
+                        flash("Enter your current password to set a new password.", "error")
+                    elif not user.check_password(cur_pw):
+                        flash("Current password is incorrect.", "error")
+                    elif len(new_pw) < 6:
+                        flash("New password must be at least 6 characters.", "error")
+                    elif new_pw != new_pw2:
+                        flash("New passwords do not match.", "error")
+                    else:
+                        user.set_password(new_pw)
+                        user.username = username
+                        user.email = email
+                        db.session.commit()
+                        flash("Profile updated.", "success")
+                        return redirect(url_for("profile"))
+                else:
+                    user.username = username
+                    user.email = email
+                    db.session.commit()
+                    flash("Profile updated.", "success")
+                    return redirect(url_for("profile"))
+
     analyses = (
-        RouteAnalysis.query.filter_by(user_id=g.user.id)
+        RouteAnalysis.query.filter_by(user_id=user.id)
         .order_by(RouteAnalysis.created_at.desc())
-        .limit(10)
+        .limit(4)
         .all()
     )
     return render_template("profile.html", title="Profile", analyses=analyses)
