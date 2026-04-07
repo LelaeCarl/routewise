@@ -17,19 +17,43 @@
   },
   {
     "id": "ningbo_port",
-    "name": "Ningbo Port",
+    "name": "Ningbo-Zhoushan Port",
     "country": "China",
     "city": "Ningbo",
     "type": "port",
-    "description": "Hangzhou Bay port complex used for bulk movement into multi-leg ocean lanes."
+    "description": "Hangzhou Bay mega-port complex used for bulk movement into multi-leg ocean lanes."
+  },
+  {
+    "id": "qingdao_port",
+    "name": "Qingdao Port",
+    "country": "China",
+    "city": "Qingdao",
+    "type": "port",
+    "description": "North China sea gateway for export loads entering the Indian Ocean corridor via Red Sea transshipment."
+  },
+  {
+    "id": "nansha_port",
+    "name": "Nansha Port",
+    "country": "China",
+    "city": "Guangzhou",
+    "type": "port",
+    "description": "Pearl River deep-water port supporting southern China exports alongside Shenzhen and air feeds via Guangzhou."
+  },
+  {
+    "id": "shanghai_pudong_airport",
+    "name": "Shanghai Pudong International Airport",
+    "country": "China",
+    "city": "Shanghai",
+    "type": "airport",
+    "description": "Major East China air cargo hub paired with Shanghai Port for time-critical China–Africa flows."
   },
   {
     "id": "guangzhou_airport",
-    "name": "Guangzhou Airport",
+    "name": "Guangzhou Baiyun International Airport",
     "country": "China",
     "city": "Guangzhou",
     "type": "airport",
-    "description": "Air cargo gateway for high-priority shipments; supports quick handoffs to inland logistics."
+    "description": "Air cargo gateway for high-priority shipments; supports quick handoffs to inland logistics and Nansha."
   },
   {
     "id": "beijing_airport",
@@ -49,11 +73,11 @@
   },
   {
     "id": "nairobi_airport",
-    "name": "Nairobi Airport",
+    "name": "Jomo Kenyatta International Airport",
     "country": "Kenya",
     "city": "Nairobi",
     "type": "airport",
-    "description": "Kenya’s air gateway for inbound cargo; typically used to accelerate last-mile distribution to ICDs."
+    "description": "Kenya’s primary international air gateway (JKIA) for inbound cargo; accelerates last-mile distribution to ICDs."
   },
   {
     "id": "nairobi_icd",
@@ -64,12 +88,36 @@
     "description": "Inland Container Depot for customs handling, cross-dock transfers, and distribution into Kenya’s regional markets."
   },
   {
+    "id": "naivasha_icd",
+    "name": "Naivasha ICD",
+    "country": "Kenya",
+    "city": "Naivasha",
+    "type": "icd",
+    "description": "Inland container depot on the Kenyan corridor linking coastal rail intake to Nairobi and western distribution."
+  },
+  {
     "id": "kisumu_hub",
     "name": "Kisumu Hub",
     "country": "Kenya",
     "city": "Kisumu",
     "type": "rail_hub",
     "description": "Regional inland hub connected to Kenya’s rail corridor and used for downstream consolidation."
+  },
+  {
+    "id": "eldoret_hub",
+    "name": "Eldoret Hub",
+    "country": "Kenya",
+    "city": "Eldoret",
+    "type": "road_hub",
+    "description": "Highland logistics consolidation point for northern and western Kenya road distribution."
+  },
+  {
+    "id": "lamu_port",
+    "name": "Lamu Port",
+    "country": "Kenya",
+    "city": "Lamu",
+    "type": "port",
+    "description": "Northern Kenyan deep-water gateway; supports alternate Indian Ocean entry and coastal feed to Mombasa."
   },
   {
     "id": "djibouti_port",

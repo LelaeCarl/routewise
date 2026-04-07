@@ -141,7 +141,7 @@
     "cost_per_kg": 3.2,
     "minimum_charge": 1100,
     "time": 3.0,
-    "description": "Prototype road lane: Mombasa → Nairobi Airport (for air-accelerated handoffs)."
+    "description": "Prototype road lane: Mombasa → Jomo Kenyatta International Airport (for air-accelerated handoffs)."
   },
   {
     "id": "e_road_mombasa_nairobi_airport_rev",
@@ -152,7 +152,7 @@
     "cost_per_kg": 3.2,
     "minimum_charge": 1000,
     "time": 3.0,
-    "description": "Prototype road lane: Nairobi Airport → Mombasa."
+    "description": "Prototype road lane: Jomo Kenyatta International Airport → Mombasa."
   },
   {
     "id": "e_road_nairobi_airport_nairobi_icd_fwd",
@@ -163,7 +163,7 @@
     "cost_per_kg": 2.0,
     "minimum_charge": 1000,
     "time": 1.0,
-    "description": "Prototype last-mile road: Nairobi Airport → Nairobi ICD."
+    "description": "Prototype last-mile road: Jomo Kenyatta International Airport → Nairobi ICD."
   },
   {
     "id": "e_road_nairobi_airport_nairobi_icd_rev",
@@ -174,7 +174,7 @@
     "cost_per_kg": 2.0,
     "minimum_charge": 1000,
     "time": 1.0,
-    "description": "Prototype last-mile road: Nairobi ICD → Nairobi Airport."
+    "description": "Prototype last-mile road: Nairobi ICD → Jomo Kenyatta International Airport."
   },
 
   {
@@ -186,7 +186,7 @@
     "cost_per_kg": 2.5,
     "minimum_charge": 1000,
     "time": 1.2,
-    "description": "Prototype road transfer: Shenzhen Port → Guangzhou Airport (inland consolidation for air)."
+    "description": "Prototype road transfer: Shenzhen Port → Guangzhou Baiyun International Airport (inland consolidation for air)."
   },
   {
     "id": "e_road_guangzhou_airport_shenzhen_port_rev",
@@ -197,7 +197,7 @@
     "cost_per_kg": 2.5,
     "minimum_charge": 1000,
     "time": 1.2,
-    "description": "Prototype road transfer: Guangzhou Airport → Shenzhen Port (return transfer)."
+    "description": "Prototype road transfer: Guangzhou Baiyun International Airport → Shenzhen Port (return transfer)."
   },
 
   {
@@ -276,7 +276,7 @@
     "cost_per_kg": 45,
     "minimum_charge": 2000,
     "time": 3.7,
-    "description": "Prototype air leg: Guangzhou Airport → Dubai Air Hub."
+    "description": "Prototype air leg: Guangzhou Baiyun International Airport → Dubai Air Hub."
   },
   {
     "id": "e_air_guangzhou_dubai_rev",
@@ -287,7 +287,7 @@
     "cost_per_kg": 45,
     "minimum_charge": 1900,
     "time": 3.7,
-    "description": "Prototype air leg: Dubai Air Hub → Guangzhou Airport."
+    "description": "Prototype air leg: Dubai Air Hub → Guangzhou Baiyun International Airport."
   },
   {
     "id": "e_air_dubai_nairobi_fwd",
@@ -298,7 +298,7 @@
     "cost_per_kg": 28,
     "minimum_charge": 1800,
     "time": 3.3,
-    "description": "Prototype air leg: Dubai Air Hub → Nairobi Airport."
+    "description": "Prototype air leg: Dubai Air Hub → Jomo Kenyatta International Airport."
   },
   {
     "id": "e_air_dubai_nairobi_rev",
@@ -309,7 +309,7 @@
     "cost_per_kg": 28,
     "minimum_charge": 1700,
     "time": 3.3,
-    "description": "Prototype air leg: Nairobi Airport → Dubai Air Hub."
+    "description": "Prototype air leg: Jomo Kenyatta International Airport → Dubai Air Hub."
   },
   {
     "id": "e_air_beijing_nairobi_direct_fwd",
@@ -320,7 +320,7 @@
     "cost_per_kg": 55,
     "minimum_charge": 2500,
     "time": 6.0,
-    "description": "Prototype direct air route: Beijing Airport → Nairobi Airport."
+    "description": "Prototype direct air route: Beijing Airport → Jomo Kenyatta International Airport."
   },
   {
     "id": "e_air_beijing_nairobi_direct_rev",
@@ -331,7 +331,7 @@
     "cost_per_kg": 55,
     "minimum_charge": 2400,
     "time": 6.0,
-    "description": "Prototype direct air route: Nairobi Airport → Beijing Airport."
+    "description": "Prototype direct air route: Jomo Kenyatta International Airport → Beijing Airport."
   },
   {
     "id": "e_air_guangzhou_nairobi_direct_fwd",
@@ -342,7 +342,7 @@
     "cost_per_kg": 52,
     "minimum_charge": 2200,
     "time": 6.2,
-    "description": "Prototype direct air route: Guangzhou Airport → Nairobi Airport."
+    "description": "Prototype direct air route: Guangzhou Baiyun International Airport → Jomo Kenyatta International Airport."
   },
   {
     "id": "e_air_guangzhou_nairobi_direct_rev",
@@ -353,6 +353,271 @@
     "cost_per_kg": 52,
     "minimum_charge": 2100,
     "time": 6.2,
-    "description": "Prototype direct air route: Nairobi Airport → Guangzhou Airport."
+    "description": "Prototype direct air route: Jomo Kenyatta International Airport → Guangzhou Baiyun International Airport."
+  },
+
+  {
+    "id": "e_road_shanghai_port_pudong_airport_fwd",
+    "from": "shanghai_port",
+    "to": "shanghai_pudong_airport",
+    "mode": "road",
+    "base_cost": 750,
+    "cost_per_kg": 2.0,
+    "minimum_charge": 900,
+    "time": 0.4,
+    "description": "Prototype metro transfer: Shanghai Port → Shanghai Pudong International Airport."
+  },
+  {
+    "id": "e_road_shanghai_pudong_airport_port_rev",
+    "from": "shanghai_pudong_airport",
+    "to": "shanghai_port",
+    "mode": "road",
+    "base_cost": 720,
+    "cost_per_kg": 2.0,
+    "minimum_charge": 900,
+    "time": 0.4,
+    "description": "Prototype metro transfer: Shanghai Pudong International Airport → Shanghai Port."
+  },
+  {
+    "id": "e_air_pudong_dubai_fwd",
+    "from": "shanghai_pudong_airport",
+    "to": "dubai_air_hub",
+    "mode": "air",
+    "base_cost": 1650,
+    "cost_per_kg": 46,
+    "minimum_charge": 2100,
+    "time": 3.75,
+    "description": "Prototype air leg: Shanghai Pudong International Airport → Dubai Air Hub."
+  },
+  {
+    "id": "e_air_dubai_pudong_rev",
+    "from": "dubai_air_hub",
+    "to": "shanghai_pudong_airport",
+    "mode": "air",
+    "base_cost": 1550,
+    "cost_per_kg": 46,
+    "minimum_charge": 2000,
+    "time": 3.75,
+    "description": "Prototype air leg: Dubai Air Hub → Shanghai Pudong International Airport."
+  },
+  {
+    "id": "e_air_pudong_nairobi_direct_fwd",
+    "from": "shanghai_pudong_airport",
+    "to": "nairobi_airport",
+    "mode": "air",
+    "base_cost": 1950,
+    "cost_per_kg": 54,
+    "minimum_charge": 2400,
+    "time": 5.9,
+    "description": "Prototype direct air route: Shanghai Pudong International Airport → Jomo Kenyatta International Airport."
+  },
+  {
+    "id": "e_air_nairobi_pudong_direct_rev",
+    "from": "nairobi_airport",
+    "to": "shanghai_pudong_airport",
+    "mode": "air",
+    "base_cost": 1850,
+    "cost_per_kg": 54,
+    "minimum_charge": 2300,
+    "time": 5.9,
+    "description": "Prototype direct air route: Jomo Kenyatta International Airport → Shanghai Pudong International Airport."
+  },
+  {
+    "id": "e_sea_qingdao_djibouti_fwd",
+    "from": "qingdao_port",
+    "to": "djibouti_port",
+    "mode": "sea",
+    "base_cost": 6200,
+    "cost_per_kg": 0.85,
+    "minimum_charge": 4200,
+    "time": 13.2,
+    "description": "Prototype ocean lane: Qingdao → Djibouti."
+  },
+  {
+    "id": "e_sea_djibouti_qingdao_rev",
+    "from": "djibouti_port",
+    "to": "qingdao_port",
+    "mode": "sea",
+    "base_cost": 6000,
+    "cost_per_kg": 0.85,
+    "minimum_charge": 4000,
+    "time": 13.2,
+    "description": "Prototype ocean lane: Djibouti → Qingdao."
+  },
+  {
+    "id": "e_sea_nansha_djibouti_fwd",
+    "from": "nansha_port",
+    "to": "djibouti_port",
+    "mode": "sea",
+    "base_cost": 5500,
+    "cost_per_kg": 0.78,
+    "minimum_charge": 3700,
+    "time": 12.9,
+    "description": "Prototype ocean lane: Nansha → Djibouti."
+  },
+  {
+    "id": "e_sea_djibouti_nansha_rev",
+    "from": "djibouti_port",
+    "to": "nansha_port",
+    "mode": "sea",
+    "base_cost": 5300,
+    "cost_per_kg": 0.78,
+    "minimum_charge": 3500,
+    "time": 12.9,
+    "description": "Prototype ocean lane: Djibouti → Nansha."
+  },
+  {
+    "id": "e_road_nansha_guangzhou_airport_fwd",
+    "from": "nansha_port",
+    "to": "guangzhou_airport",
+    "mode": "road",
+    "base_cost": 700,
+    "cost_per_kg": 2.2,
+    "minimum_charge": 950,
+    "time": 0.9,
+    "description": "Prototype road transfer: Nansha Port → Guangzhou Baiyun International Airport."
+  },
+  {
+    "id": "e_road_guangzhou_airport_nansha_rev",
+    "from": "guangzhou_airport",
+    "to": "nansha_port",
+    "mode": "road",
+    "base_cost": 680,
+    "cost_per_kg": 2.2,
+    "minimum_charge": 950,
+    "time": 0.9,
+    "description": "Prototype road transfer: Guangzhou Baiyun International Airport → Nansha Port."
+  },
+  {
+    "id": "e_sea_djibouti_lamu_fwd",
+    "from": "djibouti_port",
+    "to": "lamu_port",
+    "mode": "sea",
+    "base_cost": 4200,
+    "cost_per_kg": 0.62,
+    "minimum_charge": 3100,
+    "time": 4.8,
+    "description": "Prototype ocean lane: Djibouti → Lamu (regional leg)."
+  },
+  {
+    "id": "e_sea_lamu_djibouti_rev",
+    "from": "lamu_port",
+    "to": "djibouti_port",
+    "mode": "sea",
+    "base_cost": 4400,
+    "cost_per_kg": 0.62,
+    "minimum_charge": 3300,
+    "time": 4.8,
+    "description": "Prototype ocean lane: Lamu → Djibouti."
+  },
+  {
+    "id": "e_sea_mombasa_lamu_fwd",
+    "from": "mombasa_port",
+    "to": "lamu_port",
+    "mode": "sea",
+    "base_cost": 1100,
+    "cost_per_kg": 0.45,
+    "minimum_charge": 900,
+    "time": 1.1,
+    "description": "Prototype coastal feeder: Mombasa Port → Lamu Port."
+  },
+  {
+    "id": "e_sea_lamu_mombasa_rev",
+    "from": "lamu_port",
+    "to": "mombasa_port",
+    "mode": "sea",
+    "base_cost": 1050,
+    "cost_per_kg": 0.45,
+    "minimum_charge": 900,
+    "time": 1.1,
+    "description": "Prototype coastal feeder: Lamu Port → Mombasa Port."
+  },
+  {
+    "id": "e_rail_mombasa_naivasha_fwd",
+    "from": "mombasa_port",
+    "to": "naivasha_icd",
+    "mode": "rail",
+    "base_cost": 2200,
+    "cost_per_kg": 2.6,
+    "minimum_charge": 2100,
+    "time": 2.4,
+    "description": "Prototype rail intake: Mombasa Port → Naivasha ICD."
+  },
+  {
+    "id": "e_rail_naivasha_mombasa_rev",
+    "from": "naivasha_icd",
+    "to": "mombasa_port",
+    "mode": "rail",
+    "base_cost": 2100,
+    "cost_per_kg": 2.6,
+    "minimum_charge": 2000,
+    "time": 2.4,
+    "description": "Prototype rail intake: Naivasha ICD → Mombasa Port."
+  },
+  {
+    "id": "e_rail_naivasha_nairobi_icd_fwd",
+    "from": "naivasha_icd",
+    "to": "nairobi_icd",
+    "mode": "rail",
+    "base_cost": 950,
+    "cost_per_kg": 2.2,
+    "minimum_charge": 1100,
+    "time": 1.1,
+    "description": "Prototype rail leg: Naivasha ICD → Nairobi ICD."
+  },
+  {
+    "id": "e_rail_nairobi_icd_naivasha_rev",
+    "from": "nairobi_icd",
+    "to": "naivasha_icd",
+    "mode": "rail",
+    "base_cost": 900,
+    "cost_per_kg": 2.2,
+    "minimum_charge": 1050,
+    "time": 1.1,
+    "description": "Prototype rail leg: Nairobi ICD → Naivasha ICD."
+  },
+  {
+    "id": "e_road_nairobi_icd_eldoret_fwd",
+    "from": "nairobi_icd",
+    "to": "eldoret_hub",
+    "mode": "road",
+    "base_cost": 1400,
+    "cost_per_kg": 3.2,
+    "minimum_charge": 1500,
+    "time": 2.6,
+    "description": "Prototype road lane: Nairobi ICD → Eldoret Hub."
+  },
+  {
+    "id": "e_road_eldoret_nairobi_icd_rev",
+    "from": "eldoret_hub",
+    "to": "nairobi_icd",
+    "mode": "road",
+    "base_cost": 1350,
+    "cost_per_kg": 3.2,
+    "minimum_charge": 1450,
+    "time": 2.6,
+    "description": "Prototype road lane: Eldoret Hub → Nairobi ICD."
+  },
+  {
+    "id": "e_road_eldoret_kisumu_fwd",
+    "from": "eldoret_hub",
+    "to": "kisumu_hub",
+    "mode": "road",
+    "base_cost": 800,
+    "cost_per_kg": 2.8,
+    "minimum_charge": 1000,
+    "time": 1.2,
+    "description": "Prototype road lane: Eldoret Hub → Kisumu Hub."
+  },
+  {
+    "id": "e_road_kisumu_eldoret_rev",
+    "from": "kisumu_hub",
+    "to": "eldoret_hub",
+    "mode": "road",
+    "base_cost": 780,
+    "cost_per_kg": 2.8,
+    "minimum_charge": 980,
+    "time": 1.2,
+    "description": "Prototype road lane: Kisumu Hub → Eldoret Hub."
   }
 ]
