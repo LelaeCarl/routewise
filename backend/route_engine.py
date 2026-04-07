@@ -35,6 +35,35 @@ class RouteEngine:
 
     DEFAULT_WEIGHT_KG = 500.0
 
+    @staticmethod
+    def compute_chargeable_weight_kg(
+        actual_weight_kg: float,
+        *,
+        length_cm: float | None = None,
+        width_cm: float | None = None,
+        height_cm: float | None = None,
+    ) -> float:
+        """
+        Chargeable weight (kg) with optional volumetric weight (cm).
+
+        If all dimensions are provided:
+          volumetric_weight = (L * W * H) / 6000
+          chargeable_weight = max(actual_weight, volumetric_weight)
+        """
+        actual = max(float(actual_weight_kg or 0.0), 0.1)
+
+        if length_cm is None or width_cm is None or height_cm is None:
+            return actual
+
+        l = float(length_cm)
+        w = float(width_cm)
+        h = float(height_cm)
+        if l <= 0 or w <= 0 or h <= 0:
+            return actual
+
+        volumetric = (l * w * h) / 6000.0
+        return max(actual, volumetric)
+
     def __init__(self) -> None:
         nodes, edges = load_network()
         self._node_map: Dict[str, Node] = {n.id: n for n in nodes}
@@ -47,17 +76,62 @@ class RouteEngine:
         self._max_time = max((e.time for e in edges), default=0.0) or 1.0
 
     @staticmethod
-    def compute_edge_cost(edge, weight_kg: float) -> float:
+    def compute_edge_cost(
+        edge,
+        weight_kg: float,
+        *,
+        length_cm: float | None = None,
+        width_cm: float | None = None,
+        height_cm: float | None = None,
+    ) -> float:
         """Compute the shipment cost for an edge at a given weight."""
-        return max(edge.base_cost + weight_kg * edge.cost_per_kg, edge.minimum_charge)
+        w = float(weight_kg or 0.0)
+        chargeable = RouteEngine.compute_chargeable_weight_kg(
+            w,
+            length_cm=length_cm,
+            width_cm=width_cm,
+            height_cm=height_cm,
+        )
 
-    def _edge_weight(self, edge, objective_key: str, weight_kg: float, max_cost: float) -> float:
+        if getattr(edge, "mode", None) == "air":
+            cost = chargeable * float(edge.cost_per_kg)
+            return max(cost, float(edge.minimum_charge))
+
+        cost = float(edge.base_cost) + (w * float(edge.cost_per_kg))
+        return max(cost, float(edge.minimum_charge))
+
+    def _edge_weight(
+        self,
+        edge,
+        objective_key: str,
+        weight_kg: float,
+        max_cost: float,
+        *,
+        length_cm: float | None = None,
+        width_cm: float | None = None,
+        height_cm: float | None = None,
+    ) -> float:
         if objective_key == "lowest_cost":
-            return self.compute_edge_cost(edge, weight_kg)
+            return self.compute_edge_cost(
+                edge,
+                weight_kg,
+                length_cm=length_cm,
+                width_cm=width_cm,
+                height_cm=height_cm,
+            )
         if objective_key == "fastest_delivery":
             return edge.time
         if objective_key == "balanced_tradeoff":
-            normalized_cost = self.compute_edge_cost(edge, weight_kg) / max_cost
+            normalized_cost = (
+                self.compute_edge_cost(
+                    edge,
+                    weight_kg,
+                    length_cm=length_cm,
+                    width_cm=width_cm,
+                    height_cm=height_cm,
+                )
+                / max_cost
+            )
             normalized_time = edge.time / self._max_time
             return 0.5 * normalized_cost + 0.5 * normalized_time
         raise ValueError(f"Unknown objective key: {objective_key}")
@@ -68,6 +142,10 @@ class RouteEngine:
         destination_id: str,
         objective_key: str,
         weight_kg: float | None = None,
+        *,
+        length_cm: float | None = None,
+        width_cm: float | None = None,
+        height_cm: float | None = None,
     ) -> dict:
         wkg = weight_kg if weight_kg is not None else self.DEFAULT_WEIGHT_KG
 
@@ -97,7 +175,17 @@ class RouteEngine:
             }
 
         max_cost = max(
-            (self.compute_edge_cost(e, wkg) for e in self._edges), default=1.0
+            (
+                self.compute_edge_cost(
+                    e,
+                    wkg,
+                    length_cm=length_cm,
+                    width_cm=width_cm,
+                    height_cm=height_cm,
+                )
+                for e in self._edges
+            ),
+            default=1.0,
         ) or 1.0
 
         dist: Dict[str, float] = {origin_id: 0.0}
@@ -116,7 +204,15 @@ class RouteEngine:
 
             for edge in self._adj.get(u, []):
                 v = edge.to_node
-                w = self._edge_weight(edge, objective_key, wkg, max_cost)
+                w = self._edge_weight(
+                    edge,
+                    objective_key,
+                    wkg,
+                    max_cost,
+                    length_cm=length_cm,
+                    width_cm=width_cm,
+                    height_cm=height_cm,
+                )
                 new_w = current_weight + w
                 if new_w < dist.get(v, float("inf")):
                     dist[v] = new_w
@@ -149,7 +245,16 @@ class RouteEngine:
         node_ids = list(reversed(node_ids_rev))
         legs = list(reversed(legs_rev))
 
-        total_cost = sum(self.compute_edge_cost(e, wkg) for e in legs)
+        total_cost = sum(
+            self.compute_edge_cost(
+                e,
+                wkg,
+                length_cm=length_cm,
+                width_cm=width_cm,
+                height_cm=height_cm,
+            )
+            for e in legs
+        )
         total_time = sum(e.time for e in legs)
 
         modes_used: List[str] = []
@@ -169,7 +274,13 @@ class RouteEngine:
                 "to_id": l.to_node,
                 "mode": MODE_LABELS.get(l.mode, l.mode),
                 "mode_key": l.mode,
-                "cost": self.compute_edge_cost(l, wkg),
+                "cost": self.compute_edge_cost(
+                    l,
+                    wkg,
+                    length_cm=length_cm,
+                    width_cm=width_cm,
+                    height_cm=height_cm,
+                ),
                 "time": l.time,
                 "description": getattr(l, "description", "") or "",
             }
@@ -194,6 +305,20 @@ class RouteEngine:
             "objective_key": objective_key,
             "origin": asdict(origin),
             "destination": asdict(destination),
+            "shipment": {
+                "actual_weight_kg": float(wkg),
+                "length_cm": float(length_cm) if length_cm is not None else None,
+                "width_cm": float(width_cm) if width_cm is not None else None,
+                "height_cm": float(height_cm) if height_cm is not None else None,
+                "chargeable_weight_kg": float(
+                    self.compute_chargeable_weight_kg(
+                        wkg,
+                        length_cm=length_cm,
+                        width_cm=width_cm,
+                        height_cm=height_cm,
+                    )
+                ),
+            },
             "path_node_ids": node_ids,
             "path_nodes": path_nodes,
             "legs": leg_dicts,

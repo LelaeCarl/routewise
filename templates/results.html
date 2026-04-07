@@ -41,10 +41,22 @@
           <div class="flex justify-between gap-3"><span class="text-slate-500">Origin</span><span class="font-medium text-slate-900">{{ origin_name }}</span></div>
           <div class="flex justify-between gap-3"><span class="text-slate-500">Destination</span><span class="font-medium text-slate-900">{{ destination_name }}</span></div>
           {% if weight %}<div class="flex justify-between gap-3"><span class="text-slate-500">Weight</span><span class="font-mono text-sm font-medium text-slate-900">{{ weight }} kg</span></div>{% endif %}
+          {% if length_cm and width_cm and height_cm %}
+            <div class="flex justify-between gap-3">
+              <span class="text-slate-500">Dims</span>
+              <span class="font-mono text-sm font-medium text-slate-900">{{ length_cm }}×{{ width_cm }}×{{ height_cm }} cm</span>
+            </div>
+          {% endif %}
+          {% if route.shipment is defined and route.shipment.chargeable_weight_kg is defined %}
+            <div class="flex justify-between gap-3">
+              <span class="text-slate-500">Chargeable</span>
+              <span class="font-mono text-sm font-medium text-slate-900">{{ route.shipment.chargeable_weight_kg | round(2) }} kg</span>
+            </div>
+          {% endif %}
         </div>
         <div class="border-t border-slate-300 px-4 py-3">
           <a
-            href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=preference_key) }}"
+            href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=preference_key) }}"
             class="inline-flex w-full items-center justify-center rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-panel"
           >
             Edit inputs
@@ -310,7 +322,7 @@
 
                 {% if alt.success and not is_current %}
                   <a
-                    href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=obj_key) }}"
+                    href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=obj_key) }}"
                     class="mt-2 inline-flex w-full items-center justify-center rounded-sm border border-primary bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-slate-900"
                   >
                     View analysis →
@@ -327,7 +339,7 @@
       <h1 class="text-xl font-semibold tracking-tight text-slate-900">Route analysis unavailable</h1>
       <p class="mt-2 text-sm text-slate-600">{{ route.error }}</p>
       <a
-        href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, preference=preference_key) }}"
+        href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=preference_key) }}"
         class="mt-4 inline-flex items-center justify-center rounded-sm border border-primary bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900"
       >
         Adjust inputs →

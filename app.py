@@ -290,6 +290,9 @@ def results():
     origin_id = request.args.get("origin", "").strip()
     destination_id = request.args.get("destination", "").strip()
     weight = request.args.get("weight", "").strip()
+    length_cm_raw = request.args.get("length_cm", "").strip()
+    width_cm_raw = request.args.get("width_cm", "").strip()
+    height_cm_raw = request.args.get("height_cm", "").strip()
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
     preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced trade-off")
@@ -305,6 +308,21 @@ def results():
         weight_kg = 500.0
     weight_kg = max(0.1, weight_kg)
 
+    def _parse_dim(value: str) -> float | None:
+        if not value:
+            return None
+        try:
+            num = float(value)
+        except (ValueError, TypeError):
+            return None
+        if num <= 0:
+            return None
+        return num
+
+    length_cm = _parse_dim(length_cm_raw)
+    width_cm = _parse_dim(width_cm_raw)
+    height_cm = _parse_dim(height_cm_raw)
+
     engine = RouteEngine()
     route = None
     alternatives = {}
@@ -317,9 +335,25 @@ def results():
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
     else:
-        route = engine.compute_route(origin_id, destination_id, preference_key, weight_kg)
+        route = engine.compute_route(
+            origin_id,
+            destination_id,
+            preference_key,
+            weight_kg,
+            length_cm=length_cm,
+            width_cm=width_cm,
+            height_cm=height_cm,
+        )
         for obj_key in OBJECTIVE_KEYS:
-            alternatives[obj_key] = engine.compute_route(origin_id, destination_id, obj_key, weight_kg)
+            alternatives[obj_key] = engine.compute_route(
+                origin_id,
+                destination_id,
+                obj_key,
+                weight_kg,
+                length_cm=length_cm,
+                width_cm=width_cm,
+                height_cm=height_cm,
+            )
 
         if route.get("success"):
             route["route_rationale"] = build_rationale(route, preference_key, alternatives)
@@ -330,6 +364,9 @@ def results():
             sensitivity = build_sensitivity_context(
                 origin_id, destination_id, preference_key,
                 weight_kg, route, engine,
+                length_cm=length_cm,
+                width_cm=width_cm,
+                height_cm=height_cm,
             )
 
             leg_labels = build_leg_labels(route)
@@ -365,6 +402,9 @@ def results():
         origin_name=origin_name,
         destination_name=destination_name,
         weight=weight,
+        length_cm=length_cm_raw,
+        width_cm=width_cm_raw,
+        height_cm=height_cm_raw,
         preference=preference_label,
         route=route,
         alternatives=enriched_alts if enriched_alts else alternatives,

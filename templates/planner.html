@@ -79,6 +79,55 @@
               </div>
 
               <div class="hidden sm:block"></div>
+
+              <div class="sm:col-span-2">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Optional dimensions (cm)</p>
+                <p class="mt-0.5 text-[11px] text-slate-500">Used for air chargeable weight via volumetric weight \(L×W×H / 6000\).</p>
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600" for="length_cm">Length (cm)</label>
+                <input
+                  id="length_cm"
+                  name="length_cm"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value="{{ request.args.get('length_cm','') }}"
+                  placeholder="e.g., 60"
+                  class="mt-1.5 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-none focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
+                />
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600" for="width_cm">Width (cm)</label>
+                <input
+                  id="width_cm"
+                  name="width_cm"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value="{{ request.args.get('width_cm','') }}"
+                  placeholder="e.g., 40"
+                  class="mt-1.5 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-none focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
+                />
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600" for="height_cm">Height (cm)</label>
+                <input
+                  id="height_cm"
+                  name="height_cm"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value="{{ request.args.get('height_cm','') }}"
+                  placeholder="e.g., 50"
+                  class="mt-1.5 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-none focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
+                />
+              </div>
+
+              <div class="hidden sm:block"></div>
             </div>
           </div>
 
