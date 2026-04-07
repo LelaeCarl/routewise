@@ -81,3 +81,31 @@ To build a practical and intelligent system that simplifies logistics decision-m
 ## 📌 Status
 
 🚧 In Development (Graduation Project)
+
+---
+
+## 🔐 Local development login
+
+Default dev admin (used by `flask seed-admin` when `ROUTEWISE_*` env vars are unset):
+
+| Field | Value |
+|-------|--------|
+| Email | `admin@routewise.local` |
+| Password | `carl123` |
+
+Initialize the database and create that account:
+
+```bash
+flask --app app init-db
+flask --app app seed-admin
+```
+
+If you see **Invalid email or password** but you expect the defaults above, an older database may have a different password. Reset the dev admin to match env (or defaults):
+
+```bash
+flask --app app seed-admin --force
+```
+
+Optional environment variables: `ROUTEWISE_ADMIN_USERNAME` (default `carl`), `ROUTEWISE_ADMIN_EMAIL`, `ROUTEWISE_ADMIN_PASSWORD`.
+
+The app defaults to `sqlite:///routewise.db` (database file next to where you run the app). If you set `DATABASE_URL` (for example to another path on a host), run `flask seed-admin --force` with that same `DATABASE_URL` so you reset the account your running app actually uses.

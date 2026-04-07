@@ -1,5 +1,6 @@
 import os
 
+import click
 from flask import Flask, flash, g, redirect, render_template, request, session, url_for
 from sqlalchemy import or_
 from sqlalchemy.exc import OperationalError
@@ -48,21 +49,33 @@ def init_db_command():
 
 
 @app.cli.command("seed-admin")
-def seed_admin_command():
-    """Seed a local dev admin account if none exists."""
+@click.option(
+    "--force",
+    is_flag=True,
+    help="If an admin already exists, reset username, email, and password from env (or dev defaults).",
+)
+def seed_admin_command(force: bool) -> None:
+    """Seed a local dev admin account, or reset it with --force when login no longer works."""
     with app.app_context():
         db.create_all()
 
-        existing = User.query.filter_by(role="admin").first()
-        if existing:
-            print("Admin already exists. Skipping seed.")
-            return
-
         username = os.environ.get("ROUTEWISE_ADMIN_USERNAME", "carl")
-        email = os.environ.get("ROUTEWISE_ADMIN_EMAIL", "admin@routewise.local")
+        email = os.environ.get("ROUTEWISE_ADMIN_EMAIL", "admin@routewise.local").lower()
         password = os.environ.get("ROUTEWISE_ADMIN_PASSWORD", "carl123")
 
-        user = User(username=username, email=email.lower(), role="admin")
+        existing = User.query.filter_by(role="admin").first()
+        if existing:
+            if not force:
+                print("Admin already exists. Skipping seed. Use --force to reset password.")
+                return
+            existing.username = username
+            existing.email = email
+            existing.set_password(password)
+            db.session.commit()
+            print(f"Reset dev admin: username={username!r} email={email!r} (password from env or default).")
+            return
+
+        user = User(username=username, email=email, role="admin")
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
