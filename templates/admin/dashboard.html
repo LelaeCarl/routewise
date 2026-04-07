@@ -1,108 +1,111 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+  <section class="border border-slate-300 bg-surface">
+    <div class="border-b border-slate-300 bg-panel px-4 py-3 sm:flex sm:items-end sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Admin control panel</h1>
-        <p class="mt-1 text-sm text-slate-600">System overview for RouteWise operations and inspection.</p>
+        <h1 class="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">Admin</h1>
+        <p class="mt-0.5 text-sm text-slate-600">System overview and inspection.</p>
       </div>
-      <div class="rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-200/60">
-        <p class="text-sm font-semibold text-slate-900">{{ current_user.username }}</p>
-        <p class="mt-0.5 text-xs text-slate-500">Admin access</p>
-      </div>
-    </div>
-
-    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-      <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Users</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ total_users }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Analyses</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ total_analyses }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nodes</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ total_nodes }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Edges</p>
-        <p class="mt-2 text-2xl font-bold text-slate-900">{{ total_edges }}</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200/70 bg-slate-50 p-4">
-        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</p>
-        <p class="mt-2 text-sm font-semibold text-slate-900">Healthy</p>
-        <p class="mt-1 text-xs text-slate-500">Local development</p>
+      <div class="mt-2 border border-slate-300 bg-surface px-3 py-2 sm:mt-0">
+        <p class="text-sm font-medium text-slate-900">{{ current_user.username }}</p>
+        <p class="text-[10px] text-slate-500">Administrator</p>
       </div>
     </div>
 
-    <div class="mt-6 grid gap-4 md:grid-cols-3">
-      <a href="{{ url_for('admin.users') }}" class="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">Manage users</p>
-        <p class="mt-1 text-sm text-slate-600">Add users, edit roles, and remove accounts.</p>
+    <div class="grid gap-px bg-slate-300 sm:grid-cols-2 lg:grid-cols-5">
+      <div class="bg-panel px-4 py-3">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Users</p>
+        <p class="mt-1 text-xl font-semibold tabular-nums text-slate-900">{{ total_users }}</p>
+      </div>
+      <div class="bg-panel px-4 py-3">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Analyses</p>
+        <p class="mt-1 text-xl font-semibold tabular-nums text-slate-900">{{ total_analyses }}</p>
+      </div>
+      <div class="bg-panel px-4 py-3">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Nodes</p>
+        <p class="mt-1 text-xl font-semibold tabular-nums text-slate-900">{{ total_nodes }}</p>
+      </div>
+      <div class="bg-panel px-4 py-3">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Edges</p>
+        <p class="mt-1 text-xl font-semibold tabular-nums text-slate-900">{{ total_edges }}</p>
+      </div>
+      <div class="bg-panel px-4 py-3 sm:col-span-2 lg:col-span-1">
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</p>
+        <p class="mt-1 text-sm font-semibold text-slate-900">Operational</p>
+        <p class="text-[10px] text-slate-500">Local dev</p>
+      </div>
+    </div>
+
+    <div class="grid gap-2 p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <a href="{{ url_for('admin.users') }}" class="border border-slate-300 bg-panel px-4 py-3 transition hover:border-slate-400 hover:bg-surface">
+        <p class="text-sm font-semibold text-slate-900">Users</p>
+        <p class="mt-1 text-xs text-slate-600">Accounts, roles, removal.</p>
       </a>
-      <a href="{{ url_for('admin.analyses') }}" class="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">View analyses</p>
-        <p class="mt-1 text-sm text-slate-600">Inspect computed route history across users.</p>
+      <a href="{{ url_for('admin.analyses') }}" class="border border-slate-300 bg-panel px-4 py-3 transition hover:border-slate-400 hover:bg-surface">
+        <p class="text-sm font-semibold text-slate-900">Analyses</p>
+        <p class="mt-1 text-xs text-slate-600">Route history across users.</p>
       </a>
-      <a href="{{ url_for('admin.network_nodes') }}" class="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">Inspect nodes</p>
-        <p class="mt-1 text-sm text-slate-600">Ports, airports, ICDs, and inland hubs.</p>
+      <a href="{{ url_for('admin.network_nodes') }}" class="border border-slate-300 bg-panel px-4 py-3 transition hover:border-slate-400 hover:bg-surface">
+        <p class="text-sm font-semibold text-slate-900">Nodes</p>
+        <p class="mt-1 text-xs text-slate-600">Network directory (read-only).</p>
       </a>
-      <a href="{{ url_for('admin.network_edges') }}" class="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">Inspect edges</p>
-        <p class="mt-1 text-sm text-slate-600">Directed corridors with time + mode metadata.</p>
+      <a href="{{ url_for('admin.network_edges') }}" class="border border-slate-300 bg-panel px-4 py-3 transition hover:border-slate-400 hover:bg-surface">
+        <p class="text-sm font-semibold text-slate-900">Edges</p>
+        <p class="mt-1 text-xs text-slate-600">Corridors and modes.</p>
       </a>
-      <a href="{{ url_for('admin.pricing') }}" class="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">Inspect pricing data</p>
-        <p class="mt-1 text-sm text-slate-600">Review how costs are modeled per transport mode.</p>
+      <a href="{{ url_for('admin.pricing') }}" class="border border-slate-300 bg-panel px-4 py-3 transition hover:border-slate-400 hover:bg-surface">
+        <p class="text-sm font-semibold text-slate-900">Pricing model</p>
+        <p class="mt-1 text-xs text-slate-600">Cost formula reference.</p>
       </a>
-      <a href="{{ url_for('planner') }}" class="rounded-2xl border border-slate-200/70 bg-slate-50 p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">
-        <p class="text-sm font-semibold text-slate-900">Run a new analysis</p>
-        <p class="mt-1 text-sm text-slate-600">Open the planner with objective-driven routing.</p>
+      <a href="{{ url_for('planner') }}" class="border border-slate-300 bg-surface px-4 py-3 transition hover:border-slate-400">
+        <p class="text-sm font-semibold text-slate-900">Planner</p>
+        <p class="mt-1 text-xs text-slate-600">Run a new analysis.</p>
       </a>
     </div>
   </section>
 
-  <section class="mt-6 grid gap-6 lg:grid-cols-2">
-    <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-      <h2 class="text-lg font-bold tracking-tight text-slate-900 font-display">Recent users</h2>
-      <div class="mt-4 space-y-3">
+  <section class="mt-4 grid gap-4 lg:grid-cols-2">
+    <div class="border border-slate-300 bg-surface">
+      <div class="border-b border-slate-300 bg-panel px-4 py-2">
+        <h2 class="text-sm font-semibold text-slate-900">Recent users</h2>
+      </div>
+      <div class="divide-y divide-slate-200">
         {% for u in recent_users %}
-          <div class="flex items-center justify-between gap-4 rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/60">
+          <div class="flex items-center justify-between gap-3 px-4 py-2.5">
             <div>
-              <p class="text-sm font-semibold text-slate-900">{{ u.username }}</p>
-              <p class="text-xs text-slate-500">{{ u.email }} · {{ u.role }}</p>
+              <p class="text-sm font-medium text-slate-900">{{ u.username }}</p>
+              <p class="text-xs text-slate-600">{{ u.email }} · {{ u.role }}</p>
             </div>
-            <p class="text-xs font-semibold text-slate-700">{{ u.created_at.strftime("%Y-%m-%d") }}</p>
+            <p class="text-[10px] font-mono text-slate-500">{{ u.created_at.strftime("%Y-%m-%d") }}</p>
           </div>
         {% else %}
-          <p class="text-sm text-slate-600">No users yet.</p>
+          <p class="px-4 py-4 text-sm text-slate-600">No users.</p>
         {% endfor %}
       </div>
     </div>
 
-    <div class="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-      <h2 class="text-lg font-bold tracking-tight text-slate-900 font-display">Recent analyses</h2>
-      <div class="mt-4 space-y-3">
+    <div class="border border-slate-300 bg-surface">
+      <div class="border-b border-slate-300 bg-panel px-4 py-2">
+        <h2 class="text-sm font-semibold text-slate-900">Recent analyses</h2>
+      </div>
+      <div class="divide-y divide-slate-200">
         {% for a in recent_analyses %}
-          <div class="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200/60">
-            <div class="flex items-start justify-between gap-4">
+          <div class="px-4 py-2.5">
+            <div class="flex items-start justify-between gap-2">
               <div>
-                <p class="text-sm font-semibold text-slate-900">{{ a.path_summary }}</p>
-                <p class="mt-0.5 text-xs text-slate-500">
+                <p class="text-sm font-medium text-slate-900">{{ a.path_summary }}</p>
+                <p class="mt-0.5 text-xs text-slate-600">
                   {{ a.objective }} · {{ a.total_cost | format_cny }} · {{ a.total_time_days | format_days }} d
                 </p>
               </div>
-              <p class="text-xs font-semibold text-slate-700">{{ a.created_at.strftime("%Y-%m-%d") }}</p>
+              <p class="text-[10px] font-mono text-slate-500">{{ a.created_at.strftime("%Y-%m-%d") }}</p>
             </div>
           </div>
         {% else %}
-          <p class="text-sm text-slate-600">No analyses recorded yet.</p>
+          <p class="px-4 py-4 text-sm text-slate-600">No analyses.</p>
         {% endfor %}
       </div>
     </div>
   </section>
 {% endblock %}
-

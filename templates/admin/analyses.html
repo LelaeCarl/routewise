@@ -1,45 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="flex items-end justify-between gap-4">
+  <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Route analyses</h1>
-      <p class="mt-1 text-sm text-slate-600">Read-only history of computed routes across users.</p>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Analyses</h1>
+      <p class="mt-1 text-sm text-slate-600">All users’ route history (read-only).</p>
     </div>
-    <a href="{{ url_for('admin.dashboard') }}" class="rounded-xl bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/60 hover:bg-white">
-      Back to dashboard
+    <a href="{{ url_for('admin.dashboard') }}" class="rounded-sm border border-slate-300 bg-panel px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-surface">
+      ← Dashboard
     </a>
   </div>
 
   {% if analyses|length == 0 %}
-    <div class="mt-6 rounded-2xl border border-slate-200/70 bg-slate-50 p-6 text-center">
-      <p class="text-sm font-semibold text-slate-900">No analyses yet</p>
-      <p class="mt-1 text-sm text-slate-600">Run a few routes while logged in to populate history.</p>
+    <div class="mt-6 border border-dashed border-slate-400 bg-panel p-6 text-center">
+      <p class="text-sm font-semibold text-slate-900">No analyses</p>
+      <p class="mt-1 text-sm text-slate-600">Run routes while logged in to populate history.</p>
     </div>
   {% else %}
-    <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200/70 bg-white shadow-card">
-      <table class="w-full text-left text-sm">
-        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-600">
+    <div class="mt-6 overflow-x-auto border border-slate-300 bg-surface">
+      <table class="w-full min-w-[900px] text-left text-sm">
+        <thead class="border-b border-slate-300 bg-panel text-[10px] font-semibold uppercase tracking-wide text-slate-600">
           <tr>
-            <th class="px-4 py-3">Date</th>
-            <th class="px-4 py-3">User</th>
-            <th class="px-4 py-3">Route</th>
-            <th class="px-4 py-3">Objective</th>
-            <th class="px-4 py-3">Weight (kg)</th>
-            <th class="px-4 py-3">Cost</th>
-            <th class="px-4 py-3">Time</th>
+            <th class="px-3 py-2">Date</th>
+            <th class="px-3 py-2">User</th>
+            <th class="px-3 py-2">Route</th>
+            <th class="px-3 py-2">Objective</th>
+            <th class="px-3 py-2">Weight (kg)</th>
+            <th class="px-3 py-2">Cost</th>
+            <th class="px-3 py-2">Time</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-200/70">
+        <tbody class="divide-y divide-slate-200">
           {% for a in analyses %}
             <tr>
-              <td class="px-4 py-3 text-slate-700">{{ a.created_at.strftime("%Y-%m-%d") }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ a.user.username if a.user else a.user_id }}</td>
-              <td class="px-4 py-3 font-semibold text-slate-900">{{ a.path_summary }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ a.objective }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ a.weight_kg | round(2) }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ a.total_cost | format_cny }}</td>
-              <td class="px-4 py-3 text-slate-700">{{ a.total_time_days | format_days }} d</td>
+              <td class="px-3 py-2 font-mono text-xs text-slate-700">{{ a.created_at.strftime("%Y-%m-%d") }}</td>
+              <td class="px-3 py-2 text-slate-700">{{ a.user.username if a.user else a.user_id }}</td>
+              <td class="px-3 py-2 font-medium text-slate-900">{{ a.path_summary }}</td>
+              <td class="px-3 py-2 text-slate-700">{{ a.objective }}</td>
+              <td class="px-3 py-2 font-mono text-xs text-slate-700">{{ a.weight_kg | round(2) }}</td>
+              <td class="px-3 py-2 font-mono text-sm text-slate-900">{{ a.total_cost | format_cny }}</td>
+              <td class="px-3 py-2 font-mono text-xs text-slate-700">{{ a.total_time_days | format_days }} d</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -47,4 +47,3 @@
     </div>
   {% endif %}
 {% endblock %}
-

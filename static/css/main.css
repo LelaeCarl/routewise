@@ -1,15 +1,17 @@
-/* ── RouteWise design tokens ── */
+/* ── RouteWise operations console — design tokens ── */
 :root {
-  --primary: #1d4ed8;
-  --deep: #1e3a8a;
-  --secondary: #14b8a6;
-  --accent: #22c55e;
-  --background: #f6f8fb;
-  --surface: #eef2f7;
-  --text: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border: #e2e8f0;
+  --rw-bg: #eceef1;
+  --rw-surface: #ffffff;
+  --rw-panel: #f5f6f8;
+  --rw-border: #c5ccd6;
+  --rw-border-subtle: #dfe3e9;
+  --rw-text: #0f172a;
+  --rw-text-secondary: #475569;
+  --rw-text-muted: #64748b;
+  --rw-primary: #1a2836;
+  --rw-primary-hover: #121a24;
+  --rw-accent: #3d5a80;
+  --rw-focus: rgba(61, 90, 128, 0.35);
 }
 
 /* ── Base ── */
@@ -18,23 +20,24 @@ html {
 }
 
 body {
-  color: var(--text);
+  color: var(--rw-text);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(29, 78, 216, 0.12);
-  color: #1e293b;
+  background: rgba(26, 40, 54, 0.12);
+  color: var(--rw-text);
 }
 
 a {
   text-decoration: none;
 }
 
-/* ── Typography ── */
+/* ── Typography: operational hierarchy ── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 /* ── Focus ── */
@@ -43,8 +46,8 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(29, 78, 216, 0.3);
-  outline-offset: 2px;
+  outline: 2px solid var(--rw-focus);
+  outline-offset: 1px;
 }
 
 /* ── Form controls ── */
@@ -52,41 +55,89 @@ select,
 input[type="text"],
 input[type="number"],
 input[type="email"],
+input[type="password"],
 textarea {
-  border: 1px solid var(--border);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  border: 1px solid var(--rw-border-subtle);
+  border-radius: 2px;
+  background: var(--rw-surface);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  box-shadow: none;
 }
 
 select:hover,
 input[type="text"]:hover,
 input[type="number"]:hover,
 textarea:hover {
-  border-color: #cbd5e1;
+  border-color: var(--rw-border);
 }
 
 select:focus,
 input[type="text"]:focus,
 input[type="number"]:focus,
 textarea:focus {
-  border-color: rgba(29, 78, 216, 0.4);
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.08);
+  border-color: var(--rw-accent);
+  box-shadow: 0 0 0 1px var(--rw-accent);
 }
 
-/* ── Buttons ── */
-button,
-a[class*="bg-primary"] {
-  transition: all 0.15s ease;
+/* ── Structural panels (prefer over floating cards) ── */
+.rw-panel {
+  border: 1px solid var(--rw-border-subtle);
+  border-radius: 2px;
+  background: var(--rw-surface);
 }
 
-/* ── KPI numbers use display font ── */
+.rw-panel-header {
+  border-bottom: 1px solid var(--rw-border-subtle);
+  padding: 0.75rem 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rw-text-muted);
+}
+
+/* ── Primary / secondary actions ── */
+.rw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 2px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.rw-btn-primary {
+  background: var(--rw-primary);
+  color: #fff;
+  border: 1px solid var(--rw-primary);
+}
+
+.rw-btn-primary:hover {
+  background: var(--rw-primary-hover);
+  border-color: var(--rw-primary-hover);
+}
+
+.rw-btn-secondary {
+  background: var(--rw-surface);
+  color: var(--rw-text);
+  border: 1px solid var(--rw-border);
+}
+
+.rw-btn-secondary:hover {
+  background: var(--rw-panel);
+}
+
+/* ── KPI / numeric emphasis ── */
 .kpi-value {
-  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Table refinement ── */
+/* ── Tables ── */
 table {
   font-variant-numeric: tabular-nums;
   border-collapse: collapse;
@@ -94,10 +145,11 @@ table {
 
 thead th {
   font-weight: 600;
-  letter-spacing: 0.05em;
-  font-size: 0.6875rem;
-  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  font-size: 0.625rem;
+  color: var(--rw-text-muted);
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 tbody td {
@@ -108,25 +160,25 @@ tfoot td {
   font-size: 0.8125rem;
 }
 
-/* ── Route journey vertical line ── */
+/* ── Route journey line ── */
 .route-line {
   background: linear-gradient(
     to bottom,
-    rgba(29, 78, 216, 0.25) 0%,
-    #e2e8f0 30%,
-    #e2e8f0 70%,
-    rgba(29, 78, 216, 0.25) 100%
+    rgba(61, 90, 128, 0.35) 0%,
+    #d4d9e0 28%,
+    #d4d9e0 72%,
+    rgba(61, 90, 128, 0.35) 100%
   );
 }
 
 /* ── Loading spinner ── */
 .rw-spinner {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 9999px;
-  border: 2.5px solid rgba(29, 78, 216, 0.15);
-  border-top-color: var(--primary);
-  animation: rw-spin 0.8s linear infinite;
+  border: 2px solid rgba(26, 40, 54, 0.12);
+  border-top-color: var(--rw-accent);
+  animation: rw-spin 0.75s linear infinite;
 }
 
 @keyframes rw-spin {
@@ -134,37 +186,70 @@ tfoot td {
   to   { transform: rotate(360deg); }
 }
 
-/* ── Workspace sidebar (logged-in shell) ── */
+/* ── Workspace sidebar navigation ── */
 .rw-side-nav {
   display: block;
-  margin-left: 0.25rem;
-  border-radius: 0.625rem;
-  border-left: 3px solid transparent;
-  padding: 0.5rem 0.75rem 0.5rem 0.65rem;
+  margin-left: 0;
+  border-radius: 0;
+  border-left: 2px solid transparent;
+  padding: 0.4rem 0.65rem 0.4rem 0.6rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--rw-text-secondary);
   letter-spacing: -0.01em;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 }
 
 .rw-side-nav:hover {
-  background: rgba(15, 23, 42, 0.04);
-  color: var(--text);
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--rw-text);
 }
 
 .rw-side-nav--active {
-  border-left-color: var(--primary);
-  background: rgba(29, 78, 216, 0.07);
-  color: var(--deep);
+  border-left-color: var(--rw-primary);
+  background: rgba(26, 40, 54, 0.06);
+  color: var(--rw-primary);
   font-weight: 600;
 }
 
 .rw-side-nav--muted {
-  color: var(--text-muted);
+  color: var(--rw-text-muted);
   font-weight: 500;
 }
 
 .rw-side-nav--muted:hover {
-  color: var(--text-secondary);
+  color: var(--rw-text-secondary);
+}
+
+/* ── Flash messages (system notices) ── */
+.rw-flash {
+  border-radius: 2px;
+  border: 1px solid;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.rw-flash-info {
+  border-color: var(--rw-border);
+  background: var(--rw-panel);
+  color: var(--rw-text);
+}
+
+.rw-flash-success {
+  border-color: #b8c9b8;
+  background: #f0f4f0;
+  color: #1e293b;
+}
+
+.rw-flash-warning {
+  border-color: #e2c08d;
+  background: #faf6ef;
+  color: #78350f;
+}
+
+.rw-flash-error {
+  border-color: #e5bcbc;
+  background: #faf0f0;
+  color: #7f1d1d;
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#1D4ED8" />
+    <meta name="theme-color" content="#1a2836" />
     <meta
       name="description"
       content="RouteWise helps you plan intelligent cross-border logistics routes between China and Kenya."
@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -26,21 +26,30 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-              display: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', 'sans-serif'],
+              sans: ['"IBM Plex Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+              display: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+              mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
             },
             colors: {
-              primary: '#1D4ED8',
-              deep: '#1E3A8A',
-              secondary: '#14B8A6',
-              accent: '#22C55E',
-              background: '#F6F8FB',
-              surface: '#EEF2F7',
-              text: '#0F172A',
+              primary: '#1a2836',
+              deep: '#0f172a',
+              secondary: '#64748b',
+              accent: '#3d5a80',
+              background: '#eceef1',
+              surface: '#ffffff',
+              panel: '#f5f6f8',
+              border: '#c5ccd6',
+              text: '#0f172a',
             },
             boxShadow: {
-              soft: '0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 16px rgba(15, 23, 42, 0.06)',
-              card: '0 1px 2px rgba(15, 23, 42, 0.03), 0 2px 8px rgba(15, 23, 42, 0.04)',
+              none: 'none',
+              inset: 'inset 0 1px 0 0 rgb(226 232 240)',
+            },
+            borderRadius: {
+              sm: '2px',
+              DEFAULT: '3px',
+              md: '4px',
+              lg: '6px',
             },
           },
         },
@@ -53,18 +62,18 @@
   <body class="min-h-screen bg-background font-sans text-text antialiased">
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:border focus:border-slate-400 focus:bg-surface focus:px-3 focus:py-2 focus:text-sm focus:text-slate-900"
     >
       Skip to content
     </a>
 
     <div
       id="rw-loading"
-      class="hidden fixed inset-0 z-[60] bg-background/70 backdrop-blur-sm"
+      class="hidden fixed inset-0 z-[60] bg-slate-900/20"
       aria-hidden="true"
     >
       <div class="flex h-full items-center justify-center px-4">
-        <div class="w-full max-w-md rounded-2xl bg-white/80 p-6 ring-1 ring-slate-200/60 shadow-soft">
+        <div class="w-full max-w-sm border border-slate-300 bg-surface p-4 shadow-none">
           <div class="flex items-center justify-center gap-3">
             <span class="rw-spinner" aria-hidden="true"></span>
             <p class="text-sm font-semibold text-slate-900">Computing route&hellip;</p>
@@ -88,18 +97,18 @@
     {% endif %}
 
     {% if is_auth_shell %}
-        <header class="sticky top-0 z-40 shrink-0 border-b border-slate-200/60 bg-white/90 backdrop-blur-md">
-          <div class="mx-auto flex h-14 max-w-6xl items-center px-5">
-            <a href="{{ url_for('auth.login') }}" class="inline-flex items-center gap-2.5">
-              <span class="grid h-8 w-8 place-items-center rounded-lg bg-white ring-1 ring-slate-200/70 shadow-sm overflow-hidden">
+        <header class="sticky top-0 z-40 shrink-0 border-b border-slate-300 bg-surface">
+          <div class="mx-auto flex h-12 max-w-6xl items-center px-4 sm:px-5">
+            <a href="{{ url_for('auth.login') }}" class="inline-flex items-center gap-2">
+              <span class="grid h-7 w-7 place-items-center border border-slate-300 bg-surface overflow-hidden">
                 <img
                   src="{{ url_for('static', filename='img/logo.png') }}"
                   alt="RouteWise"
-                  class="h-8 w-8 object-contain"
+                  class="h-7 w-7 object-contain"
                   loading="eager"
                 />
               </span>
-              <span class="text-[15px] font-bold tracking-tight text-slate-900 font-display">RouteWise</span>
+              <span class="text-sm font-semibold tracking-tight text-slate-900">RouteWise</span>
             </a>
           </div>
         </header>
@@ -107,22 +116,22 @@
 
         <main
           id="main-content"
-          class="{% if is_workspace %}min-h-0 flex-1 overflow-y-auto px-5 py-8 sm:px-8 lg:px-10{% elif is_auth_shell %}mx-auto w-full max-w-6xl flex-1 px-0 py-0{% else %}mx-auto w-full max-w-6xl flex-1 px-5 py-10{% endif %}"
+          class="{% if is_workspace %}min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 lg:px-8{% elif is_auth_shell %}mx-auto w-full max-w-6xl flex-1 px-0 py-0{% else %}mx-auto w-full max-w-6xl flex-1 px-4 py-8{% endif %}"
         >
           {% if is_workspace %}<div class="mx-auto w-full max-w-5xl">{% endif %}
 
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-              <div class="{% if is_auth_shell %}px-5 pt-6{% endif %} {% if is_workspace %}mb-6{% else %}mb-6{% endif %}">
-                {% if is_auth_shell %}<div class="mx-auto max-w-lg space-y-2">{% else %}<div class="space-y-2">{% endif %}
+              <div class="{% if is_auth_shell %}px-4 pt-5 sm:px-5{% endif %} {% if is_workspace %}mb-4{% else %}mb-4{% endif %}">
+                {% if is_auth_shell %}<div class="mx-auto max-w-lg space-y-1.5">{% else %}<div class="space-y-1.5">{% endif %}
                   {% for category, message in messages %}
-                    {% set styles =
-                      'border-slate-200/70 bg-white text-slate-800' if category == 'info' else
-                      'border-secondary/20 bg-secondary/10 text-slate-800' if category == 'success' else
-                      'border-amber-200 bg-amber-50 text-amber-900' if category == 'warning' else
-                      'border-red-200 bg-red-50 text-red-900'
+                    {% set flash_class =
+                      'rw-flash rw-flash-info' if category == 'info' else
+                      'rw-flash rw-flash-success' if category == 'success' else
+                      'rw-flash rw-flash-warning' if category == 'warning' else
+                      'rw-flash rw-flash-error'
                     %}
-                    <div class="rounded-2xl border p-4 text-sm shadow-card {{ styles }}">{{ message }}</div>
+                    <div class="{{ flash_class }}">{{ message }}</div>
                   {% endfor %}
                 </div>
               </div>
@@ -135,9 +144,9 @@
         </main>
 
     {% if is_workspace %}
-        <footer class="shrink-0 border-t border-slate-200/60 bg-white/80 px-5 py-3 text-center text-[11px] text-slate-400 sm:px-8 lg:px-10">
+        <footer class="shrink-0 border-t border-slate-300 bg-surface px-4 py-2 text-center text-[10px] text-slate-500 sm:px-6 lg:px-8">
           <span>&copy; {{ 2026 }} RouteWise</span>
-          <span class="mx-2 text-slate-300">&middot;</span>
+          <span class="mx-2 text-slate-400">&middot;</span>
           <span>China &harr; Kenya logistics planning</span>
         </footer>
       </div>

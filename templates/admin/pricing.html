@@ -1,27 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="flex items-end justify-between gap-4">
+  <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-bold tracking-tight text-slate-900 font-display">Inspect pricing data</h1>
-      <p class="mt-1 text-sm text-slate-600">Read-only view of the current cost model used during routing.</p>
+      <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Pricing model</h1>
+      <p class="mt-1 text-sm text-slate-600">How per-leg costs are derived during routing.</p>
     </div>
-    <a href="{{ url_for('admin.dashboard') }}" class="rounded-xl bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-800 ring-1 ring-slate-200/60 hover:bg-white">
-      Back to dashboard
+    <a href="{{ url_for('admin.dashboard') }}" class="rounded-sm border border-slate-300 bg-panel px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-surface">
+      ← Dashboard
     </a>
   </div>
 
-  <div class="mt-6 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-soft">
-    <h2 class="text-lg font-bold tracking-tight text-slate-900 font-display">Current model</h2>
-    <p class="mt-2 text-sm text-slate-600">
-      RouteWise currently derives per-leg shipment cost from a weight-based model implemented in the routing engine:
-      <span class="font-semibold text-slate-800">cost = max(base_cost + weight_kg × cost_per_kg, minimum_charge)</span>.
-    </p>
-
-    <div class="mt-5 rounded-2xl border border-slate-200/70 bg-slate-50 p-5 text-sm text-slate-700">
-      For this phase, pricing is inspected via the network edge attributes (base cost, per-kg rate, minimum charge) used during computation.
-      Editing is intentionally disabled to keep the system stable.
+  <div class="mt-6 border border-slate-300 bg-surface">
+    <div class="border-b border-slate-300 bg-panel px-4 py-2">
+      <h2 class="text-sm font-semibold text-slate-900">Current model</h2>
+    </div>
+    <div class="p-4">
+      <p class="text-sm text-slate-700">
+        Per-leg shipment cost uses a weight-based model in the routing engine:
+        <span class="font-mono text-xs font-semibold text-slate-900">cost = max(base_cost + weight_kg × cost_per_kg, minimum_charge)</span>.
+      </p>
+      <div class="mt-4 border border-slate-300 bg-panel p-4 text-sm text-slate-700">
+        Edge attributes (base cost, per-kg rate, minimum charge) drive computation. Editing is disabled in this phase for stability.
+      </div>
     </div>
   </div>
 {% endblock %}
-
