@@ -26,6 +26,9 @@
         <div class="border border-slate-300 bg-panel px-4 py-3">
           <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Rationale</p>
           <p class="mt-1.5 text-sm leading-relaxed text-slate-700">{{ route.route_rationale }}</p>
+          {% if route.mode_recommendation is defined and route.mode_recommendation %}
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-700">{{ route.mode_recommendation }}</p>
+          {% endif %}
           {% if route_insight %}
             <p class="mt-2 text-xs leading-relaxed text-slate-500">{{ route_insight }}</p>
           {% endif %}
@@ -47,10 +50,24 @@
               <span class="font-mono text-sm font-medium text-slate-900">{{ length_cm }}×{{ width_cm }}×{{ height_cm }} cm</span>
             </div>
           {% endif %}
-          {% if route.shipment is defined and route.shipment.chargeable_weight_kg is defined %}
+          {% if route.pricing_basis_lines is defined and route.pricing_basis_lines %}
+            <div class="pt-1">
+              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Pricing basis</p>
+              <div class="mt-1 text-[11px] text-slate-600 space-y-1">
+              {% for line in route.pricing_basis_lines %}
+                <div>{{ line }}</div>
+              {% endfor %}
+              </div>
+            </div>
+          {% elif route.shipment is defined and route.shipment.chargeable_weight_kg is defined %}
             <div class="flex justify-between gap-3">
-              <span class="text-slate-500">Chargeable</span>
-              <span class="font-mono text-sm font-medium text-slate-900">{{ route.shipment.chargeable_weight_kg | round(2) }} kg</span>
+              <span class="text-slate-500">Chargeable weight</span>
+              <span class="font-mono text-sm font-medium text-slate-900">
+                {{ route.shipment.chargeable_weight_kg | round(2) }} kg{% if route.shipment_volume_based is defined and route.shipment_volume_based %} (volume-based){% endif %}
+              </span>
+            </div>
+            <div class="pt-1 text-[11px] text-slate-500">
+              Pricing is based on chargeable weight (actual vs volume).
             </div>
           {% endif %}
         </div>
@@ -137,36 +154,40 @@
             </div>
             <div class="p-4">
 
-            <div class="mt-0 hidden md:flex md:items-start">
-              {% for node in route.path_nodes %}
-                {% if not loop.first %}
-                  {% set leg = route.legs[loop.index0 - 1] %}
-                  <div class="flex flex-1 items-center self-start mt-[7px] min-w-[60px]">
-                    <div class="h-px flex-1 bg-slate-300"></div>
-                    <div class="flex flex-col items-center px-2">
-                      <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
-                      <span class="mt-1 text-[10px] text-slate-500 kpi-value whitespace-nowrap">{{ leg.time | format_days }}d · {{ leg.cost | format_cny }}</span>
+            {# Desktop: keep nodes/legs on a single line (scroll instead of overlap). #}
+            <div class="hidden md:block overflow-x-auto">
+              <div class="flex items-start min-w-max gap-0">
+                {% for node in route.path_nodes %}
+                  {% if not loop.first %}
+                    {% set leg = route.legs[loop.index0 - 1] %}
+                    <div class="flex items-center self-start mt-[7px] w-28 shrink-0">
+                      <div class="h-px flex-1 bg-slate-300"></div>
+                      <div class="flex flex-col items-center px-2">
+                        <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
+                        <span class="mt-1 text-[10px] text-slate-500 kpi-value whitespace-nowrap">{{ leg.time | format_days }}d · {{ leg.cost | format_cny }}</span>
+                      </div>
+                      <div class="h-px flex-1 bg-slate-300"></div>
                     </div>
-                    <div class="h-px flex-1 bg-slate-300"></div>
-                  </div>
-                {% endif %}
-                <div class="shrink-0 text-center" style="max-width:140px">
-                  <div class="mx-auto flex h-[18px] w-[18px] items-center justify-center border border-slate-300 {% if loop.first or loop.last %}bg-slate-800{% else %}bg-slate-100{% endif %}">
-                    {% if loop.first or loop.last %}
-                      <div class="h-2 w-2 bg-white"></div>
-                    {% else %}
-                      <div class="h-1.5 w-1.5 bg-slate-400"></div>
+                  {% endif %}
+
+                  <div class="shrink-0 w-40 px-1 text-center">
+                    <div class="mx-auto flex h-[18px] w-[18px] items-center justify-center border border-slate-300 {% if loop.first or loop.last %}bg-slate-800{% else %}bg-slate-100{% endif %}">
+                      {% if loop.first or loop.last %}
+                        <div class="h-2 w-2 bg-white"></div>
+                      {% else %}
+                        <div class="h-1.5 w-1.5 bg-slate-400"></div>
+                      {% endif %}
+                    </div>
+                    <p class="mt-2 text-xs font-semibold leading-tight {% if loop.first or loop.last %}text-slate-900{% else %}text-slate-700{% endif %}">{{ node.name }}</p>
+                    <p class="mt-0.5 text-[10px] text-slate-500 whitespace-nowrap">{{ node.type | format_node_type }} · {{ node.city }}</p>
+                    {% if loop.first %}
+                      <p class="mt-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-500">Origin</p>
+                    {% elif loop.last %}
+                      <p class="mt-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-500">Destination</p>
                     {% endif %}
                   </div>
-                  <p class="mt-2 text-xs font-semibold leading-tight {% if loop.first or loop.last %}text-slate-900{% else %}text-slate-700{% endif %}">{{ node.name }}</p>
-                  <p class="mt-0.5 text-[10px] text-slate-500">{{ node.type | format_node_type }} · {{ node.city }}</p>
-                  {% if loop.first %}
-                    <p class="mt-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-500">Origin</p>
-                  {% elif loop.last %}
-                    <p class="mt-0.5 text-[9px] font-semibold uppercase tracking-widest text-slate-500">Destination</p>
-                  {% endif %}
-                </div>
-              {% endfor %}
+                {% endfor %}
+              </div>
             </div>
 
             <div class="mt-4 md:hidden">
@@ -276,21 +297,24 @@
           <div class="p-4 space-y-2">
           {% if decision.all_similar is defined and decision.all_similar %}
             <div class="border border-slate-200 bg-panel px-3 py-2 text-xs text-slate-600">
-              All objectives yield similar routes for this pair.
+              All objectives give nearly the same result for this route pair.
             </div>
           {% endif %}
 
-            {% for obj_key, alt in alternatives.items() %}
-              {% set is_current = alt.get('is_current', obj_key == preference_key) if alt is mapping else (obj_key == preference_key) %}
-              <div class="border px-3 py-3 {% if is_current %}border-primary bg-panel{% else %}border-slate-200 bg-panel/40{% endif %}">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="min-w-0">
-                    <div class="flex items-center gap-1.5 flex-wrap">
+            {% set objective_order = ui_objectives if ui_objectives is defined and ui_objectives else alternatives.keys() %}
+            {% for obj_key in objective_order %}
+              {% set alt = alternatives.get(obj_key) %}
+              {% if alt %}
+                {% set is_current = alt.get('is_current', obj_key == preference_key) if alt is mapping else (obj_key == preference_key) %}
+                <div class="border px-3 py-3 {% if is_current %}border-primary bg-panel{% else %}border-slate-200 bg-panel/40{% endif %}">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1.5 flex-wrap">
                       {% if is_current %}
                         <span class="h-1.5 w-1.5 shrink-0 bg-slate-800"></span>
                       {% endif %}
                       <p class="text-sm font-semibold {% if is_current %}text-slate-900{% else %}text-slate-800{% endif %}">
-                        {% if obj_key == 'lowest_cost' %}Lowest cost{% elif obj_key == 'fastest_delivery' %}Fastest delivery{% else %}Balanced trade-off{% endif %}
+                        {% if obj_key == 'lowest_cost' %}Lowest cost{% elif obj_key == 'fastest_delivery' %}Fastest delivery{% else %}Practical option{% endif %}
                       </p>
                       {% if alt.tag is defined and alt.tag and alt.tag != 'current' %}
                         <span class="border border-slate-300 px-1.5 py-0 text-[10px] font-semibold uppercase tracking-wide {% if alt.tag == 'cheaper' %}text-slate-700{% elif alt.tag == 'faster' %}text-slate-800{% elif alt.tag == 'similar' %}text-slate-500{% else %}text-slate-700{% endif %}">{{ alt.tag }}</span>
@@ -308,27 +332,28 @@
                     {% if decision.best_for is defined and decision.best_for.get(obj_key) and not is_current %}
                       <p class="mt-1 text-[10px] text-slate-500">{{ decision.best_for[obj_key] }}</p>
                     {% endif %}
+                      </div>
+                    {% if alt.success %}
+                      <div class="text-right shrink-0">
+                        <p class="text-sm font-semibold text-slate-900 kpi-value">{{ alt.total_cost | format_cny }}</p>
+                        <p class="text-[11px] text-slate-500 kpi-value">{{ alt.total_time | format_days }} d</p>
+                        {% if alt.delta_cost_fmt is defined and alt.delta_cost_fmt and not is_current and alt.tag != 'similar' %}
+                          <p class="mt-0.5 text-[10px] text-slate-500">{{ alt.delta_cost_fmt }} · {{ alt.delta_time_fmt }}</p>
+                        {% endif %}
+                      </div>
+                    {% endif %}
                   </div>
-                  {% if alt.success %}
-                    <div class="text-right shrink-0">
-                      <p class="text-sm font-semibold text-slate-900 kpi-value">{{ alt.total_cost | format_cny }}</p>
-                      <p class="text-[11px] text-slate-500 kpi-value">{{ alt.total_time | format_days }} d</p>
-                      {% if alt.delta_cost_fmt is defined and alt.delta_cost_fmt and not is_current and alt.tag != 'similar' %}
-                        <p class="mt-0.5 text-[10px] text-slate-500">{{ alt.delta_cost_fmt }} · {{ alt.delta_time_fmt }}</p>
-                      {% endif %}
-                    </div>
+
+                  {% if alt.success and not is_current %}
+                    <a
+                      href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=obj_key) }}"
+                      class="mt-2 inline-flex w-full items-center justify-center rounded-sm border border-primary bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-slate-900"
+                    >
+                      View analysis →
+                    </a>
                   {% endif %}
                 </div>
-
-                {% if alt.success and not is_current %}
-                  <a
-                    href="{{ url_for('results', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=obj_key) }}"
-                    class="mt-2 inline-flex w-full items-center justify-center rounded-sm border border-primary bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-slate-900"
-                  >
-                    View analysis →
-                  </a>
-                {% endif %}
-              </div>
+              {% endif %}
             {% endfor %}
           </div>
         </div>

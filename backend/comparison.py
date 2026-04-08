@@ -16,8 +16,16 @@ TIME_SIMILAR_DAYS = 1.0
 OBJECTIVE_LABELS = {
     "lowest_cost": "Lowest cost",
     "fastest_delivery": "Fastest delivery",
-    "balanced_tradeoff": "Balanced trade-off",
+    "practical_route": "Practical option",
 }
+
+
+def routes_nearly_identical(a: dict, b: dict) -> bool:
+    """UI helper: treat two successful routes as effectively the same option."""
+    if not a.get("success") or not b.get("success"):
+        return False
+    delta = compute_delta(a, b)
+    return _is_similar(delta)
 
 
 def compute_delta(current: dict, alternative: dict) -> dict:
@@ -128,7 +136,7 @@ def build_rationale(current_route: dict, objective_key: str, alternatives: dict)
         return _rationale_lowest_cost(current_route, deltas, modes)
     if objective_key == "fastest_delivery":
         return _rationale_fastest(current_route, deltas, modes)
-    return _rationale_balanced(current_route, deltas, modes)
+    return _rationale_practical(current_route, deltas, modes)
 
 
 def _fallback_rationale(route: dict, objective_key: str, modes: str) -> str:
@@ -136,7 +144,7 @@ def _fallback_rationale(route: dict, objective_key: str, modes: str) -> str:
         return f"This route minimizes total estimated cost using {modes} transport."
     if objective_key == "fastest_delivery":
         return f"This route minimizes estimated transit time using {modes} transport."
-    return f"This route balances cost and time using {modes} transport."
+    return f"This route optimizes for practical operations using {modes} transport."
 
 
 def _rationale_lowest_cost(route: dict, deltas: dict, modes: str) -> str:
@@ -181,7 +189,7 @@ def _rationale_fastest(route: dict, deltas: dict, modes: str) -> str:
     )
 
 
-def _rationale_balanced(route: dict, deltas: dict, modes: str) -> str:
+def _rationale_practical(route: dict, deltas: dict, modes: str) -> str:
     lc = deltas.get("lowest_cost")
     fd = deltas.get("fastest_delivery")
 
@@ -212,9 +220,8 @@ def _rationale_balanced(route: dict, deltas: dict, modes: str) -> str:
             return f"This route offers a practical middle ground. {joined[0].upper()}{joined[1:]}."
 
     return (
-        f"This route balances cost (\u00a5{route['total_cost']:,.0f}) "
-        f"and transit time ({route['total_time']:.1f} days), "
-        f"offering a middle ground between the cheapest and fastest options."
+        f"This route penalizes delay while remaining cost-aware (\u00a5{route['total_cost']:,.0f}, "
+        f"{route['total_time']:.1f} days), offering a middle ground between cheapest and fastest options."
     )
 
 

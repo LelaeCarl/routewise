@@ -11,7 +11,7 @@ from backend.models import Node
 OBJECTIVE_LABELS = {
     "lowest_cost": "Lowest cost",
     "fastest_delivery": "Fastest delivery",
-    "balanced_tradeoff": "Balanced trade-off",
+    "practical_route": "Practical option",
 }
 
 MODE_LABELS = {
@@ -34,6 +34,10 @@ class RouteEngine:
     """
 
     DEFAULT_WEIGHT_KG = 500.0
+    SOFT_PENALTY_SEA_LIGHT = 1.10
+    SOFT_PENALTY_AIR_HEAVY = 1.10
+    SOFT_PENALTY_LIGHT_KG = 50.0
+    SOFT_PENALTY_HEAVY_KG = 300.0
 
     @staticmethod
     def compute_chargeable_weight_kg(
@@ -95,10 +99,16 @@ class RouteEngine:
 
         if getattr(edge, "mode", None) == "air":
             cost = chargeable * float(edge.cost_per_kg)
-            return max(cost, float(edge.minimum_charge))
+            cost = max(cost, float(edge.minimum_charge))
+            if w > RouteEngine.SOFT_PENALTY_HEAVY_KG:
+                cost *= RouteEngine.SOFT_PENALTY_AIR_HEAVY
+            return cost
 
         cost = float(edge.base_cost) + (w * float(edge.cost_per_kg))
-        return max(cost, float(edge.minimum_charge))
+        cost = max(cost, float(edge.minimum_charge))
+        if getattr(edge, "mode", None) == "sea" and w < RouteEngine.SOFT_PENALTY_LIGHT_KG:
+            cost *= RouteEngine.SOFT_PENALTY_SEA_LIGHT
+        return cost
 
     def _edge_weight(
         self,
@@ -121,7 +131,7 @@ class RouteEngine:
             )
         if objective_key == "fastest_delivery":
             return edge.time
-        if objective_key == "balanced_tradeoff":
+        if objective_key == "practical_route":
             normalized_cost = (
                 self.compute_edge_cost(
                     edge,
@@ -338,7 +348,7 @@ def route_engine_quick_checks(weight_kg: float = 500.0) -> dict:
     scenarios = [
         ("shanghai_port", "nairobi_icd", "lowest_cost"),
         ("guangzhou_airport", "nairobi_airport", "fastest_delivery"),
-        ("shenzhen_port", "kisumu_hub", "balanced_tradeoff"),
+        ("shenzhen_port", "kisumu_hub", "practical_route"),
         ("shanghai_port", "mombasa_port", "lowest_cost"),
     ]
 

@@ -161,7 +161,7 @@ app.jinja_env.filters["format_node_type"] = format_node_type
 PREFERENCE_LABELS = {
     "lowest_cost": "Lowest cost",
     "fastest_delivery": "Fastest delivery",
-    "balanced_tradeoff": "Balanced trade-off",
+    "practical_route": "Practical option",
 }
 
 DIRECTION_LABELS = {
@@ -170,11 +170,11 @@ DIRECTION_LABELS = {
 }
 
 
-OBJECTIVE_KEYS = ("lowest_cost", "fastest_delivery", "balanced_tradeoff")
+OBJECTIVE_KEYS = ("lowest_cost", "fastest_delivery", "practical_route")
 LEGACY_OBJECTIVE_TO_OBJECTIVE = {
     "cheapest": "lowest_cost",
     "fastest": "fastest_delivery",
-    "balanced": "balanced_tradeoff",
+    "balanced": "practical_route",
 }
 
 
@@ -182,7 +182,7 @@ def _normalize_objective_key(obj_key: str) -> str:
     key = (obj_key or "").strip()
     if key in OBJECTIVE_KEYS:
         return key
-    return LEGACY_OBJECTIVE_TO_OBJECTIVE.get(key, "balanced_tradeoff")
+    return LEGACY_OBJECTIVE_TO_OBJECTIVE.get(key, "practical_route")
 
 
 @app.context_processor
@@ -238,17 +238,17 @@ def planner():
     china_nodes_raw = [n for n in nodes if n.country == "China" and n.type in allowed_types]
     kenya_nodes_raw = [n for n in nodes if n.country == "Kenya" and n.type in allowed_types]
 
-    china_nodes = [{"id": n.id, "name": n.name, "city": n.city} for n in china_nodes_raw]
-    kenya_nodes = [{"id": n.id, "name": n.name, "city": n.city} for n in kenya_nodes_raw]
+    china_nodes = [{"id": n.id, "name": n.name, "city": n.city, "type": n.type} for n in china_nodes_raw]
+    kenya_nodes = [{"id": n.id, "name": n.name, "city": n.city, "type": n.type} for n in kenya_nodes_raw]
 
     direction_key = request.args.get("direction", "china-kenya")
     origin_id = request.args.get("origin", "").strip()
     destination_id = request.args.get("destination", "").strip()
     weight = request.args.get("weight", "")
-    preference_key = _normalize_objective_key(request.args.get("preference", "balanced_tradeoff"))
+    preference_key = _normalize_objective_key(request.args.get("preference", "practical_route"))
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
-    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Practical option")
 
     if direction_key == "china-kenya":
         origin_options = china_nodes_raw
@@ -285,7 +285,7 @@ def planner():
 @app.route("/results")
 def results():
     direction_key = request.args.get("direction", "china-kenya")
-    preference_key = _normalize_objective_key(request.args.get("preference", "balanced_tradeoff"))
+    preference_key = _normalize_objective_key(request.args.get("preference", "practical_route"))
 
     origin_id = request.args.get("origin", "").strip()
     destination_id = request.args.get("destination", "").strip()
@@ -295,7 +295,7 @@ def results():
     height_cm_raw = request.args.get("height_cm", "").strip()
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
-    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced trade-off")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Practical option")
 
     nodes = load_nodes()
     node_map = {n.id: n for n in nodes}
@@ -323,6 +323,20 @@ def results():
     width_cm = _parse_dim(width_cm_raw)
     height_cm = _parse_dim(height_cm_raw)
 
+    dims_ok = bool(length_cm and width_cm and height_cm)
+    volumetric_weight_kg = None
+    if dims_ok:
+        volumetric_weight_kg = (float(length_cm) * float(width_cm) * float(height_cm)) / 6000.0
+
+    def _invalid_pair(origin_type: str | None, dest_type: str | None) -> bool:
+        if not origin_type or not dest_type:
+            return False
+        return (origin_type == "airport" and dest_type == "port") or (origin_type == "port" and dest_type == "airport")
+
+    origin_type = node_map.get(origin_id).type if origin_id in node_map else None
+    destination_type = node_map.get(destination_id).type if destination_id in node_map else None
+    invalid_route_pair = _invalid_pair(origin_type, destination_type)
+
     engine = RouteEngine()
     route = None
     alternatives = {}
@@ -334,6 +348,11 @@ def results():
 
     if not origin_id or not destination_id:
         route = {"success": False, "error": "Please select an origin and destination to generate a route analysis."}
+    elif invalid_route_pair:
+        route = {
+            "success": False,
+            "error": "Selected origin and destination types do not form a valid shipment pair.",
+        }
     else:
         route = engine.compute_route(
             origin_id,
@@ -356,6 +375,47 @@ def results():
             )
 
         if route.get("success"):
+            shipment = route.get("shipment") if isinstance(route.get("shipment"), dict) else {}
+            chargeable = float(shipment.get("chargeable_weight_kg") or 0.0)
+            actual = float(shipment.get("actual_weight_kg") or 0.0)
+            route["shipment_volume_based"] = bool(dims_ok and chargeable > actual + 0.01)
+
+            # Mode-aware pricing basis for results UI.
+            mode_keys = {leg.get("mode_key") for leg in (route.get("legs") or []) if isinstance(leg, dict)}
+            lines: list[str] = []
+            if "air" in mode_keys:
+                # Air: explicitly show chargeable weight logic (actual vs volumetric).
+                if dims_ok and volumetric_weight_kg is not None:
+                    lines.append(
+                        f"Air pricing basis: chargeable weight = max(actual {actual:.2f} kg, volumetric {volumetric_weight_kg:.2f} kg) = {chargeable:.2f} kg."
+                    )
+                else:
+                    lines.append(f"Air pricing basis: chargeable weight = actual weight ({actual:.2f} kg).")
+
+            if "sea" in mode_keys:
+                # Sea (LCL): explain W/M billing (weight or measure), without air-style chargeable-weight language.
+                if dims_ok:
+                    volume_cbm = (float(length_cm) * float(width_cm) * float(height_cm)) / 1_000_000.0
+                    weight_ton = actual / 1000.0
+                    wm = max(volume_cbm, weight_ton)
+                    lines.append(
+                        f"Sea (LCL) pricing basis: W/M (weight or measure) = max({weight_ton:.3f} t, {volume_cbm:.3f} m³) = {wm:.3f} W/M."
+                    )
+                else:
+                    lines.append("Sea (LCL) pricing basis: typically billed by W/M (weight or volume), using whichever is higher.")
+
+            if "road" in mode_keys or "rail" in mode_keys:
+                lines.append("Ground (road/rail) pricing basis: actual shipment weight.")
+
+            route["pricing_basis_lines"] = lines
+
+            if weight_kg < 100:
+                route["mode_recommendation"] = "Air recommended for speed"
+            elif weight_kg > 300:
+                route["mode_recommendation"] = "Sea recommended for cost"
+            else:
+                route["mode_recommendation"] = ""
+
             route["route_rationale"] = build_rationale(route, preference_key, alternatives)
             route_insight = build_route_insight(route, preference_key)
             route_story = build_route_story(route)
@@ -368,6 +428,24 @@ def results():
                 width_cm=width_cm,
                 height_cm=height_cm,
             )
+
+            # UI: hide practical_route card when it is effectively duplicate.
+            try:
+                from backend.comparison import routes_nearly_identical
+            except Exception:  # pragma: no cover
+                routes_nearly_identical = None
+
+            ui_objectives = list(OBJECTIVE_KEYS)
+            practical = alternatives.get("practical_route")
+            if routes_nearly_identical and practical and preference_key != "practical_route":
+                if routes_nearly_identical(practical, alternatives.get("lowest_cost", {})) or routes_nearly_identical(
+                    practical, alternatives.get("fastest_delivery", {})
+                ):
+                    ui_objectives = [k for k in ui_objectives if k != "practical_route"]
+                    enriched_alts.pop("practical_route", None)
+
+        else:
+            ui_objectives = list(OBJECTIVE_KEYS)
 
             leg_labels = build_leg_labels(route)
             for i, label in enumerate(leg_labels):
@@ -405,9 +483,11 @@ def results():
         length_cm=length_cm_raw,
         width_cm=width_cm_raw,
         height_cm=height_cm_raw,
+        weight_kg=weight_kg,
         preference=preference_label,
         route=route,
         alternatives=enriched_alts if enriched_alts else alternatives,
+        ui_objectives=ui_objectives,
         objective_label=preference_label,
         route_insight=route_insight,
         route_story=route_story,

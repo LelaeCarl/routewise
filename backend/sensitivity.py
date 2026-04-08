@@ -41,6 +41,10 @@ def analyze_weight_scenarios(
     objective_key: str,
     current_weight: float,
     engine,
+    *,
+    length_cm: float | None = None,
+    width_cm: float | None = None,
+    height_cm: float | None = None,
 ) -> list[dict]:
     """Compute route outcomes at representative weights.
 
@@ -51,7 +55,15 @@ def analyze_weight_scenarios(
 
     results: list[dict] = []
     for w in weights:
-        route = engine.compute_route(origin_id, destination_id, objective_key, float(w))
+        route = engine.compute_route(
+            origin_id,
+            destination_id,
+            objective_key,
+            float(w),
+            length_cm=length_cm,
+            width_cm=width_cm,
+            height_cm=height_cm,
+        )
         if not route.get("success"):
             continue
         results.append({
@@ -185,6 +197,10 @@ def build_sensitivity_context(
     current_weight: float,
     current_route: dict,
     engine,
+    *,
+    length_cm: float | None = None,
+    width_cm: float | None = None,
+    height_cm: float | None = None,
 ) -> dict:
     """Produce all sensitivity data for template rendering.
 
@@ -204,6 +220,9 @@ def build_sensitivity_context(
 
     scenarios = analyze_weight_scenarios(
         origin_id, destination_id, objective_key, current_weight, engine,
+        length_cm=length_cm,
+        width_cm=width_cm,
+        height_cm=height_cm,
     )
     bp = detect_breakpoint(scenarios)
 

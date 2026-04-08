@@ -19,14 +19,14 @@ TIME_SIMILAR_DAYS = 1.0
 CLASSIFICATION_LABELS = {
     "cost-efficient": "Cost-efficient",
     "time-optimized": "Time-optimized",
-    "balanced": "Balanced",
+    "balanced": "Practical",
     "similar-options": "Similar options",
 }
 
 _BEST_FOR = {
     "lowest_cost": "Best for: minimizing cost",
     "fastest_delivery": "Best for: fastest delivery",
-    "balanced_tradeoff": "Best for: balanced planning",
+    "practical_route": "Best for: practical option",
 }
 
 
@@ -174,7 +174,7 @@ def build_decision_insight(
         return _insight_cost(current_route, cost_diff, days_saved)
     if objective_key == "fastest_delivery":
         return _insight_speed(current_route, cost_diff, days_saved)
-    return _insight_balanced(current_route, cheapest, fastest, cost_diff, days_saved)
+    return _insight_practical(current_route, cheapest, fastest, cost_diff, days_saved)
 
 
 def _insight_cost(route: dict, cost_diff: float, days_saved: float) -> str:
@@ -203,7 +203,7 @@ def _insight_speed(route: dict, cost_diff: float, days_saved: float) -> str:
     )
 
 
-def _insight_balanced(
+def _insight_practical(
     route: dict,
     cheapest: dict,
     fastest: dict,
@@ -218,13 +218,13 @@ def _insight_balanced(
 
     if near_fastest:
         return (
-            "The balanced analysis favors speed for this corridor, "
+            "The practical analysis favors speed for this corridor, "
             "producing a route close to the fastest option."
         )
 
     if near_cheapest:
         return (
-            "The balanced analysis favors economy for this corridor, "
+            "The practical analysis favors economy for this corridor, "
             "producing a route close to the lowest-cost option."
         )
 

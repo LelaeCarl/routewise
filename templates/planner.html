@@ -62,6 +62,15 @@
                     </option>
                   {% endfor %}
                 </select>
+                <p class="mt-1 text-[11px] text-slate-500">
+                  Ports and airports may appear inside the route automatically. The planner limits endpoint pairs to realistic shipment combinations.
+                </p>
+              </div>
+
+              <div class="sm:col-span-2 hidden" id="invalidRouteNotice">
+                <div class="border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                  Airport ↔ port endpoint combinations are not supported. Use airport→airport/inland or port→port/inland.
+                </div>
               </div>
 
               <div>
@@ -83,6 +92,13 @@
               <div class="sm:col-span-2">
                 <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Optional dimensions (cm)</p>
                 <p class="mt-0.5 text-[11px] text-slate-500">Used for air chargeable weight via volumetric weight \(L×W×H / 6000\).</p>
+              </div>
+
+              <div class="sm:col-span-2 hidden" id="dimensionWarning">
+                <div class="border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                  <p class="font-semibold">Check dimensions</p>
+                  <p class="mt-0.5 text-xs" id="dimensionWarningText"></p>
+                </div>
               </div>
 
               <div>
@@ -148,7 +164,7 @@
               >
                   <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest cost</option>
                   <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest delivery</option>
-                  <option value="balanced_tradeoff" {% if preference_key == 'balanced_tradeoff' %}selected{% endif %}>Balanced trade-off</option>
+                  <option value="practical_route" {% if preference_key == 'practical_route' %}selected{% endif %}>Practical option</option>
               </select>
             </div>
           </div>
@@ -182,8 +198,8 @@
             <p class="mt-1 text-xs leading-relaxed text-slate-600">Prefers air and fast inland links to minimize transit time.</p>
           </div>
           <div class="pt-3">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Balanced trade-off</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">Weights cost and time for a middle-ground route.</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Practical option</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-600">A pragmatic blend of cost and time.</p>
           </div>
         </div>
       </div>
@@ -205,6 +221,15 @@
     var directionEl = document.getElementById('direction');
     var originEl    = document.getElementById('origin');
     var destEl      = document.getElementById('destination');
+    var noticeEl    = document.getElementById('invalidRouteNotice');
+    var formEl      = document.getElementById('plannerForm');
+    var submitBtn   = formEl ? formEl.querySelector('button[type=\"submit\"]') : null;
+    var weightEl    = document.getElementById('weight');
+    var lengthEl    = document.getElementById('length_cm');
+    var widthEl     = document.getElementById('width_cm');
+    var heightEl    = document.getElementById('height_cm');
+    var dimWarnEl   = document.getElementById('dimensionWarning');
+    var dimWarnTxt  = document.getElementById('dimensionWarningText');
 
     function rebuildSelect(selectEl, nodes) {
       var prev = selectEl.value;
@@ -221,6 +246,102 @@
       }
     }
 
+    function nodeTypeById(nodes, id) {
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === id) return nodes[i].type || '';
+      }
+      return '';
+    }
+
+    function currentNodesByDirection() {
+      return directionEl.value === 'china-kenya'
+        ? { originNodes: chinaNodes, destNodes: kenyaNodes }
+        : { originNodes: kenyaNodes, destNodes: chinaNodes };
+    }
+
+    function isInvalidPair(originType, destType) {
+      return (originType === 'airport' && destType === 'port') || (originType === 'port' && destType === 'airport');
+    }
+
+    function filterDestNodes(originType, destNodes) {
+      if (originType === 'port') {
+        return destNodes.filter(function (n) { return (n.type || '') !== 'airport'; });
+      }
+      if (originType === 'airport') {
+        return destNodes.filter(function (n) { return (n.type || '') !== 'port'; });
+      }
+      return destNodes;
+    }
+
+    function refreshDestinationOptions() {
+      var sets = currentNodesByDirection();
+      var oType = nodeTypeById(sets.originNodes, originEl.value);
+      var filtered = filterDestNodes(oType, sets.destNodes);
+      rebuildSelect(destEl, filtered);
+    }
+
+    function validatePair() {
+      var sets = currentNodesByDirection();
+      var oType = nodeTypeById(sets.originNodes, originEl.value);
+      var dType = nodeTypeById(sets.destNodes, destEl.value);
+      var bad = isInvalidPair(oType, dType);
+
+      if (noticeEl) {
+        noticeEl.classList.toggle('hidden', !bad);
+      }
+      if (submitBtn) {
+        submitBtn.disabled = bad;
+        submitBtn.classList.toggle('opacity-50', bad);
+        submitBtn.classList.toggle('cursor-not-allowed', bad);
+      }
+      return !bad;
+    }
+
+    function parsePositive(el) {
+      if (!el) return null;
+      var v = parseFloat(el.value);
+      if (!isFinite(v) || v <= 0) return null;
+      return v;
+    }
+
+    function updateDimensionWarning() {
+      if (!dimWarnEl || !dimWarnTxt) return;
+
+      var w = parsePositive(weightEl);
+      var l = parsePositive(lengthEl);
+      var wd = parsePositive(widthEl);
+      var h = parsePositive(heightEl);
+
+      // Only warn when the user is attempting to use dimensions.
+      if (l === null || wd === null || h === null) {
+        dimWarnEl.classList.add('hidden');
+        dimWarnTxt.textContent = '';
+        return;
+      }
+
+      var volumetric = (l * wd * h) / 6000.0;
+      var reasons = [];
+
+      if (l > 300 || wd > 300 || h > 300) {
+        reasons.push('One or more dimensions exceed 300 cm.');
+      }
+      if (w !== null && volumetric > 5 * w) {
+        reasons.push('Volumetric weight is more than 5× the actual weight.');
+      }
+
+      if (reasons.length) {
+        var pieces = [];
+        pieces.push('These dimensions create a very large volumetric weight. Please check that values are entered in centimeters.');
+        pieces.push('Volumetric weight ≈ ' + (Math.round(volumetric * 100) / 100) + ' kg.');
+        pieces.push(reasons.join(' '));
+        dimWarnTxt.textContent = pieces.join(' ');
+        dimWarnEl.classList.remove('hidden');
+      } else {
+        dimWarnEl.classList.add('hidden');
+        dimWarnTxt.textContent = '';
+      }
+    }
+
     directionEl.addEventListener('change', function () {
       if (this.value === 'china-kenya') {
         rebuildSelect(originEl, chinaNodes);
@@ -229,7 +350,28 @@
         rebuildSelect(originEl, kenyaNodes);
         rebuildSelect(destEl, chinaNodes);
       }
+      refreshDestinationOptions();
+      validatePair();
     });
+
+    originEl.addEventListener('change', function () {
+      refreshDestinationOptions();
+      validatePair();
+    });
+    destEl.addEventListener('change', validatePair);
+    if (weightEl) weightEl.addEventListener('input', updateDimensionWarning);
+    if (lengthEl) lengthEl.addEventListener('input', updateDimensionWarning);
+    if (widthEl) widthEl.addEventListener('input', updateDimensionWarning);
+    if (heightEl) heightEl.addEventListener('input', updateDimensionWarning);
+    if (formEl) {
+      formEl.addEventListener('submit', function (e) {
+        if (!validatePair()) e.preventDefault();
+      });
+    }
+
+    refreshDestinationOptions();
+    validatePair();
+    updateDimensionWarning();
   })();
 </script>
 {% endblock %}
