@@ -3,14 +3,14 @@
 {% set mode_bg = {'sea': 'bg-slate-700', 'air': 'bg-slate-500', 'road': 'bg-slate-600', 'rail': 'bg-slate-800', 'segment': 'bg-slate-500'} %}
 
 {% block content %}
-  <div class="space-y-1">
-    <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Track Shipment</h1>
-    <p class="max-w-2xl text-sm leading-relaxed text-slate-600">
-      Enter your tracking number to see status and route progress.
+  <header class="rw-page-head">
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Track shipment</h1>
+    <p class="mt-2 max-w-xl text-sm leading-relaxed text-slate-600">
+      Enter a tracking number to view status and route progress.
     </p>
-  </div>
+  </header>
 
-  <section class="mt-8 border border-slate-300 bg-surface p-4 sm:p-5">
+  <section class="mt-2 rw-card p-4 sm:p-5">
     <form method="post" action="{{ url_for('track_shipment') }}" class="flex flex-col gap-3 sm:flex-row sm:items-end sm:gap-4">
       <div class="min-w-0 flex-1">
         <label class="text-xs font-semibold uppercase tracking-wide text-slate-600" for="tracking_number">Tracking number</label>
@@ -24,12 +24,7 @@
           class="mt-1.5 w-full rounded-sm border border-slate-300 bg-white px-3 py-2 font-mono text-sm text-slate-900 shadow-none focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
         />
       </div>
-      <button
-        type="submit"
-        class="inline-flex shrink-0 items-center justify-center rounded-sm border border-primary bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-accent/40"
-      >
-        Track
-      </button>
+      <button type="submit" class="rw-btn-primary shrink-0 px-6">Track</button>
     </form>
 
     {% if form_error == 'empty' %}
@@ -55,10 +50,10 @@
     {% set route_nodes = sc.nodes or [] %}
     {% set route_edges = sc.edges or [] %}
 
-    {# —— Summary hero —— #}
-    <section class="mt-8">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Summary</h2>
-      <div class="rw-track-hero mt-3 p-5 sm:p-6">
+    {# —— Summary hero (tracking + schematic when available) —— #}
+    <section class="mt-10">
+      <h2 class="rw-section-label">Overview</h2>
+      <div class="rw-track-hero mt-4 p-5 sm:p-6">
         <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div class="min-w-0">
             <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Tracking number</p>
@@ -89,23 +84,24 @@
         </div>
 
         <div class="mt-6 border-t border-slate-200 pt-6">
-          <div class="flex flex-wrap items-end justify-between gap-3">
-            <div class="min-w-0">
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</p>
-              <p class="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">{{ progress.derived_status }}</p>
-              {% if progress.current_location_label %}
-                <p class="mt-2 max-w-xl text-sm leading-snug text-slate-700">{{ progress.current_location_label }}</p>
-              {% endif %}
+          <div class="rw-track-status-focus">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</p>
+                <p class="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">{{ progress.derived_status }}</p>
+                {% if progress.current_location_label %}
+                  <p class="mt-2 max-w-xl text-sm leading-snug text-slate-700">{{ progress.current_location_label }}</p>
+                {% endif %}
+              </div>
+              <p class="font-mono text-sm font-semibold tabular-nums text-slate-800">{{ progress.progress_percent }}%</p>
             </div>
-            <p class="font-mono text-sm font-semibold tabular-nums text-slate-800">{{ progress.progress_percent }}%</p>
+            <div class="rw-track-progress-bar mt-4">
+              <div class="rw-track-progress-bar__fill" style="width: {{ progress.progress_percent }}%; max-width: 100%;"></div>
+            </div>
+            <p class="mt-3 text-[11px] leading-relaxed text-slate-500">
+              {{ "%.2f"|format(progress.elapsed_days) }} / {{ "%.2f"|format(progress.estimated_total_days) }} days (planned). {{ progress.simulation_note }}
+            </p>
           </div>
-          <div class="rw-track-progress-bar mt-4">
-            <div class="rw-track-progress-bar__fill" style="width: {{ progress.progress_percent }}%; max-width: 100%;"></div>
-          </div>
-          <p class="mt-3 text-[11px] leading-relaxed text-slate-500">
-            About {{ "%.2f"|format(progress.elapsed_days) }} days used of {{ "%.2f"|format(progress.estimated_total_days) }} days planned.
-            {{ progress.simulation_note }}
-          </p>
         </div>
 
         <div class="mt-6 grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-3">
@@ -122,63 +118,63 @@
             <p class="mt-1 text-base font-semibold tabular-nums text-slate-900 kpi-value">{{ s.total_estimated_cost | format_cny }}</p>
           </div>
         </div>
+
+        {% if route_nodes | length > 0 %}
+          <div class="rw-track-hero__schematic">
+            <p class="rw-section-label">Route progress</p>
+            <p class="mt-1 max-w-2xl text-xs text-slate-600">
+              Stops in order. The connector shows simulated movement along your saved path (not a map).
+            </p>
+            <div class="rw-track-schematic rw-track-schematic--in-hero mt-4 overflow-x-auto">
+              <div class="rw-track-schematic__inner">
+                {% for node in route_nodes %}
+                  <div
+                    class="rw-track-node {% if node.visual == 'done' %}rw-track-node--done{% elif node.visual == 'here' %}rw-track-node--here{% elif node.visual == 'next' %}rw-track-node--next{% else %}rw-track-node--later{% endif %}"
+                  >
+                    <div class="rw-track-node__diamond" aria-hidden="true"></div>
+                    {% if node.type %}
+                      <p class="rw-track-node__label">{{ node.type }}</p>
+                    {% else %}
+                      <p class="rw-track-node__label">{% if node.visual == 'here' %}Now{% elif node.visual == 'next' %}Next{% elif node.visual == 'done' %}Done{% else %}Later{% endif %}</p>
+                    {% endif %}
+                    <p class="rw-track-node__name">{{ node.name or "—" }}</p>
+                    {% if node.city %}
+                      <p class="rw-track-node__city">{{ node.city }}</p>
+                    {% endif %}
+                  </div>
+
+                  {% if not loop.last %}
+                    {% set ei = loop.index0 %}
+                    {% set edge = route_edges[ei] if ei < (route_edges | length) else none %}
+                    {% if edge %}
+                      {% set ph = edge.phase %}
+                      {% set fill_w = 100 if ph == 'completed' else (0 if ph == 'upcoming' else ((progress.marker_fraction or 0) * 100)) %}
+                      {% set show_marker = (ph == 'current' and not progress.is_delivered and progress.active_leg_index is not none and progress.active_leg_index == edge.index) %}
+                      <div class="rw-track-seg rw-track-seg--{{ 'past' if ph == 'completed' else ph }}">
+                        <div class="rw-track-seg__track">
+                          <div class="rw-track-seg__fill" style="width: {{ fill_w | round(1) }}%; max-width: 100%;"></div>
+                          {% if show_marker %}
+                            <div
+                              class="rw-track-seg__marker"
+                              style="left: {{ ((progress.marker_fraction or 0) * 100) | round(2) }}%;"
+                              aria-hidden="true"
+                            ></div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
       </div>
     </section>
 
-    {# —— Schematic route —— #}
-    {% if route_nodes | length > 0 %}
+    {% if route_nodes | length == 0 and s.path_summary %}
       <section class="mt-10">
-        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route progress</h2>
-        <p class="mt-1 max-w-2xl text-xs text-slate-600">
-          Hubs and stops in order. The line shows your shipment’s path (simulated progress, not a map).
-        </p>
-
-        <div class="rw-track-schematic mt-4 overflow-x-auto">
-          <div class="rw-track-schematic__inner">
-            {% for node in route_nodes %}
-              <div
-                class="rw-track-node {% if node.visual == 'done' %}rw-track-node--done{% elif node.visual == 'here' %}rw-track-node--here{% elif node.visual == 'next' %}rw-track-node--next{% else %}rw-track-node--later{% endif %}"
-              >
-                <div class="rw-track-node__diamond" aria-hidden="true"></div>
-                {% if node.type %}
-                  <p class="rw-track-node__label">{{ node.type }}</p>
-                {% else %}
-                  <p class="rw-track-node__label">{% if node.visual == 'here' %}Now{% elif node.visual == 'next' %}Next{% elif node.visual == 'done' %}Done{% else %}Later{% endif %}</p>
-                {% endif %}
-                <p class="rw-track-node__name">{{ node.name or "—" }}</p>
-                {% if node.city %}
-                  <p class="rw-track-node__city">{{ node.city }}</p>
-                {% endif %}
-              </div>
-
-              {% if not loop.last %}
-                {% set ei = loop.index0 %}
-                {% set edge = route_edges[ei] if ei < (route_edges | length) else none %}
-                {% if edge %}
-                  {% set ph = edge.phase %}
-                  {% set fill_w = 100 if ph == 'completed' else (0 if ph == 'upcoming' else ((progress.marker_fraction or 0) * 100)) %}
-                  {% set show_marker = (ph == 'current' and not progress.is_delivered and progress.active_leg_index is not none and progress.active_leg_index == edge.index) %}
-                  <div class="rw-track-seg rw-track-seg--{{ 'past' if ph == 'completed' else ph }}">
-                    <div class="rw-track-seg__track">
-                      <div class="rw-track-seg__fill" style="width: {{ fill_w | round(1) }}%; max-width: 100%;"></div>
-                      {% if show_marker %}
-                        <div
-                          class="rw-track-seg__marker"
-                          style="left: {{ ((progress.marker_fraction or 0) * 100) | round(2) }}%;"
-                          aria-hidden="true"
-                        ></div>
-                      {% endif %}
-                    </div>
-                  </div>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-      </section>
-    {% elif s.path_summary %}
-      <section class="mt-10">
-        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route</h2>
+        <h2 class="rw-section-label">Route</h2>
         <div class="mt-3 border border-slate-300 bg-panel px-4 py-3 text-sm text-slate-700">
           {{ s.path_summary }}
         </div>
@@ -187,7 +183,7 @@
 
     {# —— Logistics stages —— #}
     <section class="mt-10">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Logistics stages</h2>
+      <h2 class="rw-section-label">Logistics stages</h2>
       <p class="mt-1 max-w-2xl text-xs text-slate-600">Standard milestones. The current step is highlighted.</p>
 
       <ol class="mt-4 border border-slate-300 bg-surface">
@@ -226,7 +222,7 @@
 
     {# —— Route legs detail —— #}
     <section class="mt-10">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route detail</h2>
+      <h2 class="rw-section-label">Route detail</h2>
       <p class="mt-1 max-w-2xl text-xs text-slate-600">Each leg of your planned route. Time and cost are from your plan.</p>
 
       {% if progress.route_milestones and progress.route_milestones | length > 0 %}
@@ -274,7 +270,7 @@
 
     {# —— Meta —— #}
     <section class="mt-10">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Record</h2>
+      <h2 class="rw-section-label">Record</h2>
       <div class="mt-3 grid gap-3 sm:grid-cols-2">
         <div class="border border-slate-200 bg-surface px-3 py-2.5">
           <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Created</p>
