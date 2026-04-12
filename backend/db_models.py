@@ -53,3 +53,43 @@ class RouteAnalysis(db.Model):
 
     user = db.relationship("User", back_populates="analyses")
 
+
+class Shipment(db.Model):
+    """Trackable shipment snapshot derived from a computed route (planner output)."""
+
+    __tablename__ = "shipments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True, index=True)
+
+    tracking_number = db.Column(db.String(40), unique=True, nullable=False, index=True)
+
+    origin_id = db.Column(db.String(128), nullable=False)
+    origin_name = db.Column(db.String(255), nullable=False)
+    destination_id = db.Column(db.String(128), nullable=False)
+    destination_name = db.Column(db.String(255), nullable=False)
+
+    direction_key = db.Column(db.String(32), nullable=True)
+
+    objective_key = db.Column(db.String(64), nullable=False, index=True)
+    objective_label = db.Column(db.String(128), nullable=False)
+
+    weight_kg = db.Column(db.Float, nullable=False)
+
+    total_estimated_cost = db.Column(db.Float, nullable=False)
+    estimated_delivery_days = db.Column(db.Float, nullable=False)
+
+    route_legs = db.Column(db.JSON, nullable=False)
+    path_nodes = db.Column(db.JSON, nullable=False)
+
+    path_summary = db.Column(db.String(1024), nullable=False, default="")
+
+    current_status = db.Column(db.String(64), nullable=False, index=True)
+    current_stage_index = db.Column(db.Integer, nullable=False, default=0)
+
+    created_at = db.Column(db.DateTime, nullable=False, default=_utcnow, index=True)
+    updated_at = db.Column(db.DateTime, nullable=False, default=_utcnow, onupdate=_utcnow)
+    estimated_arrival = db.Column(db.DateTime, nullable=True)
+
+    user = db.relationship("User", backref=db.backref("shipments", lazy="dynamic"))
+

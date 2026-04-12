@@ -17,7 +17,7 @@ from backend.decision import build_decision_context
 from backend.route_engine import RouteEngine
 from backend.sensitivity import build_sensitivity_context
 from backend.extensions import db
-from backend.db_models import RouteAnalysis, User
+from backend.db_models import RouteAnalysis, Shipment, User
 from backend.auth_routes import auth_bp
 from backend.admin_routes import admin_bp
 from backend.auth_utils import login_required
