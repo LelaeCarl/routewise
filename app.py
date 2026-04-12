@@ -18,6 +18,13 @@ from backend.route_engine import RouteEngine
 from backend.sensitivity import build_sensitivity_context
 from backend.extensions import db
 from backend.db_models import RouteAnalysis, Shipment, User
+from backend.shipment_tracking import (
+    get_shipment_by_tracking_number,
+    milestone_timeline,
+    modes_used_summary,
+    normalize_tracking_number,
+    route_leg_timeline,
+)
 from backend.auth_routes import auth_bp
 from backend.admin_routes import admin_bp
 from backend.auth_utils import login_required
@@ -510,6 +517,40 @@ def about():
 @app.route("/pricing")
 def pricing():
     return render_template("pricing.html", title="Pricing & Rates")
+
+
+@app.route("/track", methods=["GET", "POST"])
+def track_shipment():
+    if request.method == "POST":
+        raw = (request.form.get("tracking_number") or "").strip()
+        n = normalize_tracking_number(raw)
+        if not n:
+            return render_template("track.html", title="Track Shipment", form_error="empty")
+        return redirect(url_for("track_shipment_detail", tracking_number=n))
+    return render_template("track.html", title="Track Shipment")
+
+
+@app.route("/track/<tracking_number>")
+def track_shipment_detail(tracking_number):
+    n = normalize_tracking_number(tracking_number)
+    if not n:
+        return redirect(url_for("track_shipment"))
+    shipment = get_shipment_by_tracking_number(n)
+    if not shipment:
+        return render_template(
+            "track.html",
+            title="Track Shipment",
+            not_found=True,
+            searched_query=n,
+        )
+    return render_template(
+        "track.html",
+        title=f"Track {shipment.tracking_number}",
+        shipment=shipment,
+        status_timeline=milestone_timeline(shipment),
+        route_timeline=route_leg_timeline(shipment),
+        modes_summary=modes_used_summary(shipment),
+    )
 
 
 @app.route("/profile", methods=["GET", "POST"])

@@ -111,6 +111,63 @@ def leg_milestones(shipment: Shipment) -> list[dict[str, Any]]:
     return milestones
 
 
+def _leg_display_row(leg: dict, leg_index: int) -> dict[str, Any]:
+    frm = (leg.get("from") or {}).get("name", "")
+    to = (leg.get("to") or {}).get("name", "")
+    mode = leg.get("mode", "")
+    mode_key = (leg.get("mode_key") or "").lower()
+    return {
+        "leg_index": leg_index,
+        "from_name": frm,
+        "to_name": to,
+        "mode": mode,
+        "mode_key": mode_key,
+        "summary": f"{frm} → {to} ({mode})" if frm or to else mode,
+        "time": leg.get("time"),
+        "cost": leg.get("cost"),
+    }
+
+
+def route_leg_timeline(shipment: Shipment) -> list[dict[str, Any]]:
+    """Per-leg rows with completed / current / upcoming for route path UI."""
+    legs = shipment.route_legs or []
+    if not legs:
+        return []
+
+    sci = int(shipment.current_stage_index or 0)
+    last_stage = len(SHIPMENT_STATUSES) - 1
+    if sci >= last_stage:
+        return [{**_leg_display_row(leg, i), "phase": "completed"} for i, leg in enumerate(legs)]
+
+    n = len(legs)
+    p = sci / max(1, last_stage)
+    out: list[dict[str, Any]] = []
+    for i, leg in enumerate(legs):
+        leg_start = i / n
+        leg_end = (i + 1) / n
+        if p + 1e-9 >= leg_end:
+            phase: Phase = "completed"
+        elif p >= leg_start:
+            phase = "current"
+        else:
+            phase = "upcoming"
+        out.append({**_leg_display_row(leg, i), "phase": phase})
+    return out
+
+
+def modes_used_summary(shipment: Shipment) -> str:
+    """Comma-separated mode labels from legs (order preserved, unique)."""
+    legs = shipment.route_legs or []
+    seen: set[str] = set()
+    parts: list[str] = []
+    for leg in legs:
+        m = str(leg.get("mode", "")).strip()
+        if m and m not in seen:
+            seen.add(m)
+            parts.append(m)
+    return ", ".join(parts) if parts else "—"
+
+
 def create_shipment_from_route(
     *,
     route: dict,
