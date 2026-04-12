@@ -507,6 +507,11 @@ def about():
     return render_template("about.html", title="About")
 
 
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html", title="Pricing & Rates")
+
+
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():

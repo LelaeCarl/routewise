@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="space-y-1">
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Pricing &amp; Rates</h1>
+    <p class="max-w-2xl text-sm leading-relaxed text-slate-600">
+      Understand how shipping costs are estimated in RouteWise.
+      Our pricing is based on transport mode, shipment weight, and route structure.
+    </p>
+  </div>
+
+  <section class="mt-8">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">What affects your shipping cost?</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <div class="border border-slate-300 bg-surface p-4">
+        <p class="text-sm font-semibold text-slate-900">Transport mode</p>
+        <p class="mt-2 text-xs leading-relaxed text-slate-600">
+          Different transport types have different costs.
+          Air is usually faster but more expensive.
+          Sea is slower but more cost-efficient for heavy shipments.
+        </p>
+      </div>
+      <div class="border border-slate-300 bg-surface p-4">
+        <p class="text-sm font-semibold text-slate-900">Shipment weight</p>
+        <p class="mt-2 text-xs leading-relaxed text-slate-600">
+          Heavier shipments increase total cost.
+          Some transport modes become more efficient for larger weights.
+        </p>
+      </div>
+      <div class="border border-slate-300 bg-surface p-4">
+        <p class="text-sm font-semibold text-slate-900">Route structure</p>
+        <p class="mt-2 text-xs leading-relaxed text-slate-600">
+          Routes with more stops or transfers may cost more.
+          Direct routes are usually simpler and sometimes cheaper.
+        </p>
+      </div>
+      <div class="border border-slate-300 bg-surface p-4">
+        <p class="text-sm font-semibold text-slate-900">Minimum charges</p>
+        <p class="mt-2 text-xs leading-relaxed text-slate-600">
+          Each route has a minimum cost.
+          Even small shipments will not go below this base price.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Rate guide by transport mode</h2>
+    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+      <div class="border border-slate-300 bg-panel p-4">
+        <p class="text-sm font-semibold text-slate-900">Sea freight <span class="font-normal text-slate-500" aria-hidden="true">🚢</span></p>
+        <ul class="mt-3 space-y-1.5 text-xs leading-relaxed text-slate-600">
+          <li><span class="font-medium text-slate-700">Base cost:</span> ¥4,000 – ¥7,500</li>
+          <li><span class="font-medium text-slate-700">Cost per kg:</span> ¥0.6 – ¥1.0</li>
+          <li>Best for heavy and bulk shipments</li>
+          <li>Slower delivery time</li>
+        </ul>
+      </div>
+      <div class="border border-slate-300 bg-panel p-4">
+        <p class="text-sm font-semibold text-slate-900">Air freight <span class="font-normal text-slate-500" aria-hidden="true">✈️</span></p>
+        <ul class="mt-3 space-y-1.5 text-xs leading-relaxed text-slate-600">
+          <li><span class="font-medium text-slate-700">Base cost:</span> ¥1,100 – ¥2,000</li>
+          <li><span class="font-medium text-slate-700">Cost per kg:</span> ¥28 – ¥55</li>
+          <li>Fastest delivery option</li>
+          <li>Higher cost</li>
+        </ul>
+      </div>
+      <div class="border border-slate-300 bg-panel p-4">
+        <p class="text-sm font-semibold text-slate-900">Road transport <span class="font-normal text-slate-500" aria-hidden="true">🚚</span></p>
+        <ul class="mt-3 space-y-1.5 text-xs leading-relaxed text-slate-600">
+          <li><span class="font-medium text-slate-700">Base cost:</span> ¥800 – ¥1,200</li>
+          <li><span class="font-medium text-slate-700">Cost per kg:</span> ¥2 – ¥3.5</li>
+          <li>Used for inland delivery</li>
+          <li>Medium speed and cost</li>
+        </ul>
+      </div>
+      <div class="border border-slate-300 bg-panel p-4">
+        <p class="text-sm font-semibold text-slate-900">Rail transport <span class="font-normal text-slate-500" aria-hidden="true">🚆</span></p>
+        <ul class="mt-3 space-y-1.5 text-xs leading-relaxed text-slate-600">
+          <li><span class="font-medium text-slate-700">Base cost:</span> ¥1,700 – ¥1,800</li>
+          <li><span class="font-medium text-slate-700">Cost per kg:</span> ~¥3</li>
+          <li>Stable and reliable option</li>
+          <li>Balanced between cost and speed</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">How is the total cost calculated?</h2>
+    <div class="mt-4 border border-slate-400 bg-slate-50 px-4 py-4 sm:px-5">
+      <p class="font-mono text-sm font-medium text-slate-900 sm:text-base">
+        Estimated cost = Base cost + (Cost per kg &times; Shipment weight)
+      </p>
+    </div>
+    <p class="mt-3 max-w-2xl text-xs leading-relaxed text-slate-600">
+      If the calculated cost is lower than the minimum charge, the minimum charge will be used instead.
+    </p>
+    <dl class="mt-4 grid gap-3 sm:grid-cols-3">
+      <div class="border border-slate-200 bg-surface px-3 py-2.5">
+        <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Base cost</dt>
+        <dd class="mt-1 text-xs text-slate-600">Fixed starting cost for the route</dd>
+      </div>
+      <div class="border border-slate-200 bg-surface px-3 py-2.5">
+        <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Cost per kg</dt>
+        <dd class="mt-1 text-xs text-slate-600">Price per kilogram</dd>
+      </div>
+      <div class="border border-slate-200 bg-surface px-3 py-2.5 sm:col-span-1">
+        <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Shipment weight</dt>
+        <dd class="mt-1 text-xs text-slate-600">Total shipment weight</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Example</h2>
+    <div class="mt-4 border border-slate-300 bg-surface p-4 sm:p-5">
+      <ul class="space-y-1 text-xs text-slate-600 sm:text-sm">
+        <li><span class="font-medium text-slate-800">Shipment weight:</span> 100 kg</li>
+        <li><span class="font-medium text-slate-800">Base cost:</span> ¥1,500</li>
+        <li><span class="font-medium text-slate-800">Cost per kg:</span> ¥30</li>
+      </ul>
+      <p class="mt-4 border-t border-slate-200 pt-4 font-mono text-sm text-slate-900">
+        Estimated cost = ¥1,500 + (¥30 &times; 100) = ¥4,500
+      </p>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Why do different routes have different prices?</h2>
+    <ul class="mt-4 space-y-2 border border-slate-300 divide-y divide-slate-200 bg-surface">
+      <li class="flex gap-2 px-3 py-2.5 text-sm text-slate-700">
+        <span class="mt-1.5 h-1 w-1 shrink-0 bg-slate-500"></span>
+        <span>Faster routes usually cost more</span>
+      </li>
+      <li class="flex gap-2 px-3 py-2.5 text-sm text-slate-700">
+        <span class="mt-1.5 h-1 w-1 shrink-0 bg-slate-500"></span>
+        <span>Air transport increases cost</span>
+      </li>
+      <li class="flex gap-2 px-3 py-2.5 text-sm text-slate-700">
+        <span class="mt-1.5 h-1 w-1 shrink-0 bg-slate-500"></span>
+        <span>Multi-leg routes may include additional charges</span>
+      </li>
+      <li class="flex gap-2 px-3 py-2.5 text-sm text-slate-700">
+        <span class="mt-1.5 h-1 w-1 shrink-0 bg-slate-500"></span>
+        <span>Heavier shipments may change the best route</span>
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10 mb-2">
+    <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Important</h2>
+    <div class="mt-3 border border-amber-200 bg-amber-50/80 px-4 py-3">
+      <p class="text-sm leading-relaxed text-amber-950">
+        All prices shown in RouteWise are estimates.
+        Actual costs may vary depending on route conditions and logistics providers.
+      </p>
+    </div>
+  </section>
+{% endblock %}
