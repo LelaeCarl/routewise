@@ -159,9 +159,9 @@ app.jinja_env.filters["format_days"] = format_days
 app.jinja_env.filters["format_node_type"] = format_node_type
 
 PREFERENCE_LABELS = {
-    "lowest_cost": "Lowest cost",
-    "fastest_delivery": "Fastest delivery",
-    "practical_route": "Practical option",
+    "lowest_cost": "Lowest Cost",
+    "fastest_delivery": "Fastest Delivery",
+    "practical_route": "Balanced Tradeoff",
 }
 
 DIRECTION_LABELS = {
@@ -248,7 +248,7 @@ def planner():
     preference_key = _normalize_objective_key(request.args.get("preference", "practical_route"))
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
-    preference_label = PREFERENCE_LABELS.get(preference_key, "Practical option")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced Tradeoff")
 
     if direction_key == "china-kenya":
         origin_options = china_nodes_raw
@@ -295,7 +295,7 @@ def results():
     height_cm_raw = request.args.get("height_cm", "").strip()
 
     direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
-    preference_label = PREFERENCE_LABELS.get(preference_key, "Practical option")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced Tradeoff")
 
     nodes = load_nodes()
     node_map = {n.id: n for n in nodes}
@@ -429,17 +429,17 @@ def results():
                 height_cm=height_cm,
             )
 
-            # UI: hide practical_route card when it is effectively duplicate.
+            # UI: hide balanced-tradeoff (practical_route) card when it is effectively duplicate.
             try:
                 from backend.comparison import routes_nearly_identical
             except Exception:  # pragma: no cover
                 routes_nearly_identical = None
 
             ui_objectives = list(OBJECTIVE_KEYS)
-            practical = alternatives.get("practical_route")
-            if routes_nearly_identical and practical and preference_key != "practical_route":
-                if routes_nearly_identical(practical, alternatives.get("lowest_cost", {})) or routes_nearly_identical(
-                    practical, alternatives.get("fastest_delivery", {})
+            balanced_tradeoff_route = alternatives.get("practical_route")
+            if routes_nearly_identical and balanced_tradeoff_route and preference_key != "practical_route":
+                if routes_nearly_identical(balanced_tradeoff_route, alternatives.get("lowest_cost", {})) or routes_nearly_identical(
+                    balanced_tradeoff_route, alternatives.get("fastest_delivery", {})
                 ):
                     ui_objectives = [k for k in ui_objectives if k != "practical_route"]
                     enriched_alts.pop("practical_route", None)

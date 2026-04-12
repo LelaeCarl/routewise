@@ -314,7 +314,7 @@
                         <span class="h-1.5 w-1.5 shrink-0 bg-slate-800"></span>
                       {% endif %}
                       <p class="text-sm font-semibold {% if is_current %}text-slate-900{% else %}text-slate-800{% endif %}">
-                        {% if obj_key == 'lowest_cost' %}Lowest cost{% elif obj_key == 'fastest_delivery' %}Fastest delivery{% else %}Practical option{% endif %}
+                        {{ preference_labels.get(obj_key, obj_key) }}
                       </p>
                       {% if alt.tag is defined and alt.tag and alt.tag != 'current' %}
                         <span class="border border-slate-300 px-1.5 py-0 text-[10px] font-semibold uppercase tracking-wide {% if alt.tag == 'cheaper' %}text-slate-700{% elif alt.tag == 'faster' %}text-slate-800{% elif alt.tag == 'similar' %}text-slate-500{% else %}text-slate-700{% endif %}">{{ alt.tag }}</span>

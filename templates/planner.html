@@ -162,9 +162,9 @@
                 name="preference"
                 class="w-full rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-none focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/40"
               >
-                  <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest cost</option>
-                  <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest delivery</option>
-                  <option value="practical_route" {% if preference_key == 'practical_route' %}selected{% endif %}>Practical option</option>
+                  <option value="lowest_cost" {% if preference_key == 'lowest_cost' %}selected{% endif %}>Lowest Cost</option>
+                  <option value="fastest_delivery" {% if preference_key == 'fastest_delivery' %}selected{% endif %}>Fastest Delivery</option>
+                  <option value="practical_route" {% if preference_key == 'practical_route' %}selected{% endif %}>Balanced Tradeoff</option>
               </select>
             </div>
           </div>
@@ -190,16 +190,16 @@
         </div>
         <div class="space-y-0 divide-y divide-slate-200 p-4">
           <div class="pb-3">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Lowest cost</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">Prefers sea and road legs to minimize total spend.</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Lowest Cost</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-600">Chooses the cheapest route.</p>
           </div>
           <div class="pt-3 pb-3">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fastest delivery</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">Prefers air and fast inland links to minimize transit time.</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fastest Delivery</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-600">Chooses the quickest route.</p>
           </div>
           <div class="pt-3">
-            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Practical option</p>
-            <p class="mt-1 text-xs leading-relaxed text-slate-600">A pragmatic blend of cost and time.</p>
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Balanced Tradeoff</p>
+            <p class="mt-1 text-xs leading-relaxed text-slate-600">Chooses a route that balances cost and delivery time.</p>
           </div>
         </div>
       </div>

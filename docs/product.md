@@ -99,7 +99,7 @@ Provides information about:
 
 - Simplicity
 - Clarity
-- Practical usefulness
+- Real-world usefulness
 - Academic correctness
 
 ---

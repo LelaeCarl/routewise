@@ -74,7 +74,7 @@ RouteWise/
 
 ## 🎯 Project Goal
 
-To build a practical and intelligent system that simplifies logistics decision-making for cross-border e-commerce between China and Kenya.
+To build a useful and intelligent system that simplifies logistics decision-making for cross-border e-commerce between China and Kenya.
 
 ---
 

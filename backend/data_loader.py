@@ -151,7 +151,7 @@ def load_edges(path: str | None = None) -> List[Edge]:
             )
         )
 
-    # Practical realism: where both rail and road exist between the same endpoints,
+    # Operational realism: where both rail and road exist between the same endpoints,
     # rail should typically be faster than road on that corridor.
     by_pair: Dict[tuple[str, str], Dict[str, List[int]]] = {}
     for idx, e in enumerate(edges):

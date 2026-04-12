@@ -14,9 +14,9 @@ COST_SIMILAR_PCT = 5.0
 TIME_SIMILAR_DAYS = 1.0
 
 OBJECTIVE_LABELS = {
-    "lowest_cost": "Lowest cost",
-    "fastest_delivery": "Fastest delivery",
-    "practical_route": "Practical option",
+    "lowest_cost": "Lowest Cost",
+    "fastest_delivery": "Fastest Delivery",
+    "practical_route": "Balanced Tradeoff",
 }
 
 
@@ -144,7 +144,7 @@ def _fallback_rationale(route: dict, objective_key: str, modes: str) -> str:
         return f"This route minimizes total estimated cost using {modes} transport."
     if objective_key == "fastest_delivery":
         return f"This route minimizes estimated transit time using {modes} transport."
-    return f"This route optimizes for practical operations using {modes} transport."
+    return f"This route balances cost and delivery time using {modes} transport."
 
 
 def _rationale_lowest_cost(route: dict, deltas: dict, modes: str) -> str:
@@ -217,7 +217,7 @@ def _rationale_practical(route: dict, deltas: dict, modes: str) -> str:
 
         if pieces:
             joined = "; ".join(pieces)
-            return f"This route offers a practical middle ground. {joined[0].upper()}{joined[1:]}."
+            return f"This route offers a balanced tradeoff between cost and speed. {joined[0].upper()}{joined[1:]}."
 
     return (
         f"This route penalizes delay while remaining cost-aware (\u00a5{route['total_cost']:,.0f}, "

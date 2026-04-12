@@ -9,9 +9,9 @@ from backend.models import Node
 
 
 OBJECTIVE_LABELS = {
-    "lowest_cost": "Lowest cost",
-    "fastest_delivery": "Fastest delivery",
-    "practical_route": "Practical option",
+    "lowest_cost": "Lowest Cost",
+    "fastest_delivery": "Fastest Delivery",
+    "practical_route": "Balanced Tradeoff",
 }
 
 MODE_LABELS = {

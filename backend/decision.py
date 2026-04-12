@@ -19,14 +19,14 @@ TIME_SIMILAR_DAYS = 1.0
 CLASSIFICATION_LABELS = {
     "cost-efficient": "Cost-efficient",
     "time-optimized": "Time-optimized",
-    "balanced": "Practical",
+    "balanced": "Balanced",
     "similar-options": "Similar options",
 }
 
 _BEST_FOR = {
-    "lowest_cost": "Best for: minimizing cost",
-    "fastest_delivery": "Best for: fastest delivery",
-    "practical_route": "Best for: practical option",
+    "lowest_cost": "Chooses the cheapest route",
+    "fastest_delivery": "Chooses the quickest route",
+    "practical_route": "Chooses a route that balances cost and delivery time",
 }
 
 
@@ -218,13 +218,13 @@ def _insight_practical(
 
     if near_fastest:
         return (
-            "The practical analysis favors speed for this corridor, "
+            "The balanced tradeoff objective favors speed for this corridor, "
             "producing a route close to the fastest option."
         )
 
     if near_cheapest:
         return (
-            "The practical analysis favors economy for this corridor, "
+            "The balanced tradeoff objective favors economy for this corridor, "
             "producing a route close to the lowest-cost option."
         )
 
@@ -232,7 +232,7 @@ def _insight_practical(
     faster_than_cheap = cheapest["total_time"] - route["total_time"]
 
     return (
-        f"This route offers a practical balance \u2014 "
+        f"This route offers a balanced tradeoff \u2014 "
         f"\u00a5{over_cheap:,.0f} more than the cheapest option "
         f"but {faster_than_cheap:.1f} days faster."
     )
