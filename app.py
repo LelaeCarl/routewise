@@ -665,6 +665,17 @@ def track_shipment_detail(tracking_number):
     )
 
 
+@app.route("/shipments")
+@login_required
+def shipments_list():
+    items = (
+        Shipment.query.filter_by(user_id=g.user.id)
+        .order_by(Shipment.created_at.desc())
+        .all()
+    )
+    return render_template("shipments.html", title="Shipments", shipments=items)
+
+
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():

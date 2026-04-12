@@ -27,6 +27,7 @@
     <a href="{{ url_for('hubs') }}" class="rw-side-nav {% if p == '/hubs' %}rw-side-nav--active{% endif %}" {% if p == '/hubs' %}aria-current="page"{% endif %}>Hubs</a>
     <a href="{{ url_for('pricing') }}" class="rw-side-nav {% if p == '/pricing' %}rw-side-nav--active{% endif %}" {% if p == '/pricing' %}aria-current="page"{% endif %}>Pricing &amp; Rates</a>
     <a href="{{ url_for('track_shipment') }}" class="rw-side-nav {% if p.startswith('/track') %}rw-side-nav--active{% endif %}" {% if p.startswith('/track') %}aria-current="page"{% endif %}>Track Shipment</a>
+    <a href="{{ url_for('shipments_list') }}" class="rw-side-nav {% if p == '/shipments' %}rw-side-nav--active{% endif %}" {% if p == '/shipments' %}aria-current="page"{% endif %}>Shipments</a>
     <a href="{{ url_for('about') }}" class="rw-side-nav {% if p == '/about' %}rw-side-nav--active{% endif %}" {% if p == '/about' %}aria-current="page"{% endif %}>About</a>
     {% if is_admin %}
       <p class="px-2 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">Operations</p>
