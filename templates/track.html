@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% set mode_bg = {'sea': 'bg-slate-700', 'air': 'bg-slate-500', 'road': 'bg-slate-600', 'rail': 'bg-slate-800'} %}
+{% set mode_bg = {'sea': 'bg-slate-700', 'air': 'bg-slate-500', 'road': 'bg-slate-600', 'rail': 'bg-slate-800', 'segment': 'bg-slate-500'} %}
 
 {% block content %}
   <div class="space-y-1">
@@ -67,9 +67,15 @@
             <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Destination</p>
             <p class="mt-1 text-sm font-medium text-slate-900">{{ s.destination_name }}</p>
           </div>
+          {% if progress.current_location_label %}
+            <div class="bg-surface px-4 py-3 sm:col-span-2">
+              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Location (estimated)</p>
+              <p class="mt-1 text-sm text-slate-800">{{ progress.current_location_label }}</p>
+            </div>
+          {% endif %}
           <div class="bg-surface px-4 py-3">
             <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Current status</p>
-            <p class="mt-1 text-sm font-semibold text-slate-900">{{ s.current_status }}</p>
+            <p class="mt-1 text-sm font-semibold text-slate-900">{{ progress.derived_status }}</p>
           </div>
           <div class="bg-surface px-4 py-3">
             <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Objective</p>
@@ -94,14 +100,27 @@
     <section class="mt-8">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Shipment progress</h2>
       <div class="mt-3 border border-primary/30 bg-primary/5 px-4 py-4">
-        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-600">Current stage</p>
-        <p class="mt-1 text-lg font-semibold text-slate-900">{{ s.current_status }}</p>
+        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-600">Current stage (simulated)</p>
+        <p class="mt-1 text-lg font-semibold text-slate-900">{{ progress.derived_status }}</p>
+        <div class="mt-3">
+          <div class="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+            <span>Estimated journey</span>
+            <span class="font-mono font-medium text-slate-800">{{ progress.progress_percent }}%</span>
+          </div>
+          <div class="mt-1.5 h-2 w-full border border-slate-200 bg-white">
+            <div class="h-full bg-primary transition-[width] duration-300" style="width: {{ progress.progress_percent }}%; max-width: 100%;"></div>
+          </div>
+          <p class="mt-2 text-[11px] leading-relaxed text-slate-500">
+            Elapsed ~{{ "%.2f"|format(progress.elapsed_days) }} d of ~{{ "%.2f"|format(progress.estimated_total_days) }} d planned.
+            {{ progress.simulation_note }}
+          </p>
+        </div>
       </div>
 
       <div class="mt-4">
         <p class="text-xs font-medium text-slate-700">All stages</p>
         <ol class="mt-3 space-y-0 border border-slate-200 bg-surface">
-          {% for row in status_timeline %}
+          {% for row in progress.status_milestones %}
             <li class="flex gap-3 border-b border-slate-100 px-3 py-2.5 last:border-b-0 {% if row.phase == 'current' %}bg-panel{% endif %}">
               <span class="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold
                 {% if row.phase == 'completed' %}bg-slate-700 text-white{% elif row.phase == 'current' %}border-2 border-primary bg-white text-primary{% else %}border border-slate-300 bg-white text-slate-400{% endif %}"
@@ -123,11 +142,11 @@
 
     <section class="mt-8">
       <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Route timeline</h2>
-      <p class="mt-1 max-w-2xl text-xs text-slate-600">Segments along your planned route. Stages show approximate progress.</p>
+      <p class="mt-1 max-w-2xl text-xs text-slate-600">Segments along your planned route. Completed / current / next reflect simulated time along the route.</p>
 
-      {% if route_timeline and route_timeline | length > 0 %}
+      {% if progress.route_milestones and progress.route_milestones | length > 0 %}
         <div class="mt-4 space-y-0 border border-slate-300 bg-surface">
-          {% for leg in route_timeline %}
+          {% for leg in progress.route_milestones %}
             <div class="border-b border-slate-200 px-4 py-3 last:border-b-0 {% if leg.phase == 'current' %}bg-panel{% elif leg.phase == 'upcoming' %}bg-surface/60{% endif %}">
               <div class="flex flex-wrap items-start justify-between gap-2">
                 <div class="min-w-0">

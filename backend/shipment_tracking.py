@@ -168,6 +168,187 @@ def modes_used_summary(shipment: Shipment) -> str:
     return ", ".join(parts) if parts else "—"
 
 
+def _as_utc_aware(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def _effective_total_days(shipment: Shipment) -> float:
+    """Planned transit duration used as the simulation timeline (days)."""
+    t = float(shipment.estimated_delivery_days or 0.0)
+    if t > 0:
+        return t
+    legs = shipment.route_legs or []
+    s = sum(max(0.0, float(leg.get("time") or 0)) for leg in legs)
+    if s > 0:
+        return s
+    return 1.0
+
+
+def _normalized_leg_durations(legs: list[dict], total_days: float) -> list[float]:
+    if not legs or total_days <= 0:
+        return []
+    raw = [max(0.0, float(leg.get("time") or 0)) for leg in legs]
+    s = sum(raw)
+    n = len(legs)
+    if s > 0:
+        scale = total_days / s
+        return [t * scale for t in raw]
+    return [total_days / n] * n
+
+
+def _logistics_phases(derived_stage_index: int, is_delivered: bool) -> list[dict[str, Any]]:
+    """Completed / current / upcoming for SHIPMENT_STATUSES based on simulated stage."""
+    out: list[dict[str, Any]] = []
+    for i, label in enumerate(SHIPMENT_STATUSES):
+        if is_delivered:
+            phase: Phase = "completed"
+        elif i < derived_stage_index:
+            phase = "completed"
+        elif i == derived_stage_index:
+            phase = "current"
+        else:
+            phase = "upcoming"
+        out.append({"index": i, "status": label, "phase": phase})
+    return out
+
+
+def derive_shipment_progress(
+    shipment: Shipment,
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Simulate progress from elapsed wall time vs planned transit — no GPS, no background jobs.
+
+    Deterministic: ``progress ≈ min(1, elapsed / estimated_total_days)``.
+    Logistics status maps the first five stages to ``progress * 5`` buckets; **Delivered** when
+    elapsed ≥ estimated journey time. Route legs (or path nodes) split the timeline using leg
+    durations normalized to match ``estimated_delivery_days``.
+    """
+    now = datetime.now(timezone.utc) if now is None else _as_utc_aware(now)
+    created = _as_utc_aware(shipment.created_at)
+    total_days = _effective_total_days(shipment)
+
+    elapsed_days = max(0.0, (now - created).total_seconds() / 86400.0)
+    r = min(1.0, elapsed_days / total_days) if total_days > 0 else 0.0
+    progress_percent = round(r * 100.0, 1)
+    is_delivered = elapsed_days >= total_days - 1e-9 and total_days > 0
+
+    if is_delivered:
+        derived_stage_index = len(SHIPMENT_STATUSES) - 1
+    else:
+        derived_stage_index = min(4, int(r * 5.0))
+
+    derived_status = SHIPMENT_STATUSES[derived_stage_index]
+
+    legs: list[dict] = list(shipment.route_legs or [])
+    pos = min(total_days, r * total_days) if not is_delivered else total_days
+
+    route_rows: list[dict[str, Any]] = []
+    current_leg_idx: int | None = None
+
+    if legs:
+        durations = _normalized_leg_durations(legs, total_days)
+        boundaries = [0.0]
+        for d in durations:
+            boundaries.append(boundaries[-1] + d)
+
+        for i, leg in enumerate(legs):
+            lo = boundaries[i]
+            hi = boundaries[i + 1]
+            if is_delivered or pos >= hi - 1e-9:
+                ph: Phase = "completed"
+            elif lo <= pos < hi - 1e-9:
+                ph = "current"
+                current_leg_idx = i
+            else:
+                ph = "upcoming"
+            route_rows.append({**_leg_display_row(leg, i), "phase": ph})
+    else:
+        nodes = list(shipment.path_nodes or [])
+        if len(nodes) >= 2:
+            nseg = len(nodes) - 1
+            seg_days = total_days / nseg if nseg > 0 else total_days
+            boundaries = [0.0]
+            for _ in range(nseg):
+                boundaries.append(boundaries[-1] + seg_days)
+            for i in range(nseg):
+                na = nodes[i]
+                nb = nodes[i + 1]
+                frm = str(na.get("name", ""))
+                to = str(nb.get("name", ""))
+                lo = boundaries[i]
+                hi = boundaries[i + 1]
+                if is_delivered or pos >= hi - 1e-9:
+                    ph = "completed"
+                elif lo <= pos < hi - 1e-9:
+                    ph = "current"
+                    current_leg_idx = i
+                else:
+                    ph = "upcoming"
+                route_rows.append(
+                    {
+                        "leg_index": i,
+                        "from_name": frm,
+                        "to_name": to,
+                        "mode": "Segment",
+                        "mode_key": "segment",
+                        "summary": f"{frm} → {to}",
+                        "time": None,
+                        "cost": None,
+                        "phase": ph,
+                    }
+                )
+
+    current_location_label = _derive_location_label(
+        shipment,
+        r=r,
+        is_delivered=is_delivered,
+        current_leg_idx=current_leg_idx,
+        legs=legs,
+    )
+
+    status_milestones = _logistics_phases(derived_stage_index, is_delivered)
+
+    return {
+        "progress_percent": progress_percent,
+        "progress_ratio": r,
+        "elapsed_days": round(elapsed_days, 4),
+        "estimated_total_days": total_days,
+        "is_delivered": is_delivered,
+        "derived_stage_index": derived_stage_index,
+        "derived_status": derived_status,
+        "current_location_label": current_location_label,
+        "status_milestones": status_milestones,
+        "route_milestones": route_rows,
+        "simulation_note": "Progress is simulated from elapsed time versus the planned transit window (no live carrier data).",
+    }
+
+
+def _derive_location_label(
+    shipment: Shipment,
+    *,
+    r: float,
+    is_delivered: bool,
+    current_leg_idx: int | None,
+    legs: list[dict],
+) -> str:
+    if is_delivered:
+        return f"Delivered — {shipment.destination_name}"
+    if r < 0.02:
+        return f"At origin hub — {shipment.origin_name}"
+    if current_leg_idx is not None and 0 <= current_leg_idx < len(legs):
+        leg = legs[current_leg_idx]
+        to_n = (leg.get("to") or {}).get("name", "")
+        frm_n = (leg.get("from") or {}).get("name", "")
+        if to_n:
+            return f"En route — toward {to_n}"
+        if frm_n:
+            return f"Departed — {frm_n}"
+    return f"In transit — heading to {shipment.destination_name}"
+
+
 def create_shipment_from_route(
     *,
     route: dict,

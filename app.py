@@ -20,11 +20,10 @@ from backend.extensions import db
 from backend.db_models import RouteAnalysis, Shipment, User
 from backend.shipment_tracking import (
     create_shipment_from_route,
+    derive_shipment_progress,
     get_shipment_by_tracking_number,
-    milestone_timeline,
     modes_used_summary,
     normalize_tracking_number,
-    route_leg_timeline,
 )
 from backend.auth_routes import auth_bp
 from backend.admin_routes import admin_bp
@@ -659,8 +658,7 @@ def track_shipment_detail(tracking_number):
         "track.html",
         title=f"Track {shipment.tracking_number}",
         shipment=shipment,
-        status_timeline=milestone_timeline(shipment),
-        route_timeline=route_leg_timeline(shipment),
+        progress=derive_shipment_progress(shipment),
         modes_summary=modes_used_summary(shipment),
     )
 
