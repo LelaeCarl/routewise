@@ -247,12 +247,14 @@ def derive_shipment_progress(
 
     route_rows: list[dict[str, Any]] = []
     current_leg_idx: int | None = None
+    boundaries_for_marker: list[float] = []
 
     if legs:
         durations = _normalized_leg_durations(legs, total_days)
         boundaries = [0.0]
         for d in durations:
             boundaries.append(boundaries[-1] + d)
+        boundaries_for_marker = boundaries
 
         for i, leg in enumerate(legs):
             lo = boundaries[i]
@@ -300,6 +302,7 @@ def derive_shipment_progress(
                         "phase": ph,
                     }
                 )
+            boundaries_for_marker = boundaries
 
     current_location_label = _derive_location_label(
         shipment,
@@ -310,6 +313,25 @@ def derive_shipment_progress(
     )
 
     status_milestones = _logistics_phases(derived_stage_index, is_delivered)
+
+    marker_fraction: float | None = None
+    if (
+        current_leg_idx is not None
+        and not is_delivered
+        and len(boundaries_for_marker) >= 2
+    ):
+        lo = boundaries_for_marker[current_leg_idx]
+        hi = boundaries_for_marker[current_leg_idx + 1]
+        if hi > lo + 1e-12:
+            marker_fraction = max(0.0, min(1.0, (pos - lo) / (hi - lo)))
+
+    schematic = _build_schematic_visual(
+        shipment,
+        route_rows,
+        is_delivered,
+        current_leg_idx,
+        marker_fraction,
+    )
 
     return {
         "progress_percent": progress_percent,
@@ -323,6 +345,122 @@ def derive_shipment_progress(
         "status_milestones": status_milestones,
         "route_milestones": route_rows,
         "simulation_note": "Progress is simulated from elapsed time versus the planned transit window (no live carrier data).",
+        "schematic": schematic,
+        "marker_fraction": marker_fraction,
+        "active_leg_index": current_leg_idx,
+    }
+
+
+def _build_schematic_visual(
+    shipment: Shipment,
+    milestones: list[dict[str, Any]],
+    is_delivered: bool,
+    active_leg_index: int | None,
+    marker_fraction: float | None,
+) -> dict[str, Any]:
+    """Node/edge data for a schematic route line (no map)."""
+    path_nodes = list(shipment.path_nodes or [])
+    n = len(path_nodes)
+
+    if n == 0:
+        return {
+            "nodes": [],
+            "edges": [],
+            "marker_fraction": marker_fraction,
+            "active_leg_index": active_leg_index,
+        }
+
+    if n == 1:
+        only = path_nodes[0]
+        return {
+            "nodes": [
+                {
+                    "index": 0,
+                    "name": str(only.get("name", "")),
+                    "city": str(only.get("city", "")),
+                    "type": str(only.get("type", "")),
+                    "visual": "done" if is_delivered else "here",
+                }
+            ],
+            "edges": [],
+            "marker_fraction": None,
+            "active_leg_index": None,
+        }
+
+    edges_out: list[dict[str, Any]] = []
+    for j, ms in enumerate(milestones):
+        if j >= n - 1:
+            break
+        ph = str(ms.get("phase", "upcoming"))
+        edges_out.append(
+            {
+                "index": j,
+                "phase": ph,
+                "mode_key": str(ms.get("mode_key", "") or "").lower(),
+                "from_name": str(ms.get("from_name", "")),
+                "to_name": str(ms.get("to_name", "")),
+            }
+        )
+    while len(edges_out) < n - 1:
+        edges_out.append(
+            {
+                "index": len(edges_out),
+                "phase": "upcoming",
+                "mode_key": "",
+                "from_name": "",
+                "to_name": "",
+            }
+        )
+
+    node_visual = ["later"] * n
+    if is_delivered:
+        node_visual = ["done"] * n
+    else:
+        first_special: int | None = None
+        for j, e in enumerate(edges_out):
+            if e.get("phase") in ("upcoming", "current"):
+                first_special = j
+                break
+        if first_special is None and edges_out:
+            if all(e.get("phase") == "completed" for e in edges_out):
+                node_visual = ["done"] * (n - 1) + ["here"] if n > 1 else ["here"]
+                if n == 1:
+                    node_visual[0] = "here"
+            else:
+                node_visual[0] = "here"
+        elif first_special is not None:
+            j = first_special
+            ph = edges_out[j].get("phase")
+            if ph == "upcoming":
+                for k in range(j):
+                    node_visual[k] = "done"
+                node_visual[j] = "here"
+            else:
+                for k in range(j + 1):
+                    node_visual[k] = "done"
+                if j + 1 < n:
+                    node_visual[j + 1] = "next"
+                for k in range(j + 2, n):
+                    node_visual[k] = "later"
+
+    nodes_out: list[dict[str, Any]] = []
+    for i, vn in enumerate(path_nodes):
+        vis = node_visual[i] if i < len(node_visual) else "later"
+        nodes_out.append(
+            {
+                "index": i,
+                "name": str(vn.get("name", "")),
+                "city": str(vn.get("city", "")),
+                "type": str(vn.get("type", "")),
+                "visual": vis,
+            }
+        )
+
+    return {
+        "nodes": nodes_out,
+        "edges": edges_out[: max(0, n - 1)],
+        "marker_fraction": marker_fraction,
+        "active_leg_index": active_leg_index,
     }
 
 

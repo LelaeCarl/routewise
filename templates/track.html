@@ -6,7 +6,7 @@
   <div class="space-y-1">
     <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">Track Shipment</h1>
     <p class="max-w-2xl text-sm leading-relaxed text-slate-600">
-      Enter your tracking number to view your shipment status and route progress.
+      Enter your tracking number to see status and route progress.
     </p>
   </div>
 
@@ -51,110 +51,204 @@
 
   {% if shipment %}
     {% set s = shipment %}
+    {% set sc = progress.schematic or {} %}
+    {% set route_nodes = sc.nodes or [] %}
+    {% set route_edges = sc.edges or [] %}
+
+    {# —— Summary hero —— #}
     <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Shipment summary</h2>
-      <div class="mt-4 border border-slate-300 bg-surface">
-        <div class="grid gap-px bg-slate-200 sm:grid-cols-2">
-          <div class="bg-panel px-4 py-3 sm:col-span-2">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Summary</h2>
+      <div class="rw-track-hero mt-3 p-5 sm:p-6">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
             <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Tracking number</p>
-            <p class="mt-1 font-mono text-base font-semibold text-slate-900">{{ s.tracking_number }}</p>
-          </div>
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Origin</p>
-            <p class="mt-1 text-sm font-medium text-slate-900">{{ s.origin_name }}</p>
-          </div>
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Destination</p>
-            <p class="mt-1 text-sm font-medium text-slate-900">{{ s.destination_name }}</p>
-          </div>
-          {% if progress.current_location_label %}
-            <div class="bg-surface px-4 py-3 sm:col-span-2">
-              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Location (estimated)</p>
-              <p class="mt-1 text-sm text-slate-800">{{ progress.current_location_label }}</p>
+            <p class="mt-1 break-all font-mono text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">{{ s.tracking_number }}</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-x-8">
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">From</p>
+                <p class="mt-0.5 text-sm font-medium text-slate-900">{{ s.origin_name }}</p>
+              </div>
+              <div>
+                <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">To</p>
+                <p class="mt-0.5 text-sm font-medium text-slate-900">{{ s.destination_name }}</p>
+              </div>
             </div>
-          {% endif %}
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Current status</p>
-            <p class="mt-1 text-sm font-semibold text-slate-900">{{ progress.derived_status }}</p>
           </div>
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Objective</p>
-            <p class="mt-1 text-sm text-slate-900">{{ s.objective_label }}</p>
-          </div>
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Shipment weight</p>
-            <p class="mt-1 text-sm font-medium text-slate-900 kpi-value">{{ s.weight_kg | round(2) }} kg</p>
-          </div>
-          <div class="bg-surface px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Estimated delivery time</p>
-            <p class="mt-1 text-sm font-medium text-slate-900 kpi-value">{{ s.estimated_delivery_days | format_days }} d</p>
-          </div>
-          <div class="bg-surface px-4 py-3 sm:col-span-2">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Estimated cost</p>
-            <p class="mt-1 text-lg font-semibold text-slate-900 kpi-value">{{ s.total_estimated_cost | format_cny }}</p>
+          <div class="shrink-0 border-t border-slate-200 pt-4 sm:border-t-0 sm:pt-0 sm:text-right">
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Estimated arrival</p>
+            <p class="mt-1 text-base font-semibold tabular-nums text-slate-900">
+              {% if s.estimated_arrival %}
+                {{ s.estimated_arrival.strftime('%Y-%m-%d %H:%M') }} UTC
+              {% else %}
+                —
+              {% endif %}
+            </p>
+            <p class="mt-3 text-[10px] font-semibold uppercase tracking-wide text-slate-500">Shipment weight</p>
+            <p class="mt-0.5 text-sm font-medium tabular-nums text-slate-800 kpi-value">{{ s.weight_kg | round(2) }} kg</p>
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Shipment progress</h2>
-      <div class="mt-3 border border-primary/30 bg-primary/5 px-4 py-4">
-        <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-600">Current stage (simulated)</p>
-        <p class="mt-1 text-lg font-semibold text-slate-900">{{ progress.derived_status }}</p>
-        <div class="mt-3">
-          <div class="flex items-center justify-between gap-2 text-[11px] text-slate-600">
-            <span>Estimated journey</span>
-            <span class="font-mono font-medium text-slate-800">{{ progress.progress_percent }}%</span>
+        <div class="mt-6 border-t border-slate-200 pt-6">
+          <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Status</p>
+              <p class="mt-1 text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">{{ progress.derived_status }}</p>
+              {% if progress.current_location_label %}
+                <p class="mt-2 max-w-xl text-sm leading-snug text-slate-700">{{ progress.current_location_label }}</p>
+              {% endif %}
+            </div>
+            <p class="font-mono text-sm font-semibold tabular-nums text-slate-800">{{ progress.progress_percent }}%</p>
           </div>
-          <div class="mt-1.5 h-2 w-full border border-slate-200 bg-white">
-            <div class="h-full bg-primary transition-[width] duration-300" style="width: {{ progress.progress_percent }}%; max-width: 100%;"></div>
+          <div class="rw-track-progress-bar mt-4">
+            <div class="rw-track-progress-bar__fill" style="width: {{ progress.progress_percent }}%; max-width: 100%;"></div>
           </div>
-          <p class="mt-2 text-[11px] leading-relaxed text-slate-500">
-            Elapsed ~{{ "%.2f"|format(progress.elapsed_days) }} d of ~{{ "%.2f"|format(progress.estimated_total_days) }} d planned.
+          <p class="mt-3 text-[11px] leading-relaxed text-slate-500">
+            About {{ "%.2f"|format(progress.elapsed_days) }} days used of {{ "%.2f"|format(progress.estimated_total_days) }} days planned.
             {{ progress.simulation_note }}
           </p>
         </div>
-      </div>
 
-      <div class="mt-4">
-        <p class="text-xs font-medium text-slate-700">All stages</p>
-        <ol class="mt-3 space-y-0 border border-slate-200 bg-surface">
-          {% for row in progress.status_milestones %}
-            <li class="flex gap-3 border-b border-slate-100 px-3 py-2.5 last:border-b-0 {% if row.phase == 'current' %}bg-panel{% endif %}">
-              <span class="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold
-                {% if row.phase == 'completed' %}bg-slate-700 text-white{% elif row.phase == 'current' %}border-2 border-primary bg-white text-primary{% else %}border border-slate-300 bg-white text-slate-400{% endif %}"
-                aria-hidden="true"
-              >
-                {% if row.phase == 'completed' %}✓{% else %}{{ loop.index }}{% endif %}
-              </span>
-              <div class="min-w-0 flex-1">
-                <p class="text-sm font-semibold {% if row.phase == 'upcoming' %}text-slate-500{% else %}text-slate-900{% endif %}">{{ row.status }}</p>
-                <p class="text-[11px] text-slate-500">
-                  {% if row.phase == 'completed' %}Completed{% elif row.phase == 'current' %}In progress{% else %}Upcoming{% endif %}
-                </p>
-              </div>
-            </li>
-          {% endfor %}
-        </ol>
+        <div class="mt-6 grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-3">
+          <div class="border border-slate-200 bg-panel px-3 py-2.5">
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Goal</p>
+            <p class="mt-1 text-sm text-slate-900">{{ s.objective_label }}</p>
+          </div>
+          <div class="border border-slate-200 bg-panel px-3 py-2.5">
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Planned time</p>
+            <p class="mt-1 text-sm font-medium tabular-nums text-slate-900 kpi-value">{{ s.estimated_delivery_days | format_days }} d</p>
+          </div>
+          <div class="border border-slate-200 bg-panel px-3 py-2.5 sm:col-span-1">
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Estimated cost</p>
+            <p class="mt-1 text-base font-semibold tabular-nums text-slate-900 kpi-value">{{ s.total_estimated_cost | format_cny }}</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Route timeline</h2>
-      <p class="mt-1 max-w-2xl text-xs text-slate-600">Segments along your planned route. Completed / current / next reflect simulated time along the route.</p>
+    {# —— Schematic route —— #}
+    {% if route_nodes | length > 0 %}
+      <section class="mt-10">
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route progress</h2>
+        <p class="mt-1 max-w-2xl text-xs text-slate-600">
+          Hubs and stops in order. The line shows your shipment’s path (simulated progress, not a map).
+        </p>
+
+        <div class="rw-track-schematic mt-4 overflow-x-auto">
+          <div class="rw-track-schematic__inner">
+            {% for node in route_nodes %}
+              <div
+                class="rw-track-node {% if node.visual == 'done' %}rw-track-node--done{% elif node.visual == 'here' %}rw-track-node--here{% elif node.visual == 'next' %}rw-track-node--next{% else %}rw-track-node--later{% endif %}"
+              >
+                <div class="rw-track-node__diamond" aria-hidden="true"></div>
+                {% if node.type %}
+                  <p class="rw-track-node__label">{{ node.type }}</p>
+                {% else %}
+                  <p class="rw-track-node__label">{% if node.visual == 'here' %}Now{% elif node.visual == 'next' %}Next{% elif node.visual == 'done' %}Done{% else %}Later{% endif %}</p>
+                {% endif %}
+                <p class="rw-track-node__name">{{ node.name or "—" }}</p>
+                {% if node.city %}
+                  <p class="rw-track-node__city">{{ node.city }}</p>
+                {% endif %}
+              </div>
+
+              {% if not loop.last %}
+                {% set ei = loop.index0 %}
+                {% set edge = route_edges[ei] if ei < (route_edges | length) else none %}
+                {% if edge %}
+                  {% set ph = edge.phase %}
+                  {% set fill_w = 100 if ph == 'completed' else (0 if ph == 'upcoming' else ((progress.marker_fraction or 0) * 100)) %}
+                  {% set show_marker = (ph == 'current' and not progress.is_delivered and progress.active_leg_index is not none and progress.active_leg_index == edge.index) %}
+                  <div class="rw-track-seg rw-track-seg--{{ 'past' if ph == 'completed' else ph }}">
+                    <div class="rw-track-seg__track">
+                      <div class="rw-track-seg__fill" style="width: {{ fill_w | round(1) }}%; max-width: 100%;"></div>
+                      {% if show_marker %}
+                        <div
+                          class="rw-track-seg__marker"
+                          style="left: {{ ((progress.marker_fraction or 0) * 100) | round(2) }}%;"
+                          aria-hidden="true"
+                        ></div>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% elif s.path_summary %}
+      <section class="mt-10">
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route</h2>
+        <div class="mt-3 border border-slate-300 bg-panel px-4 py-3 text-sm text-slate-700">
+          {{ s.path_summary }}
+        </div>
+      </section>
+    {% endif %}
+
+    {# —— Logistics stages —— #}
+    <section class="mt-10">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Logistics stages</h2>
+      <p class="mt-1 max-w-2xl text-xs text-slate-600">Standard milestones. The current step is highlighted.</p>
+
+      <ol class="mt-4 border border-slate-300 bg-surface">
+        {% for row in progress.status_milestones %}
+          <li
+            class="flex gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0
+              {% if row.phase == 'completed' %}rw-track-timeline__item--done bg-surface/90
+              {% elif row.phase == 'current' %}border-l-[3px] border-l-accent bg-panel pl-[13px]
+              {% else %}rw-track-timeline__item--next bg-surface/80{% endif %}"
+          >
+            <span
+              class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border text-[10px] font-bold
+                {% if row.phase == 'completed' %}border-slate-700 bg-slate-700 text-white
+                {% elif row.phase == 'current' %}border-accent bg-white text-accent
+                {% else %}border-slate-300 bg-white text-slate-400{% endif %}"
+              aria-hidden="true"
+            >
+              {% if row.phase == 'completed' %}✓{% else %}{{ loop.index }}{% endif %}
+            </span>
+            <div class="min-w-0 flex-1">
+              <p
+                class="text-sm font-semibold leading-snug
+                  {% if row.phase == 'upcoming' %}text-slate-500{% else %}text-slate-900{% endif %}
+                  {% if row.phase == 'current' %}text-base{% endif %}"
+              >
+                {{ row.status }}
+              </p>
+              <p class="mt-0.5 text-[11px] text-slate-500">
+                {% if row.phase == 'completed' %}Finished{% elif row.phase == 'current' %}Now{% else %}Later{% endif %}
+              </p>
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+
+    {# —— Route legs detail —— #}
+    <section class="mt-10">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Route detail</h2>
+      <p class="mt-1 max-w-2xl text-xs text-slate-600">Each leg of your planned route. Time and cost are from your plan.</p>
 
       {% if progress.route_milestones and progress.route_milestones | length > 0 %}
         <div class="mt-4 space-y-0 border border-slate-300 bg-surface">
           {% for leg in progress.route_milestones %}
-            <div class="border-b border-slate-200 px-4 py-3 last:border-b-0 {% if leg.phase == 'current' %}bg-panel{% elif leg.phase == 'upcoming' %}bg-surface/60{% endif %}">
+            <div
+              class="border-b border-slate-200 px-4 py-3.5 last:border-b-0
+                {% if leg.phase == 'completed' %}opacity-[0.82]
+                {% elif leg.phase == 'current' %}border-l-[3px] border-l-accent bg-panel pl-[13px]
+                {% else %}opacity-[0.55]{% endif %}"
+            >
               <div class="flex flex-wrap items-start justify-between gap-2">
                 <div class="min-w-0">
                   <div class="flex flex-wrap items-center gap-2">
                     <span class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white {{ mode_bg.get(leg.mode_key, 'bg-slate-500') }}">{{ leg.mode }}</span>
-                    <span class="text-[11px] font-medium uppercase tracking-wide
-                      {% if leg.phase == 'completed' %}text-slate-600{% elif leg.phase == 'current' %}text-primary{% else %}text-slate-400{% endif %}">
-                      {% if leg.phase == 'completed' %}Done{% elif leg.phase == 'current' %}Current{% else %}Next{% endif %}
+                    <span
+                      class="text-[10px] font-semibold uppercase tracking-wide
+                        {% if leg.phase == 'completed' %}text-slate-600
+                        {% elif leg.phase == 'current' %}text-accent
+                        {% else %}text-slate-400{% endif %}"
+                    >
+                      {% if leg.phase == 'completed' %}Done{% elif leg.phase == 'current' %}Now{% else %}Later{% endif %}
                     </span>
                   </div>
                   <p class="mt-1.5 text-sm font-medium text-slate-900">{{ leg.from_name }} → {{ leg.to_name }}</p>
@@ -178,8 +272,9 @@
       {% endif %}
     </section>
 
-    <section class="mt-8">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-800">Details</h2>
+    {# —— Meta —— #}
+    <section class="mt-10">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Record</h2>
       <div class="mt-3 grid gap-3 sm:grid-cols-2">
         <div class="border border-slate-200 bg-surface px-3 py-2.5">
           <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Created</p>
@@ -189,26 +284,16 @@
           <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Last updated</p>
           <p class="mt-1 text-sm text-slate-800">{% if s.updated_at %}{{ s.updated_at.strftime('%Y-%m-%d %H:%M') }} UTC{% else %}—{% endif %}</p>
         </div>
-        <div class="border border-slate-200 bg-surface px-3 py-2.5 sm:col-span-2">
-          <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Estimated arrival</p>
-          <p class="mt-1 text-sm text-slate-800">
-            {% if s.estimated_arrival %}
-              {{ s.estimated_arrival.strftime('%Y-%m-%d %H:%M') }} UTC
-            {% else %}
-              —
-            {% endif %}
-          </p>
-        </div>
         {% if modes_summary %}
           <div class="border border-slate-200 bg-surface px-3 py-2.5 sm:col-span-2">
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Modes on this route</p>
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Transport modes</p>
             <p class="mt-1 text-sm text-slate-800">{{ modes_summary }}</p>
           </div>
         {% endif %}
       </div>
     </section>
 
-    <p class="mt-8 text-center">
+    <p class="mt-10 text-center">
       <a href="{{ url_for('track_shipment') }}" class="text-sm font-semibold text-accent hover:underline">Track another shipment</a>
     </p>
   {% endif %}

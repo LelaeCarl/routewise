@@ -253,3 +253,203 @@ tfoot td {
   background: #faf0f0;
   color: #7f1d1d;
 }
+
+/* ── Track shipment: schematic route (no map) ── */
+.rw-track-hero {
+  border: 1px solid var(--rw-border);
+  border-radius: 2px;
+  background: var(--rw-surface);
+}
+
+.rw-track-schematic {
+  border: 1px solid var(--rw-border);
+  border-radius: 2px;
+  background: var(--rw-surface);
+  -webkit-overflow-scrolling: touch;
+}
+
+.rw-track-schematic__inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0;
+  min-width: min-content;
+  padding: 1.25rem 1rem 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .rw-track-schematic__inner {
+    padding: 1.5rem 1.25rem 1.75rem;
+  }
+}
+
+.rw-track-node {
+  flex: 0 0 auto;
+  width: 5.5rem;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .rw-track-node {
+    width: 6.5rem;
+  }
+}
+
+.rw-track-node__diamond {
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-left: auto;
+  margin-right: auto;
+  transform: rotate(45deg);
+  border: 2px solid var(--rw-border);
+  background: var(--rw-surface);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.rw-track-node--done .rw-track-node__diamond {
+  border-color: var(--rw-primary);
+  background: var(--rw-primary);
+}
+
+.rw-track-node--here .rw-track-node__diamond {
+  border-color: var(--rw-accent);
+  background: var(--rw-surface);
+  box-shadow: 0 0 0 1px var(--rw-accent);
+}
+
+.rw-track-node--next .rw-track-node__diamond {
+  border-color: var(--rw-accent);
+  background: var(--rw-accent);
+}
+
+.rw-track-node--later .rw-track-node__diamond {
+  border-color: #cbd5e1;
+  background: var(--rw-surface);
+  opacity: 0.85;
+}
+
+.rw-track-node__label {
+  margin-top: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--rw-text-muted);
+  line-height: 1.2;
+}
+
+.rw-track-node__name {
+  margin-top: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--rw-text);
+  word-break: break-word;
+}
+
+.rw-track-node--later .rw-track-node__name {
+  color: var(--rw-text-muted);
+  font-weight: 500;
+}
+
+.rw-track-node__city {
+  margin-top: 0.125rem;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  color: var(--rw-text-muted);
+}
+
+.rw-track-seg {
+  flex: 0 0 auto;
+  width: 2.75rem;
+  padding-top: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .rw-track-seg {
+    width: 4rem;
+  }
+}
+
+.rw-track-seg__track {
+  position: relative;
+  height: 3px;
+  background: #e2e8f0;
+}
+
+.rw-track-seg__fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--rw-primary);
+  transition: width 0.45s ease;
+}
+
+.rw-track-seg--current .rw-track-seg__fill {
+  background: var(--rw-accent);
+}
+
+.rw-track-seg__marker {
+  position: absolute;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-left: -0.25rem;
+  border: 2px solid var(--rw-surface);
+  background: var(--rw-accent);
+  transform: translate(-50%, -50%) rotate(45deg);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.15);
+  animation: rw-track-marker-drift 2.8s ease-in-out infinite;
+}
+
+@keyframes rw-track-marker-drift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(45deg) translateX(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(45deg) translateX(2px);
+  }
+}
+
+.rw-track-progress-bar {
+  height: 4px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.rw-track-progress-bar__fill {
+  height: 100%;
+  background: var(--rw-primary);
+  transition: width 0.5s ease;
+}
+
+.rw-track-timeline__item {
+  position: relative;
+  padding-left: 1.25rem;
+  border-left: 2px solid #e2e8f0;
+  margin-left: 0.375rem;
+}
+
+.rw-track-timeline__item:last-child {
+  border-left-color: transparent;
+}
+
+.rw-track-timeline__item--done {
+  border-left-color: #cbd5e1;
+  opacity: 0.82;
+}
+
+.rw-track-timeline__item--now {
+  border-left-color: var(--rw-accent);
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.rw-track-timeline__item--next {
+  opacity: 0.55;
+}
