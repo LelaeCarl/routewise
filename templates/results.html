@@ -71,13 +71,32 @@
             </div>
           {% endif %}
         </div>
-        <div class="border-t border-slate-300 px-4 py-3">
+        <div class="border-t border-slate-300 px-4 py-3 space-y-2">
           <a
             href="{{ url_for('planner', direction=direction_key, origin=origin_id, destination=destination_id, weight=weight, length_cm=length_cm, width_cm=width_cm, height_cm=height_cm, preference=preference_key) }}"
             class="inline-flex w-full items-center justify-center rounded-sm border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-panel"
           >
             Edit inputs
           </a>
+          <form method="post" action="{{ url_for('create_shipment_from_results') }}" class="w-full">
+            <input type="hidden" name="direction" value="{{ direction_key }}" />
+            <input type="hidden" name="origin" value="{{ origin_id }}" />
+            <input type="hidden" name="destination" value="{{ destination_id }}" />
+            <input type="hidden" name="weight" value="{{ weight }}" />
+            <input type="hidden" name="preference" value="{{ preference_key }}" />
+            <input type="hidden" name="length_cm" value="{{ length_cm or '' }}" />
+            <input type="hidden" name="width_cm" value="{{ width_cm or '' }}" />
+            <input type="hidden" name="height_cm" value="{{ height_cm or '' }}" />
+            <button
+              type="submit"
+              class="inline-flex w-full items-center justify-center rounded-sm border border-primary bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-accent/40"
+            >
+              Create &amp; Track Shipment
+            </button>
+          </form>
+          <p class="text-[10px] leading-snug text-slate-500">
+            Save this route as a shipment and get a tracking number.
+          </p>
         </div>
       </div>
     </section>

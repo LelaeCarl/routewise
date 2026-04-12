@@ -19,6 +19,7 @@ from backend.sensitivity import build_sensitivity_context
 from backend.extensions import db
 from backend.db_models import RouteAnalysis, Shipment, User
 from backend.shipment_tracking import (
+    create_shipment_from_route,
     get_shipment_by_tracking_number,
     milestone_timeline,
     modes_used_summary,
@@ -192,6 +193,97 @@ def _normalize_objective_key(obj_key: str) -> str:
     return LEGACY_OBJECTIVE_TO_OBJECTIVE.get(key, "practical_route")
 
 
+def _parse_dim_str(value: str) -> float | None:
+    if not value:
+        return None
+    try:
+        num = float(value)
+    except (ValueError, TypeError):
+        return None
+    if num <= 0:
+        return None
+    return num
+
+
+def _airport_port_invalid(origin_type: str | None, dest_type: str | None) -> bool:
+    if not origin_type or not dest_type:
+        return False
+    return (origin_type == "airport" and dest_type == "port") or (
+        origin_type == "port" and dest_type == "airport"
+    )
+
+
+def _parse_planner_query_mapping(m) -> dict:
+    """Shared planner fields from request.args (GET) or request.form (POST)."""
+    direction_key = (m.get("direction") or "china-kenya").strip() or "china-kenya"
+    preference_key = _normalize_objective_key(m.get("preference", "practical_route"))
+    origin_id = (m.get("origin") or "").strip()
+    destination_id = (m.get("destination") or "").strip()
+    weight = (m.get("weight") or "").strip()
+    length_cm_raw = (m.get("length_cm") or "").strip()
+    width_cm_raw = (m.get("width_cm") or "").strip()
+    height_cm_raw = (m.get("height_cm") or "").strip()
+
+    try:
+        weight_kg = float(weight) if weight else 500.0
+    except (ValueError, TypeError):
+        weight_kg = 500.0
+    weight_kg = max(0.1, weight_kg)
+
+    length_cm = _parse_dim_str(length_cm_raw)
+    width_cm = _parse_dim_str(width_cm_raw)
+    height_cm = _parse_dim_str(height_cm_raw)
+
+    nodes = load_nodes()
+    node_map = {n.id: n for n in nodes}
+    origin_type = node_map.get(origin_id).type if origin_id in node_map else None
+    destination_type = node_map.get(destination_id).type if destination_id in node_map else None
+    invalid_route_pair = _airport_port_invalid(origin_type, destination_type)
+
+    direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
+    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced Tradeoff")
+    origin_name = node_map.get(origin_id).name if origin_id in node_map else origin_id
+    destination_name = node_map.get(destination_id).name if destination_id in node_map else destination_id
+
+    return {
+        "direction_key": direction_key,
+        "preference_key": preference_key,
+        "origin_id": origin_id,
+        "destination_id": destination_id,
+        "weight": weight,
+        "weight_kg": weight_kg,
+        "length_cm_raw": length_cm_raw,
+        "width_cm_raw": width_cm_raw,
+        "height_cm_raw": height_cm_raw,
+        "length_cm": length_cm,
+        "width_cm": width_cm,
+        "height_cm": height_cm,
+        "invalid_route_pair": invalid_route_pair,
+        "node_map": node_map,
+        "direction_label": direction_label,
+        "preference_label": preference_label,
+        "origin_name": origin_name,
+        "destination_name": destination_name,
+    }
+
+
+def _redirect_to_results_planner(q: dict):
+    """Redirect back to results with the same query parameters as the planner form."""
+    return redirect(
+        url_for(
+            "results",
+            direction=q["direction_key"],
+            origin=q["origin_id"],
+            destination=q["destination_id"],
+            weight=q["weight"],
+            preference=q["preference_key"],
+            length_cm=q["length_cm_raw"],
+            width_cm=q["width_cm_raw"],
+            height_cm=q["height_cm_raw"],
+        )
+    )
+
+
 @app.context_processor
 def inject_user():
     return {
@@ -291,58 +383,32 @@ def planner():
 
 @app.route("/results")
 def results():
-    direction_key = request.args.get("direction", "china-kenya")
-    preference_key = _normalize_objective_key(request.args.get("preference", "practical_route"))
-
-    origin_id = request.args.get("origin", "").strip()
-    destination_id = request.args.get("destination", "").strip()
-    weight = request.args.get("weight", "").strip()
-    length_cm_raw = request.args.get("length_cm", "").strip()
-    width_cm_raw = request.args.get("width_cm", "").strip()
-    height_cm_raw = request.args.get("height_cm", "").strip()
-
-    direction_label = DIRECTION_LABELS.get(direction_key, "China → Kenya")
-    preference_label = PREFERENCE_LABELS.get(preference_key, "Balanced Tradeoff")
-
-    nodes = load_nodes()
-    node_map = {n.id: n for n in nodes}
-    origin_name = node_map.get(origin_id).name if origin_id in node_map else origin_id
-    destination_name = node_map.get(destination_id).name if destination_id in node_map else destination_id
-
-    try:
-        weight_kg = float(weight) if weight else 500.0
-    except (ValueError, TypeError):
-        weight_kg = 500.0
-    weight_kg = max(0.1, weight_kg)
-
-    def _parse_dim(value: str) -> float | None:
-        if not value:
-            return None
-        try:
-            num = float(value)
-        except (ValueError, TypeError):
-            return None
-        if num <= 0:
-            return None
-        return num
-
-    length_cm = _parse_dim(length_cm_raw)
-    width_cm = _parse_dim(width_cm_raw)
-    height_cm = _parse_dim(height_cm_raw)
+    q = _parse_planner_query_mapping(request.args)
+    direction_key = q["direction_key"]
+    preference_key = q["preference_key"]
+    origin_id = q["origin_id"]
+    destination_id = q["destination_id"]
+    weight = q["weight"]
+    length_cm_raw = q["length_cm_raw"]
+    width_cm_raw = q["width_cm_raw"]
+    height_cm_raw = q["height_cm_raw"]
+    weight_kg = q["weight_kg"]
+    length_cm = q["length_cm"]
+    width_cm = q["width_cm"]
+    height_cm = q["height_cm"]
+    direction_label = q["direction_label"]
+    preference_label = q["preference_label"]
+    node_map = q["node_map"]
+    origin_name = q["origin_name"]
+    destination_name = q["destination_name"]
+    invalid_route_pair = q["invalid_route_pair"]
 
     dims_ok = bool(length_cm and width_cm and height_cm)
     volumetric_weight_kg = None
     if dims_ok:
         volumetric_weight_kg = (float(length_cm) * float(width_cm) * float(height_cm)) / 6000.0
 
-    def _invalid_pair(origin_type: str | None, dest_type: str | None) -> bool:
-        if not origin_type or not dest_type:
-            return False
-        return (origin_type == "airport" and dest_type == "port") or (origin_type == "port" and dest_type == "airport")
-
-    origin_type = node_map.get(origin_id).type if origin_id in node_map else None
-    destination_type = node_map.get(destination_id).type if destination_id in node_map else None
-    invalid_route_pair = _invalid_pair(origin_type, destination_type)
+    ui_objectives = list(OBJECTIVE_KEYS)
 
     engine = RouteEngine()
     route = None
@@ -452,8 +518,6 @@ def results():
                     enriched_alts.pop("practical_route", None)
 
         else:
-            ui_objectives = list(OBJECTIVE_KEYS)
-
             leg_labels = build_leg_labels(route)
             for i, label in enumerate(leg_labels):
                 if i < len(route["legs"]):
@@ -501,6 +565,54 @@ def results():
         decision=decision,
         sensitivity=sensitivity,
     )
+
+
+@app.route("/results/create-shipment", methods=["POST"])
+def create_shipment_from_results():
+    """Create a trackable shipment from the same planner inputs shown on the results page."""
+    if not getattr(g, "user", None):
+        flash("Please sign in to create a shipment.", "error")
+        return redirect(url_for("auth.login", next=url_for("results")))
+
+    q = _parse_planner_query_mapping(request.form)
+    if not q["origin_id"] or not q["destination_id"]:
+        flash("Please select an origin and destination first.", "error")
+        return _redirect_to_results_planner(q)
+    if q["invalid_route_pair"]:
+        flash("This origin and destination pair cannot be used for a shipment.", "error")
+        return _redirect_to_results_planner(q)
+
+    engine = RouteEngine()
+    route = engine.compute_route(
+        q["origin_id"],
+        q["destination_id"],
+        q["preference_key"],
+        q["weight_kg"],
+        length_cm=q["length_cm"],
+        width_cm=q["width_cm"],
+        height_cm=q["height_cm"],
+    )
+    if not route.get("success"):
+        flash("Could not create a shipment. Please run the route analysis again.", "error")
+        return _redirect_to_results_planner(q)
+
+    try:
+        shipment = create_shipment_from_route(
+            route=route,
+            origin_id=q["origin_id"],
+            destination_id=q["destination_id"],
+            objective_key=q["preference_key"],
+            weight_kg=q["weight_kg"],
+            user_id=g.user.id,
+            direction_key=q["direction_key"],
+            objective_label=q["preference_label"],
+        )
+    except ValueError as exc:
+        flash(str(exc) or "Could not create shipment.", "error")
+        return _redirect_to_results_planner(q)
+
+    flash("Shipment created successfully.", "success")
+    return redirect(url_for("track_shipment_detail", tracking_number=shipment.tracking_number))
 
 
 @app.route("/hubs")
